@@ -1,5 +1,6 @@
 package com.example.midexam;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -20,5 +21,23 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(800);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }finally {
+                    goToItemTouchActivity();
+                }
+            }
+        }).start();
+    }
+
+    private void goToItemTouchActivity(){
+        startActivity(new Intent(this,ItemTouchActivity.class));
+        finish();
     }
 }
