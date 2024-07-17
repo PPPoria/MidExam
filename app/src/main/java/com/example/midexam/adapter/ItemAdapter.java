@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.midexam.R;
@@ -43,10 +44,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
     public class ItemHolder extends RecyclerView.ViewHolder {
         public TextView itemText;
+        public ConstraintLayout slideItem;
+        public TextView success;
 
         public ItemHolder(@NonNull View itemView) {
             super(itemView);
             itemText = itemView.findViewById(R.id.item_text);
+            slideItem = itemView.findViewById(R.id.slide_item);
+            success = itemView.findViewById(R.id.success);
+        }
+
+        public float getActionWidth(){
+            return success.getWidth();
         }
     }
 }
