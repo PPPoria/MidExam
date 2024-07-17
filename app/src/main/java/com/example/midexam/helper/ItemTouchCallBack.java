@@ -19,7 +19,8 @@ public class ItemTouchCallBack extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-        return makeMovementFlags(0, ItemTouchHelper.START);
+        int swipeFlag = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+        return makeMovementFlags(0, swipeFlag);
     }
 
     @Override
@@ -28,17 +29,27 @@ public class ItemTouchCallBack extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
+    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+    }
+
+    @Override
+    public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+        return 1f;
+    }
 
     @Override
     public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        try {
-            ItemAdapter.ItemHolder holder = (ItemAdapter.ItemHolder) viewHolder;
-            float actionWidth = holder.getActionWidth();
-            if (dX < -actionWidth) dX = -actionWidth;
-            holder.slideItem.setTranslationX(dX);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        ItemAdapter.ItemHolder holder = (ItemAdapter.ItemHolder) viewHolder;
+        float maxWidth = holder.getActionWidth();
+
+        if (dX < -maxWidth) dX = -maxWidth;
+        else if (dX > 0f) dX = 0f;
+
+        holder.slideItem.setTranslationX(dX);
+        holder.success.setTranslationX(dX);
+
+        Log.d(TAG, "onChildDraw: " + dX);
     }
 }

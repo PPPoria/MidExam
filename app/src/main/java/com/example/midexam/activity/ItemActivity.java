@@ -49,7 +49,7 @@ public class ItemActivity extends AppCompatActivity {
 
     private void initNewsListView() {
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new ItemAdapter(this,itemList));
+        rv.setAdapter(new ItemAdapter(this,this,itemList));
 
         new Thread(new Runnable() {
             @Override

@@ -58,4 +58,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
     annotationProcessor("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
+
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
 }
