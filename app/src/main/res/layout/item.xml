@@ -7,7 +7,8 @@
 
     <com.example.midexam.overrideview.HorizontalScrollMenu
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="wrap_content"
