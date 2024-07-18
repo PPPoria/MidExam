@@ -38,7 +38,7 @@ public class ItemActivity extends AppCompatActivity {
 
         initView();
         initNewsListView();
-        initItemSlide();
+        //initItemSlide();
     }
 
     private void initItemSlide() {
@@ -54,9 +54,8 @@ public class ItemActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                itemList.add(new ItemData("劲爆内容"));
                 itemList.add(new ItemData("乙烯一克一克"));
-                itemList.add(new ItemData("注意看，这个男人叫小帅"));
+                itemList.add(new ItemData("注意看，这个男人叫小帅。"));
                 rv.getAdapter().notifyDataSetChanged();
             }
         }).start();

@@ -58,7 +58,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         public TextView itemText;
         public ConstraintLayout slideItem;
         public ConstraintLayout slideLayout;
-        public TextView success;
+        public ConstraintLayout success;
         public int openState = 0;//展开状态，0为未展开，1为二者之间，2为已展开
 
         public ItemHolder(@NonNull View itemView) {
