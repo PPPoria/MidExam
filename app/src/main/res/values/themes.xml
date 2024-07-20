@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MidExam" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.MidExam" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+
     </style>
 
-    <style name="Theme.MidExam" parent="Base.Theme.MidExam" />
+    <style name="Theme.MidExam" parent="Base.Theme.MidExam" >
+        <!--解决启动页闪屏问题-->
+        <item name="android:windowBackground">@drawable/wave_vertical</item>
+    </style>
 </resources>
