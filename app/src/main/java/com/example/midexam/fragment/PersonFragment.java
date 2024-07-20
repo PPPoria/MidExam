@@ -1,66 +1,123 @@
 package com.example.midexam.fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
+import com.example.midexam.activity.LogActivity;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PersonFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.io.IOException;
+
 public class PersonFragment extends Fragment {
+    private static final String TAG = "PersonFragment";
+    private View view;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private SharedPreferences sp;
+    private SharedPreferences.Editor ed;
+    private boolean isLogged = false;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ImageView userBackgroundImage;
+    private ImageView userHeadImage;
+    private TextView userName;
+    private ConstraintLayout clearButton;
 
-    public PersonFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PersonFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PersonFragment newInstance(String param1, String param2) {
-        PersonFragment fragment = new PersonFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_person, container, false);
+        view = inflater.inflate(R.layout.fragment_person, container, false);
+
+        sp = getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
+        ed = sp.edit();
+
+        initView();
+        initListener();
+        initUserData();
+        initUserImage();
+        return view;
+    }
+
+    private void initUserData() {
+        String name = "登录/注册";
+        try {
+            if (sp.getBoolean("log", false)) {
+                name = sp.getString("name","登录/注册");
+                isLogged = true;
+            }
+        }catch (Exception e){}
+
+        userName.setText(name);
+    }
+
+    private void initListener() {
+        userName.setOnClickListener(v -> {
+            if(isLogged) changeUserName();
+            else startActivity(new Intent(getActivity(), LogActivity.class));
+        });
+        clearButton.setOnClickListener(v -> {
+            clearImageMemoryAndDisk();
+            Toast.makeText(getContext(), "清理完成", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void changeUserName() {
+
+    }
+
+    private void initView() {
+        userBackgroundImage = view.findViewById(R.id.user_background_image);
+        userHeadImage = view.findViewById(R.id.user_head_image);
+        userName = view.findViewById(R.id.user_name);
+        clearButton = view.findViewById(R.id.clear);
+    }
+
+    //设置图片
+    private void initUserImage() {
+        Glide.with(view).load(R.drawable.head).circleCrop().into(userHeadImage);
+        Glide.with(view).load(R.drawable.test_image).centerCrop().into(userBackgroundImage);
+    }
+
+    //清除图片缓存，不然图片更改不成功
+    private void clearImageMemoryAndDisk() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(view.getContext()).clearDiskCache();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    initView();
+                }
+            }
+        }).start();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(view.getContext()).clearMemory();
+            }
+        });
     }
 }
