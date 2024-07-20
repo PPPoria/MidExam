@@ -15,9 +15,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.midexam.R;
 
@@ -44,12 +46,19 @@ import java.util.List;
  */
 public class StatisticsFragment extends Fragment {
 
+    Button btAdd;
+    Button bt;
     ConstraintLayout cmain;
+    Description description;
     LinearLayout linearLayout;
     PieChart mPieChart;
     ScrollView scrollView;
-    Description description;
-    List<PieEntry> pieEntries;
+
+
+    List<PieEntry> pieEntriesDay;
+    List<PieEntry> pieEntriesMonth;
+    List<PieEntry> pieEntriesYear;
+    List<String> mColorPie;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -93,6 +102,35 @@ public class StatisticsFragment extends Fragment {
         initview(view);
 
 
+       mColorPie = getColorPie();
+        //增添数据
+        addData();
+        init_Pie();
+        init_PieLegend(pieEntriesDay, mColorPie);
+        updataPie(pieEntriesDay);
+    }
+
+    private void updataPie(List<PieEntry> dataResourse) {
+        PieDataSet iPieDataSet = init_PieDataSet(dataResourse, mColorPie);
+        PieData pieData = new PieData(iPieDataSet);
+        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
+        // PieDataSet
+        iPieDataSet.setValueFormatter(new PercentFormatter());
+        mPieChart.setData(pieData);
+        mPieChart.invalidate();//更新图表
+    }
+
+
+    private void addData() {
+        pieEntriesDay = new ArrayList<>();
+        pieEntriesDay.add(new PieEntry(1, "读书"));
+        pieEntriesDay.add(new PieEntry(2f, "吃饭aaaaaa"));
+        pieEntriesDay.add(new PieEntry(3, "睡觉"));
+        pieEntriesDay.add(new PieEntry(4,"好"));
+    }
+
+    @NonNull
+    private static List<String> getColorPie() {
         //设置圆弧颜色
         List<String> mColorPie=new ArrayList<>();
         mColorPie.add("#007BFF");
@@ -105,23 +143,7 @@ public class StatisticsFragment extends Fragment {
         mColorPie.add("#6C757D");
         mColorPie.add("#ADD8E6");
         mColorPie.add("#FFC0CB");
-
-        //增添数据
-        pieEntries= new ArrayList<>();
-        pieEntries.add(new PieEntry(1, "读书"));
-        pieEntries.add(new PieEntry(2f, "吃饭aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-        pieEntries.add(new PieEntry(3, "睡觉"));
-        pieEntries.add(new PieEntry(4,"好"));
-
-        init_Pie();
-        init_PieLegend(pieEntries, mColorPie);
-
-        PieDataSet iPieDataSet = init_PieDataSet(pieEntries, mColorPie);
-        PieData pieData = new PieData(iPieDataSet);
-        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
-        // PieDataSet
-        iPieDataSet.setValueFormatter(new PercentFormatter());
-        mPieChart.setData(pieData);
+        return mColorPie;
     }
 
     @NonNull
@@ -171,7 +193,7 @@ public class StatisticsFragment extends Fragment {
         //隐藏原有图例
         Legend legend=mPieChart.getLegend();
         legend.setEnabled(false);
-
+        linearLayout.removeAllViews();
         //在视图布局完成后调用
         linearLayout.post(new Runnable() {
             @Override
@@ -207,6 +229,18 @@ public class StatisticsFragment extends Fragment {
         linearLayout=view.findViewById(R.id.pie_linerayout);
         mPieChart = (PieChart) view.findViewById(R.id.pie_chart);
         scrollView=view.findViewById(R.id.pie_scroll);
+        btAdd=view.findViewById(R.id.bt_pie_add);
+
+
+        btAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pieEntriesDay.add(new PieEntry(3.3f,"打搅"));
+                Toast.makeText(getActivity(),"已增加",Toast.LENGTH_LONG).show();
+                init_PieLegend(pieEntriesDay,mColorPie);
+                updataPie(pieEntriesDay);
+            }
+        });
     }
 
     @NonNull
@@ -252,10 +286,13 @@ public class StatisticsFragment extends Fragment {
 
         private TextView tvContent;
 
-    public MyMarkerView(Context context, int layoutResource) {
+
+         public MyMarkerView(Context context, int layoutResource) {
             super(context, layoutResource);
-            tvContent = (TextView) findViewById(R.id.maker_tv);
-        }
+
+            tvContent = findViewById(R.id.maker_tv);
+
+    }
 
         // 每次MarkerView被调用时，都会回调此方法，可以更新UI
         @Override
@@ -265,17 +302,17 @@ public class StatisticsFragment extends Fragment {
             float value = pieEntry.getY();
             float percent = (float) (value / getTotal()) * 100f; // getTotal() 是你需要自定义的方法来获取所有Entry的Y值之和
 
-            tvContent.setText(pieEntry.getLabel()+"\n"+"时长: " + value + "\n" + "百分比: " + String.format("%.2f", percent) + "%");
+            tvContent.setText("活动:"+pieEntry.getLabel()+"\n"+"时长: " + value+"\n"+"占比："+(String.format("%.2f", percent) + "%"));
+            tvContent.setBackgroundColor(Color.parseColor("#FFCCCCCC"));
             tvContent.setTextColor(Color.BLACK);
-            tvContent.setTextSize(13);
             super.refreshContent(e, highlight);
         }
 
         // 自定义方法来获取所有Entry的Y值之和，这取决于你如何管理你的数据集
         private float getTotal() {
             float sum=0;
-            for (int i = 0; i < pieEntries.size(); i++) {
-                sum+=pieEntries.get(i).getValue();
+            for (int i = 0; i < pieEntriesDay.size(); i++) {
+                sum+= pieEntriesDay.get(i).getValue();
             }
             return sum; // 示例值，应该替换为你的实际计算值
         }

@@ -5,38 +5,91 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.StatisticsFragment">
+
+
     <ScrollView
         android:id="@+id/pie_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fs_constraint"
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/fs_constraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/bt_pie_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加数据"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pie_chart"
-                android:layout_width="370dp"
-                android:layout_height="245dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1" />
-
-            <LinearLayout
-                android:id="@+id/pie_linerayout"
-                android:layout_width="370dp"
-                android:layout_marginTop="30dp"
+            <Button
+                android:id="@+id/bt_pie_day"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.487"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pie_chart"
-                app:layout_constraintVertical_bias="0.4" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:text="日"/>
+
+            <Button
+                android:id="@+id/bt_pie_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               android:layout_marginLeft="60dp"
+                android:text="月"
+               />
+
+            <Button
+                android:id="@+id/bt_pie_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="年"
+                android:layout_marginLeft="60dp"
+                />
+    </LinearLayout>
+        <TextView
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="专注图"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_marginTop="12dp"
+            android:id="@+id/pie_chart"
+            android:layout_width="370dp"
+            android:layout_height="245dp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.609"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.253" />
+
+
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:id="@+id/pie_linerayout"
+            android:layout_width="370dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+
+    </LinearLayout>
     </ScrollView>
 </FrameLayout>
