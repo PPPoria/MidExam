@@ -32,14 +32,14 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }finally {
-                    goToItemTouchActivity();
+                    goToDesktopActivity();
                 }
             }/////
         }).start();
     }
 
-    private void goToItemTouchActivity(){
-        startActivity(new Intent(this, ItemActivity.class));
+    private void goToDesktopActivity(){
+        startActivity(new Intent(this, DesktopActivity.class));
         finish();
     }
 }
