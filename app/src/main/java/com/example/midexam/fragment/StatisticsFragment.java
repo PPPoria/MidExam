@@ -2,6 +2,7 @@ package com.example.midexam.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.midexam.R;
-import com.example.midexam.activity.DesktopActivity;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -33,6 +34,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,8 +45,9 @@ import java.util.List;
 public class StatisticsFragment extends Fragment {
 
     ConstraintLayout cmain;
-    ScrollView sc_label;
+    LinearLayout linearLayout;
     PieChart mPieChart;
+    ScrollView scrollView;
     Description description;
     List<PieEntry> pieEntries;
 
@@ -89,26 +92,31 @@ public class StatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
 
-        //设置文字颜色
-        List<Integer> mColor=new ArrayList<>();
-        mColor.add(Color.BLACK);
 
         //设置圆弧颜色
-        List<Integer> mColor1=new ArrayList<>();
-        mColor1.add(Color.CYAN);
-        mColor1.add(Color.GREEN);
-        mColor1.add(Color.RED);
+        List<String> mColorPie=new ArrayList<>();
+        mColorPie.add("#007BFF");
+        mColorPie.add("#28A745");
+        mColorPie.add("#FFC107");
+        mColorPie.add("#DC3545");
+        mColorPie.add("#00BFFF");
+        mColorPie.add("#6F42C1");
+        mColorPie.add("#FFA500");
+        mColorPie.add("#6C757D");
+        mColorPie.add("#ADD8E6");
+        mColorPie.add("#FFC0CB");
 
         //增添数据
         pieEntries= new ArrayList<>();
         pieEntries.add(new PieEntry(1, "读书"));
-        pieEntries.add(new PieEntry(2f, "吃饭"));
+        pieEntries.add(new PieEntry(2f, "吃饭aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
         pieEntries.add(new PieEntry(3, "睡觉"));
+        pieEntries.add(new PieEntry(4,"好"));
 
         init_Pie();
-        init_PieLegend(pieEntries, mColor1);
+        init_PieLegend(pieEntries, mColorPie);
 
-        PieDataSet iPieDataSet = init_PieDataSet(pieEntries, mColor1);
+        PieDataSet iPieDataSet = init_PieDataSet(pieEntries, mColorPie);
         PieData pieData = new PieData(iPieDataSet);
         pieData.setValueFormatter(new PercentFormatter());//使其有百分号
         // PieDataSet
@@ -117,20 +125,25 @@ public class StatisticsFragment extends Fragment {
     }
 
     @NonNull
-    private static PieDataSet init_PieDataSet(List<PieEntry> pieEntries, List<Integer> mColor1) {
+    private static PieDataSet init_PieDataSet(List<PieEntry> pieEntries, List<String> colorPie) {
         //图解
         PieDataSet iPieDataSet = new PieDataSet(pieEntries, "我在专注");
 
+
+        int[] colors = new int[colorPie.size()];
+        for (int i = 0; i < colorPie.size(); i++) {
+            colors[i] = Color.parseColor(String.valueOf(colorPie.get(i)));
+        }
         //设定图的细节
-        iPieDataSet.setColors(mColor1);//图颜色
-        iPieDataSet.setValueTextColors(mColor1);//图中文字的颜色
+        iPieDataSet.setColors(colors);//图颜色
+        iPieDataSet.setValueTextColors(Collections.singletonList(Color.BLACK));//图中文字的颜色,黑色给了个转换为集合才能接受
         iPieDataSet.setValueTextSize(20);//图中文字的大小
         iPieDataSet.setSliceSpace(3);   // 每块之间的距离
         iPieDataSet.setValueLinePart1OffsetPercentage(80.f);
 
         //设置线的长度
         iPieDataSet.setValueLinePart1Length(0.3f);
-        iPieDataSet.setValueLinePart2Length(0.3f);
+        iPieDataSet.setValueLinePart2Length(0.2f);
         //设置文字和数据图外显示
         iPieDataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
         iPieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
@@ -146,43 +159,60 @@ public class StatisticsFragment extends Fragment {
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
         description=mPieChart.getDescription();
-        description.setText("专注图");
+        description.setText("专注图");//图例
         description.setTextSize(10f); // 设置字体大小
         MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
         mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
+        mPieChart.setEntryLabelColor(Color.BLACK);
+        mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
     }
 
-    private void init_PieLegend(List<PieEntry> pieEntries, List<Integer> mColor1) {
+    private void init_PieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
         Legend legend=mPieChart.getLegend();
         legend.setEnabled(false);
 
-        //建立一个整体布局加入scrollview
-        LinearLayout l=new LinearLayout(getActivity());
-        //整体布局中的单个布局
-        LinearLayout.LayoutParams lp=new LinearLayout.
-                LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        l.setOrientation(LinearLayout.HORIZONTAL);
-        l.setLayoutParams(lp);
-        //装数据入单个布局
-        for (int i = 0; i < pieEntries.size(); i++) {
-            LinearLayout layout =getLegend(mColor1.get(i%3), pieEntries.get(i).getLabel(), (int) pieEntries.get(i).getValue());
-            l.addView(layout);
-        }
-        //整体布局装箱
-        sc_label.addView(l);
+        //在视图布局完成后调用
+        linearLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                int num=2;//每行个数
+                LinearLayout linelayout=null;//行视图
+                //装数据入单个布局
+                for (int i = 0; i < pieEntries.size(); i++) {
+                    //获取图例
+                    LinearLayout legend = getLineLegend//第一个参数是获得到字符串转为数字传入的意思
+                            (Color.parseColor(mColor1.get(i%mColor1.size())), pieEntries.get(i).getLabel(), (int) pieEntries.get(i).getValue());
+
+                    //超过num时再创建一个新的行，否则复用
+                    if (i%num==0) {
+                        linelayout= null;//单个图例的布局
+                        linelayout = new LinearLayout(getActivity());
+                        LinearLayout.LayoutParams lp=new LinearLayout.
+                                LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        linelayout.setOrientation(LinearLayout.HORIZONTAL);//水平排列
+                        linelayout.setLayoutParams(lp);
+                    }
+
+                   //行视图添加
+                    linelayout.addView(legend);//加到行
+                    if(i%2==0) linearLayout.addView(linelayout);//加到整个
+                }
+            }
+        });
     }
 
     private void initview(View view) {
         cmain=view.findViewById(R.id.main);
-        sc_label=view.findViewById(R.id.sv_label);
+        linearLayout=view.findViewById(R.id.pie_linerayout);
         mPieChart = (PieChart) view.findViewById(R.id.pie_chart);
+        scrollView=view.findViewById(R.id.pie_scroll);
     }
 
     @NonNull
-    private LinearLayout getLegend(Integer color, String label, int data) {
+    private LinearLayout getLineLegend(Integer color, String label, int data) {
         LinearLayout.LayoutParams lp=new LinearLayout.
-                LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                LayoutParams(linearLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.weight=1;//设置比重为1
 
 
@@ -193,17 +223,21 @@ public class StatisticsFragment extends Fragment {
 
         //添加color
         LinearLayout.LayoutParams colorLP=new LinearLayout.
-                LayoutParams(50,50);
-        colorLP.setMargins(0, 0, 20, 0);
-        LinearLayout colorLayout=new LinearLayout(getActivity());
-        colorLayout.setLayoutParams(colorLP);
+                LayoutParams(50,50);//大小
+        colorLP.setMargins(0, 0, 20, 0);//位置
+        LinearLayout colorLayout=new LinearLayout(getActivity());//创建对象
+        colorLayout.setLayoutParams(colorLP);//颜色设置
         colorLayout.setBackgroundColor(color);
         layout.addView(colorLayout);
 
         //添加label
         TextView labelTV=new TextView(getActivity());
+        labelTV.setMaxLines(2);//最大行
+        labelTV.setWidth(linearLayout.getWidth()/4);//宽度
+        labelTV.setEllipsize(TextUtils.TruncateAt.END);//省略模式
         labelTV.setText(label+" ");
-        labelTV.setTextSize(20);
+        if(labelTV.getLineCount()>1)labelTV.setTextSize(10);//字体大小
+        else labelTV.setTextSize(20);
         layout.addView(labelTV);
 
         //添加data
@@ -231,7 +265,7 @@ public class StatisticsFragment extends Fragment {
             float value = pieEntry.getY();
             float percent = (float) (value / getTotal()) * 100f; // getTotal() 是你需要自定义的方法来获取所有Entry的Y值之和
 
-            tvContent.setText("时长: " + value + "\n" + "百分比: " + String.format("%.2f", percent) + "%");
+            tvContent.setText(pieEntry.getLabel()+"\n"+"时长: " + value + "\n" + "百分比: " + String.format("%.2f", percent) + "%");
             tvContent.setTextColor(Color.BLACK);
             tvContent.setTextSize(13);
             super.refreshContent(e, highlight);
