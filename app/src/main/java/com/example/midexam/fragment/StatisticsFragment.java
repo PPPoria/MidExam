@@ -104,10 +104,18 @@ public class StatisticsFragment extends Fragment {
 
        mColorPie = getColorPie();
         //增添数据
-        addData();
+        pieEntriesDay = new ArrayList<>();
+        pieEntriesDay.add(new PieEntry(1, "读书"));
+        pieEntriesDay.add(new PieEntry(2f, "吃饭aaaaaa"));
+        pieEntriesDay.add(new PieEntry(3, "睡觉"));
+        pieEntriesDay.add(new PieEntry(4,"好"));
+
         init_Pie();
-        init_PieLegend(pieEntriesDay, mColorPie);
+        //updataPieLegend(pieEntriesDay, mColorPie);
         updataPie(pieEntriesDay);
+        List<PieEntry> testList=new ArrayList<>();
+        testList.add(new PieEntry(12,"睡觉"));
+        addData(testList);
     }
 
     private void updataPie(List<PieEntry> dataResourse) {
@@ -116,17 +124,31 @@ public class StatisticsFragment extends Fragment {
         pieData.setValueFormatter(new PercentFormatter());//使其有百分号
         // PieDataSet
         iPieDataSet.setValueFormatter(new PercentFormatter());
+        updataPieLegend(pieEntriesDay, mColorPie);
         mPieChart.setData(pieData);
         mPieChart.invalidate();//更新图表
     }
 
 
-    private void addData() {
-        pieEntriesDay = new ArrayList<>();
-        pieEntriesDay.add(new PieEntry(1, "读书"));
-        pieEntriesDay.add(new PieEntry(2f, "吃饭aaaaaa"));
-        pieEntriesDay.add(new PieEntry(3, "睡觉"));
-        pieEntriesDay.add(new PieEntry(4,"好"));
+    private void addData(List<PieEntry> mlist) {
+        boolean noConflict=true;
+        for (int i = 0; i < mlist.size(); i++) {
+            String label=mlist.get(i).getLabel();
+            float time=mlist.get(i).getValue();
+            for (int i1 = 0; i1 < pieEntriesDay.size(); i1++) {
+                if(label.equals(pieEntriesDay.get(i1).getLabel())){
+                    float originTime=pieEntriesDay.get(i1).getValue();
+                    pieEntriesDay.get(i1).setY(originTime+time);
+                    noConflict=false;
+                    break;
+                }
+            }
+            if(noConflict){
+                pieEntriesDay.add(mlist.get(i));
+                //updataPie(pieEntriesDay);
+                noConflict=true;
+            }
+        }
     }
 
     @NonNull
@@ -189,7 +211,7 @@ public class StatisticsFragment extends Fragment {
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
     }
 
-    private void init_PieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
+    private void updataPieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
         Legend legend=mPieChart.getLegend();
         legend.setEnabled(false);
@@ -235,9 +257,11 @@ public class StatisticsFragment extends Fragment {
         btAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pieEntriesDay.add(new PieEntry(3.3f,"打搅"));
+                List<PieEntry> mlist=new ArrayList<>();
+                mlist.add(new PieEntry(10,"打搅"));
+                mlist.add(new PieEntry(5,"睡觉"));
                 Toast.makeText(getActivity(),"已增加",Toast.LENGTH_LONG).show();
-                init_PieLegend(pieEntriesDay,mColorPie);
+                addData(mlist);
                 updataPie(pieEntriesDay);
             }
         });
