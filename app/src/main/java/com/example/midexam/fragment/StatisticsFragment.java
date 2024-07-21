@@ -44,17 +44,22 @@ import java.util.List;
  * Use the {@link StatisticsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StatisticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment implements View.OnClickListener{
 
-    Button btAdd;
-    Button bt;
+    Button btFocus;
+    Button btDay;
+    Button btMonth;
+    Button btYear;
+    Button btClearDay;
+    Button btClearMonth;
     ConstraintLayout cmain;
     Description description;
     LinearLayout linearLayout;
     PieChart mPieChart;
     ScrollView scrollView;
+    TextView title;
 
-
+    List<PieEntry> addList=null;
     List<PieEntry> pieEntriesDay;
     List<PieEntry> pieEntriesMonth;
     List<PieEntry> pieEntriesYear;
@@ -102,53 +107,152 @@ public class StatisticsFragment extends Fragment {
         initview(view);
 
 
-       mColorPie = getColorPie();
+        mColorPie = getColorPie();
         //增添数据
-        pieEntriesDay = new ArrayList<>();
-        pieEntriesDay.add(new PieEntry(1, "读书"));
+        pieEntriesDay=dataManager.getInstance().getDayDataList();
+        pieEntriesDay.add(new PieEntry(1, "读书",23321));
         pieEntriesDay.add(new PieEntry(2f, "吃饭aaaaaa"));
         pieEntriesDay.add(new PieEntry(3, "睡觉"));
         pieEntriesDay.add(new PieEntry(4,"好"));
 
         init_Pie();
-        //updataPieLegend(pieEntriesDay, mColorPie);
         updataPie(pieEntriesDay);
         List<PieEntry> testList=new ArrayList<>();
         testList.add(new PieEntry(12,"睡觉"));
-        addData(testList);
-    }
-
-    private void updataPie(List<PieEntry> dataResourse) {
-        PieDataSet iPieDataSet = init_PieDataSet(dataResourse, mColorPie);
-        PieData pieData = new PieData(iPieDataSet);
-        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
-        // PieDataSet
-        iPieDataSet.setValueFormatter(new PercentFormatter());
-        updataPieLegend(pieEntriesDay, mColorPie);
-        mPieChart.setData(pieData);
-        mPieChart.invalidate();//更新图表
+        addData(testList,pieEntriesDay);
     }
 
 
-    private void addData(List<PieEntry> mlist) {
-        boolean noConflict=true;
-        for (int i = 0; i < mlist.size(); i++) {
-            String label=mlist.get(i).getLabel();
-            float time=mlist.get(i).getValue();
-            for (int i1 = 0; i1 < pieEntriesDay.size(); i1++) {
-                if(label.equals(pieEntriesDay.get(i1).getLabel())){
-                    float originTime=pieEntriesDay.get(i1).getValue();
-                    pieEntriesDay.get(i1).setY(originTime+time);
-                    noConflict=false;
-                    break;
+
+
+    private void addData(List<PieEntry> mlist,List<PieEntry> root) {
+        if (mlist!=null) {
+            boolean noConflict=true;
+            for (int i = 0; i < mlist.size(); i++) {
+                String label=mlist.get(i).getLabel();
+                float time=mlist.get(i).getValue();
+                for (int i1 = 0; i1 < root.size(); i1++) {
+                    if(label.equals(root.get(i1).getLabel())){
+                        float originTime=root.get(i1).getValue();
+                        root.get(i1).setY(originTime+time);
+                        noConflict=false;
+                        break;
+                    }
+                }
+                if(noConflict){
+                    root.add(mlist.get(i));
+                    //updataPie(pieEntriesDay);
+                    noConflict=true;
                 }
             }
-            if(noConflict){
-                pieEntriesDay.add(mlist.get(i));
-                //updataPie(pieEntriesDay);
-                noConflict=true;
-            }
         }
+    }
+
+
+
+    private void initview(View view) {
+        cmain=view.findViewById(R.id.main);
+        linearLayout=view.findViewById(R.id.pie_linerayout);
+        mPieChart = (PieChart) view.findViewById(R.id.pie_chart);
+        scrollView=view.findViewById(R.id.pie_scroll);
+        btFocus=view.findViewById(R.id.bt_pie_focus);
+        btDay=view.findViewById(R.id.bt_pie_day);
+        btMonth=view.findViewById(R.id.bt_pie_month);
+        btYear=view.findViewById(R.id.bt_pie_year);
+      /*  btClearDay=view.findViewById(R.id.bt_pie_clearday);
+        btClearMonth=view.findViewById(R.id.bt_pie_clearmonth);*/
+        title=view.findViewById(R.id.pie_1).findViewById(R.id.title);
+
+        btFocus.setOnClickListener(this);
+        btDay.setOnClickListener(this);
+        btMonth.setOnClickListener(this);
+        btYear.setOnClickListener(this);
+    }
+
+    @NonNull
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.bt_pie_focus:
+                /*List<PieEntry> mlist=new ArrayList<>();
+                mlist.add(new PieEntry(10,"打搅"));
+                mlist.add(new PieEntry(5,"睡觉"));
+                Toast.makeText(getActivity(),"已增加",Toast.LENGTH_LONG).show();
+                addList=mlist;
+                addData(addList,pieEntriesDay);
+                updataPie(pieEntriesDay);*/
+                break;
+
+            case R.id.bt_pie_day:
+                init_Pie();
+                pieEntriesDay=dataManager.getInstance().getDayDataList();
+                updataPie(pieEntriesDay);
+
+                break;
+
+            case R.id.bt_pie_month:
+                init_Pie();
+                pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+                updataPie(pieEntriesMonth);
+                break;
+
+            case R.id.bt_pie_year:
+
+                break;
+
+           /* case R.id.bt_pie_clearday:
+
+                break;
+
+            case R.id.bt_pie_clearmonth:
+
+                break;
+*/
+            default:
+                break;
+        }
+    }
+
+
+
+    private LinearLayout getLineLegend(Integer color, String label, int data) {
+        LinearLayout.LayoutParams lp=new LinearLayout.
+                LayoutParams(linearLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.weight=1;//设置比重为1
+
+
+        LinearLayout layout=new LinearLayout(getActivity());//单个图例的布局
+        layout.setOrientation(LinearLayout.HORIZONTAL);//水平排列
+        layout.setGravity(Gravity.CENTER_VERTICAL);//垂直居中
+        layout.setLayoutParams(lp);
+
+        //添加color
+        LinearLayout.LayoutParams colorLP=new LinearLayout.
+                LayoutParams(50,50);//大小
+        colorLP.setMargins(0, 0, 20, 0);//位置
+        LinearLayout colorLayout=new LinearLayout(getActivity());//创建对象
+        colorLayout.setLayoutParams(colorLP);//颜色设置
+        colorLayout.setBackgroundColor(color);
+        layout.addView(colorLayout);
+
+        //添加label
+        TextView labelTV=new TextView(getActivity());
+        labelTV.setMaxLines(2);//最大行
+        labelTV.setWidth(linearLayout.getWidth()/4);//宽度
+        labelTV.setEllipsize(TextUtils.TruncateAt.END);//省略模式
+        labelTV.setText(label+" ");
+        if(labelTV.getLineCount()>1)labelTV.setTextSize(10);//字体大小
+        else labelTV.setTextSize(20);
+        layout.addView(labelTV);
+
+        //添加data
+        TextView dataTV=new TextView(getActivity());
+        dataTV.setText(data+""+"min");
+        dataTV.setTextSize(20);
+        layout.addView(dataTV);
+        return layout;
     }
 
     @NonNull
@@ -198,7 +302,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void init_Pie() {
-      //  mPieChart.setDescription(null);//设置描述
+        //  mPieChart.setDescription(null);//设置描述
         mPieChart.setUsePercentValues(true);//百分比显示
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
@@ -238,73 +342,24 @@ public class StatisticsFragment extends Fragment {
                         linelayout.setLayoutParams(lp);
                     }
 
-                   //行视图添加
+                    //行视图添加
                     linelayout.addView(legend);//加到行
                     if(i%2==0) linearLayout.addView(linelayout);//加到整个
                 }
             }
         });
     }
-
-    private void initview(View view) {
-        cmain=view.findViewById(R.id.main);
-        linearLayout=view.findViewById(R.id.pie_linerayout);
-        mPieChart = (PieChart) view.findViewById(R.id.pie_chart);
-        scrollView=view.findViewById(R.id.pie_scroll);
-        btAdd=view.findViewById(R.id.bt_pie_add);
-
-
-        btAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<PieEntry> mlist=new ArrayList<>();
-                mlist.add(new PieEntry(10,"打搅"));
-                mlist.add(new PieEntry(5,"睡觉"));
-                Toast.makeText(getActivity(),"已增加",Toast.LENGTH_LONG).show();
-                addData(mlist);
-                updataPie(pieEntriesDay);
-            }
-        });
+    private void updataPie(List<PieEntry> dataResourse) {
+        PieDataSet iPieDataSet = init_PieDataSet(dataResourse, mColorPie);
+        PieData pieData = new PieData(iPieDataSet);
+        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
+        // PieDataSet
+        iPieDataSet.setValueFormatter(new PercentFormatter());
+        updataPieLegend(dataResourse, mColorPie);
+        mPieChart.setData(pieData);
+        mPieChart.invalidate();//更新图表
     }
 
-    @NonNull
-    private LinearLayout getLineLegend(Integer color, String label, int data) {
-        LinearLayout.LayoutParams lp=new LinearLayout.
-                LayoutParams(linearLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.weight=1;//设置比重为1
-
-
-        LinearLayout layout=new LinearLayout(getActivity());//单个图例的布局
-        layout.setOrientation(LinearLayout.HORIZONTAL);//水平排列
-        layout.setGravity(Gravity.CENTER_VERTICAL);//垂直居中
-        layout.setLayoutParams(lp);
-
-        //添加color
-        LinearLayout.LayoutParams colorLP=new LinearLayout.
-                LayoutParams(50,50);//大小
-        colorLP.setMargins(0, 0, 20, 0);//位置
-        LinearLayout colorLayout=new LinearLayout(getActivity());//创建对象
-        colorLayout.setLayoutParams(colorLP);//颜色设置
-        colorLayout.setBackgroundColor(color);
-        layout.addView(colorLayout);
-
-        //添加label
-        TextView labelTV=new TextView(getActivity());
-        labelTV.setMaxLines(2);//最大行
-        labelTV.setWidth(linearLayout.getWidth()/4);//宽度
-        labelTV.setEllipsize(TextUtils.TruncateAt.END);//省略模式
-        labelTV.setText(label+" ");
-        if(labelTV.getLineCount()>1)labelTV.setTextSize(10);//字体大小
-        else labelTV.setTextSize(20);
-        layout.addView(labelTV);
-
-        //添加data
-        TextView dataTV=new TextView(getActivity());
-        dataTV.setText(data+""+"min");
-        dataTV.setTextSize(20);
-        layout.addView(dataTV);
-        return layout;
-    }
 
     class MyMarkerView extends MarkerView {//设置点击显示
 
@@ -345,6 +400,39 @@ public class StatisticsFragment extends Fragment {
         public MPPointF getOffset() {
             // 设置MarkerView的偏移量
             return new MPPointF(-(getWidth() / 2), -getHeight());
+        }
+    }
+
+    static class dataManager{
+        List<PieEntry> dayDataList;
+        List<PieEntry> monthDataList;
+        List<PieEntry> yearDataList;
+
+        public dataManager(List<PieEntry> dayDataList, List<PieEntry> monthDataList, List<PieEntry> yearDataList) {
+            this.dayDataList = dayDataList;
+            this.monthDataList = monthDataList;
+            this.yearDataList = yearDataList;
+        }
+
+        //2.静态内部类初始化
+        private static final class dataManagerHolder{
+            private static final dataManager INSTANCE=new dataManager(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        }
+        //3.对外提供静态类方法获取该对象
+        public static dataManager getInstance(){
+            return dataManagerHolder.INSTANCE;
+        }
+
+        public List<PieEntry> getDayDataList(){
+            return dayDataList;
+        }
+
+        public List<PieEntry> getMonthDataList() {
+            return monthDataList;
+        }
+
+        public List<PieEntry> getYearDataList() {
+            return yearDataList;
         }
     }
 }

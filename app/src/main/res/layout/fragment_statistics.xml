@@ -12,23 +12,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <LinearLayout
-        android:layout_marginTop="20dp"
         android:id="@+id/fs_constraint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <Button
-            android:id="@+id/bt_pie_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="添加数据"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="30dp"
+            android:id="@+id/cwater_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/bt_pie_focus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="专注"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="70dp"
+                app:layout_constraintEnd_toStartOf="@+id/bt_pie_water"
+                app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/bt_pie_water"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:text="饮水"
+                app:layout_constraintStart_toEndOf="@id/bt_pie_focus"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
             android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
 
             <Button
                 android:id="@+id/bt_pie_day"
@@ -51,44 +67,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="年"
-                android:layout_marginLeft="60dp"
-                />
+                android:layout_marginLeft="60dp" />
+
     </LinearLayout>
-        <TextView
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center"
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="专注图"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            />
-        <com.github.mikephil.charting.charts.PieChart
-            android:layout_marginTop="12dp"
-            android:id="@+id/pie_chart"
-            android:layout_width="370dp"
-            android:layout_height="245dp"
-            android:layout_gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.609"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.253" />
 
-
-
-        <LinearLayout
-            android:layout_gravity="center"
-            android:id="@+id/pie_linerayout"
-            android:layout_width="370dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:orientation="vertical">
-
-        </LinearLayout>
-
+        <include
+            layout="@layout/piechart" android:id="@+id/pie_1"/>
 
     </LinearLayout>
     </ScrollView>
