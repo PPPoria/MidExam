@@ -1,9 +1,8 @@
 package com.example.midexam.activity;
 
 public interface UserDataShowInterface {
-    void errorInternet();
-    void logSuccess();
-    void logFail();
-    void registerSuccess();
-    void registerFail();
+    void logSuccess(int STATUS);
+    void logFail(int STATUS);
+    void registerSuccess(int STATUS);
+    void registerFail(int STATUS);
 }
