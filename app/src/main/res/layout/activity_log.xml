@@ -63,6 +63,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/log_account"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -86,6 +87,7 @@
             app:layout_constraintTop_toBottomOf="@id/log_account_layout">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/log_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -108,10 +110,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/log_password_layout" />
-        
+
         <TextView
-            android:layout_width=""
-            android:layout_height=""
+            android:id="@+id/toRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="没有账号？立刻注册"
+            android:textColor="@color/green"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/log_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
