@@ -5,6 +5,7 @@
     </style>
 
     <style name="Theme.MidExam" parent="Base.Theme.MidExam" >
+        <item name="colorPrimary">@color/green</item>
         <!--解决启动页闪屏问题-->
         <item name="android:windowBackground">@drawable/wave_vertical</item>
     </style>
