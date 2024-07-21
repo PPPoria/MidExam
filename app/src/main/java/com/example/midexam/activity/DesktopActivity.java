@@ -61,6 +61,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
         initPages();
