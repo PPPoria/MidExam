@@ -3,10 +3,10 @@ package com.example.midexam.model;
 import java.util.List;
 
 public class UserData {
-    private String msg;
+    private String msg = "0";
     private String name;
-    private String headImage;
-    private String backgroundImage;
+    private String headImageUrl;
+    private String backgroundImageUrl;
     private String intervalTime;
     private int waterTarget;
     private int waterDrink;
@@ -14,6 +14,7 @@ public class UserData {
     private List<String> waterPerDay;
     private List<String> waterPerMonth;
     private List<String> jobs;
+    private List<String> finishJobs;
     private int focusSum;
 
     public String getMsg() {
@@ -32,20 +33,20 @@ public class UserData {
         this.name = name;
     }
 
-    public String getHeadImage() {
-        return headImage;
+    public String getHeadImageUrl() {
+        return headImageUrl;
     }
 
-    public void setHeadImage(String headImage) {
-        this.headImage = headImage;
+    public void setHeadImageUrl(String headImageUrl) {
+        this.headImageUrl = headImageUrl;
     }
 
-    public String getBackgroundImage() {
-        return backgroundImage;
+    public String getBackgroundImageUrl() {
+        return backgroundImageUrl;
     }
 
-    public void setBackgroundImage(String backgroundImage) {
-        this.backgroundImage = backgroundImage;
+    public void setBackgroundImageUrl(String backgroundImageUrl) {
+        this.backgroundImageUrl = backgroundImageUrl;
     }
 
     public String getIntervalTime() {
@@ -102,6 +103,14 @@ public class UserData {
 
     public void setJobs(List<String> jobs) {
         this.jobs = jobs;
+    }
+
+    public List<String> getFinishJobs() {
+        return finishJobs;
+    }
+
+    public void setFinishJobs(List<String> finishJobs) {
+        this.finishJobs = finishJobs;
     }
 
     public int getFocusSum() {

@@ -1,9 +1,12 @@
 package com.example.midexam.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +15,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.midexam.R;
+import com.example.midexam.presenter.UserPresenter;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class LogActivity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.Objects;
+
+public class LogActivity extends AppCompatActivity implements UserDataShowInterface{
     private static final String TAG = "LogActivity";
 
     private TextInputEditText account;
@@ -41,7 +48,9 @@ public class LogActivity extends AppCompatActivity {
 
     private void initListener() {
         logButton.setOnClickListener(v -> {
-
+            String accountStr = Objects.requireNonNull(account.getText()).toString();
+            String passwordStr = Objects.requireNonNull(password.getText()).toString();
+            UserPresenter.getInstance(this).requestLog(accountStr,passwordStr);
         });
         toRegister.setOnClickListener(v -> {
 
@@ -53,5 +62,30 @@ public class LogActivity extends AppCompatActivity {
         password = findViewById(R.id.log_password);
         logButton = findViewById(R.id.log_button);
         toRegister = findViewById(R.id.toRegister);
+    }
+
+    @Override
+    public void errorInternet() {
+        Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void logSuccess() {
+        finish();
+    }
+
+    @Override
+    public void logFail() {
+        Toast.makeText(this, "账号或密码错误", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void registerSuccess() {
+
+    }
+
+    @Override
+    public void registerFail() {
+
     }
 }

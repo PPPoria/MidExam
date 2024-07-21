@@ -8,6 +8,6 @@ import retrofit2.http.Query;
 
 public interface Api {
 
-    @GET
+    @GET("?")
     Call<UserData> getUserData(@Query("sort") String sort, @Query("account") String account, @Query("password") String password);
 }
