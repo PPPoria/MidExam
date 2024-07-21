@@ -195,6 +195,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             case R.id.bt_pie_month:
                 init_Pie();
                 pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+                pieEntriesMonth.add(new PieEntry(1.0f,"打搅"));
                 updataPie(pieEntriesMonth);
                 break;
 
