@@ -3,8 +3,9 @@ package com.example.midexam.model;
 import java.util.List;
 
 public class UserData {
-    private String msg = "0";
+    private String msg = "success";
     private String name;
+    private String color;
     private String headImageUrl;
     private String backgroundImageUrl;
     private String intervalTime;
@@ -31,6 +32,14 @@ public class UserData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getHeadImageUrl() {

@@ -65,25 +65,33 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
     }
 
     @Override
-    public void logSuccess(int STATUS) {
-        finish();
-    }
-
-    @Override
-    public void logFail(int STATUS) {
+    public void log(int STATUS) {
         if (STATUS == UserPresenter.STATUS_PASSWORD_INCORRECT)
             Toast.makeText(this, "账号或密码错误", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
             Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_SUCCESS)
+            finish();
     }
 
     @Override
-    public void registerSuccess(int STATUS) {
+    public void register(int STATUS) {
+
+    }
+
+
+    @Override
+    public void updateUserData(int STATUS) {
 
     }
 
     @Override
-    public void registerFail(int STATUS) {
+    public void trackUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
 
     }
 
