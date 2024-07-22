@@ -5,6 +5,7 @@ import com.example.midexam.model.UserData;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -16,31 +17,22 @@ import retrofit2.http.Part;
 public interface Api {
 
     @FormUrlEncoded
-    @POST("user")
-    Call<UserData> getUserData(@Field("sort") String sort,
-                               @Field("account") String account,
-                               @Field("password") String password);
+    @POST("user/log")
+    Call<UserData> log(@Field("account") String account,
+                       @Field("password") String password);
 
     @FormUrlEncoded
+    @POST("user/register")
+    Call<UserData> register(@Field("account") String account,
+                            @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("user/update")
+    Call<UserData> update(@Field("account") String account,
+                          @Field("password") String password,
+                          @Body UserData body);
+
     @Multipart
-    @POST("user")
-    Call<UserData> updateUserData(@Field("sort") String sort,
-                                  @Field("account") String account,
-                                  @Field("password") String password,
-                                  @Body UserData userData);
-
-    @FormUrlEncoded
-    @Multipart
-    @POST("user")
-    Call<UserData> updateUserImage(@Field("sort") String sort,
-                                   @Field("account") String account,
-                                   @Field("password") String password,
-                                   @Part List<MultipartBody.Part> images);
-
-    @FormUrlEncoded
-    @POST("user")
-    Call<UserData> trackUserData(@Field("sort") String sort,
-                                 @Field("account") String account,
-                                 @Field("password") String password,
-                                 @Body UserData userData);
+    @POST("user/image")
+    Call<UserData> temp(@Part("account") RequestBody body, @Part List<MultipartBody.Part> images);
 }

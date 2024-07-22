@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.midexam.R;
+import com.example.midexam.activity.DesktopActivity;
 import com.example.midexam.activity.LogActivity;
+import com.example.midexam.activity.UserDataSettingActivity;
 
 public class PersonFragment extends Fragment {
     private static final String TAG = "PersonFragment";
@@ -31,6 +33,7 @@ public class PersonFragment extends Fragment {
     private ImageView userHeadImage;
     private TextView userName;
     private ConstraintLayout clearButton;
+    private ConstraintLayout toUserDataButton;
 
 
     @Override
@@ -57,22 +60,26 @@ public class PersonFragment extends Fragment {
         String name = "登录/注册";
         try {
             if (sp.getBoolean("log", false)) {
-                name = sp.getString("name","登录/注册");
+                name = sp.getString("name", "登录/注册");
                 isLogged = true;
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
         userName.setText(name);
     }
 
     private void initListener() {
         userName.setOnClickListener(v -> {
-            if(isLogged) changeUserName();
+            if (isLogged) changeUserName();
             else startActivity(new Intent(getActivity(), LogActivity.class));
         });
         clearButton.setOnClickListener(v -> {
             clearImageMemoryAndDisk();
             Toast.makeText(getContext(), "清理完成", Toast.LENGTH_SHORT).show();
+        });
+        toUserDataButton.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), UserDataSettingActivity.class));
         });
     }
 
@@ -85,6 +92,7 @@ public class PersonFragment extends Fragment {
         userHeadImage = view.findViewById(R.id.user_head_image);
         userName = view.findViewById(R.id.user_name);
         clearButton = view.findViewById(R.id.clear);
+        toUserDataButton = view.findViewById(R.id.to_user_data);
     }
 
     //设置图片

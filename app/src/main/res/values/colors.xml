@@ -8,7 +8,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="white_transparent25">#40FFFFFF</color>
 
-    <color name="grey">#EFEFEF</color>
+    <color name="grey">#f8f9fd</color>
 
     <color name="green">#41b349</color>
     <color name="dim_green">#246829</color>
