@@ -3,7 +3,6 @@ package com.example.midexam.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,12 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
 import com.example.midexam.activity.LogActivity;
-
-import java.io.IOException;
 
 public class PersonFragment extends Fragment {
     private static final String TAG = "PersonFragment";
@@ -95,7 +90,7 @@ public class PersonFragment extends Fragment {
     //设置图片
     private void initUserImage() {
         Glide.with(view).load(R.drawable.head).circleCrop().into(userHeadImage);
-        Glide.with(view).load(R.drawable.test_image).centerCrop().into(userBackgroundImage);
+        Glide.with(view).load(R.drawable.background).centerCrop().into(userBackgroundImage);
     }
 
     //清除图片缓存，不然图片更改不成功
