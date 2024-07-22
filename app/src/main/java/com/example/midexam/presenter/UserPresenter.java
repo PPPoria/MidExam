@@ -87,7 +87,7 @@ public class UserPresenter {
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.register(account, password, userData);
+        Call<UserData> dataCall = api.register(account, password);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override

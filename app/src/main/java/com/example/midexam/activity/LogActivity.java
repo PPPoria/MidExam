@@ -44,7 +44,6 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
 
         initView();
         initListener();
-        UserPresenter.getInstance(this).updateUserImage("1","1");
     }
 
     private void initListener() {

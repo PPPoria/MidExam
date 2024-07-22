@@ -24,8 +24,7 @@ public interface Api {
     @FormUrlEncoded
     @POST("user/register")
     Call<UserData> register(@Field("account") String account,
-                            @Field("password") String password,
-                            @Body UserData body);
+                            @Field("password") String password);
 
     @FormUrlEncoded
     @POST("user/update")
