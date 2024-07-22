@@ -7,10 +7,6 @@
     tools:context=".fragment.StatisticsFragment">
 
 
-    <ScrollView
-        android:id="@+id/pie_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/fs_constraint"
         android:layout_width="match_parent"
@@ -28,10 +24,10 @@
                 android:text="专注"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="70dp"
-                app:layout_constraintEnd_toStartOf="@+id/bt_pie_water"
+                app:layout_constraintEnd_toStartOf="@+id/bt_bar_water"
                 app:layout_constraintTop_toTopOf="parent" />
             <Button
-                android:id="@+id/bt_pie_water"
+                android:id="@+id/bt_bar_water"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="100dp"
@@ -39,41 +35,11 @@
                 app:layout_constraintStart_toEndOf="@id/bt_pie_focus"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <LinearLayout
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/statistics_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-            <Button
-                android:id="@+id/bt_pie_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:text="日"/>
-
-            <Button
-                android:id="@+id/bt_pie_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-               android:layout_marginLeft="60dp"
-                android:text="月"
-               />
-
-            <Button
-                android:id="@+id/bt_pie_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="年"
-                android:layout_marginLeft="60dp" />
-
+            android:layout_height="match_parent" />
     </LinearLayout>
 
-        <include
-            layout="@layout/piechart" android:id="@+id/pie_1"/>
 
-    </LinearLayout>
-    </ScrollView>
 </FrameLayout>
