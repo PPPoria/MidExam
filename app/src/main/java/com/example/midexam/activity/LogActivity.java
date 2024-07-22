@@ -50,7 +50,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
         logButton.setOnClickListener(v -> {
             String accountStr = Objects.requireNonNull(account.getText()).toString();
             String passwordStr = Objects.requireNonNull(password.getText()).toString();
-            UserPresenter.getInstance(this).requestLog(accountStr, passwordStr);
+            UserPresenter.getInstance(this).requestLog(this,accountStr, passwordStr);
         });
         toRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -86,13 +86,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
     }
 
     @Override
-    public void trackUserData(int STATUS) {
-
-    }
-
-    @Override
     public void updateUserImage(int STATUS) {
-
     }
 
 }

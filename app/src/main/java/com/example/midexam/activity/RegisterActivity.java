@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
             String accountStr = Objects.requireNonNull(account.getText()).toString();
             String passwordStr = Objects.requireNonNull(password.getText()).toString();
             String passwordAgainStr = Objects.requireNonNull(passwordAgain.getText()).toString();
-            UserPresenter.getInstance(this).requestRegister(accountStr, passwordStr, passwordAgainStr);
+            UserPresenter.getInstance(this).requestRegister(this, accountStr, passwordStr, passwordAgainStr);
         });
     }
 
@@ -83,11 +83,6 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
 
     @Override
     public void updateUserData(int STATUS) {
-
-    }
-
-    @Override
-    public void trackUserData(int STATUS) {
 
     }
 

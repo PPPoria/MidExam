@@ -33,7 +33,7 @@ import com.example.midexam.presenter.UserPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DesktopActivity extends AppCompatActivity implements View.OnClickListener {
+public class DesktopActivity extends AppCompatActivity implements View.OnClickListener,UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
 
     private ViewPager2 pagesContainer;
@@ -158,6 +158,26 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             pagePosition = 3;
         }
         pagesContainer.setCurrentItem(pagePosition);
+    }
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
     }
 
     class DesktopAdapter extends FragmentStateAdapter {

@@ -10,8 +10,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.midexam.R;
+import com.example.midexam.presenter.UserPresenter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UserDataShowInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        getWindow().setNavigationBarColor(getColor(R.color.blue));
+        UserPresenter.getInstance(this).initImagesPath(this);
 
         new Thread(new Runnable() {
             @Override
@@ -31,15 +34,35 @@ public class MainActivity extends AppCompatActivity {
                     Thread.sleep(800);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
-                }finally {
+                } finally {
                     goToDesktopActivity();
                 }
             }/////
         }).start();
     }
 
-    private void goToDesktopActivity(){
+    private void goToDesktopActivity() {
         startActivity(new Intent(this, DesktopActivity.class));
         finish();
+    }
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
     }
 }

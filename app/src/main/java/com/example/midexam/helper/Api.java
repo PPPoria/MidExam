@@ -28,11 +28,11 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("user/update")
-    Call<UserData> update(@Field("account") String account,
-                          @Field("password") String password,
-                          @Body UserData body);
+    Call<UserData> updateData(@Field("account") String account,
+                              @Field("password") String password,
+                              @Body UserData body);
 
     @Multipart
     @POST("user/image")
-    Call<UserData> temp(@Part("account") RequestBody body, @Part List<MultipartBody.Part> images);
+    Call<UserData> updateImage(@Part("account") RequestBody body, @Part List<MultipartBody.Part> images);
 }

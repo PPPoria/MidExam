@@ -1,10 +1,20 @@
 package com.example.midexam.presenter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +28,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserPresenter {
+    private static final String TAG = "UserPresenter";
     public String baseUrl = "https://what/";
-    public static UserData userData;
+    public String backgroundImagePath;
+    public String headImagePath;
+    public UserData userData;
     public UserDataShowInterface activity;
     public static UserPresenter presenter = new UserPresenter();
 
@@ -37,13 +50,41 @@ public class UserPresenter {
         return presenter;
     }
 
-    public static UserData getUserDataInstance(UserDataShowInterface activity) {
-        presenter.activity = activity;
-        return userData;
+    public String getAccount(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        return sp.getString("account", "null");
     }
 
-    //获取登录状态，并通过STATUS状态码回调UserDataShowInterface的函数
-    public void requestLog(String account, String password) {
+    public void accordAccount(Context context, String account) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
+        ed.putString("account", account);
+    }
+
+    public String getPassword(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        return sp.getString("password", "null");
+    }
+
+    public void accordPassword(Context context, String password) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
+        ed.putString("password", password);
+    }
+
+    public boolean isLogged(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        return sp.getBoolean("isLogged", false);
+    }
+
+    public void accordLoggedStatus(Context context, boolean isLogged) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("isLogged", isLogged);
+    }
+
+    //获取登录状态，并通过STATUS状态码调用UserDataShowInterface实现类的函数
+    public void requestLog(Context context, String account, String password) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -54,25 +95,28 @@ public class UserPresenter {
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.log(STATUS_ACCOUNT_NOT_EXIST);
                 else if (tempData.getMsg().equals("0")) activity.log(STATUS_ACCOUNT_NOT_EXIST);
                 else {
+                    accordAccount(context, account);
+                    accordPassword(context, password);
+                    accordLoggedStatus(context, true);
                     userData = tempData;
                     activity.log(STATUS_SUCCESS);
                 }
             }
 
             @Override
-            public void onFailure(Call<UserData> call, Throwable throwable) {
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
                 activity.log(STATUS_NO_INTERNET);
             }
         });
     }
 
     //获取注册状态，并通过STATUS状态码回调UserDataShowInterface的函数
-    public void requestRegister(String account, String password, String passwordAgain) {
+    public void requestRegister(Context context, String account, String password, String passwordAgain) {
         if (account.length() < 8 || password.length() < 8 || passwordAgain.length() < 8) {
             activity.register(STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE);
             return;
@@ -91,26 +135,29 @@ public class UserPresenter {
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.register(STATUS_NO_INTERNET);
                 else if (tempData.getMsg().equals("0"))
                     activity.register(STATUS_ACCOUNT_ALREADY_EXIST);
                 else {
+                    accordAccount(context, account);
+                    accordPassword(context, password);
+                    accordLoggedStatus(context, true);
                     userData = tempData;
                     activity.register(STATUS_SUCCESS);
                 }
             }
 
             @Override
-            public void onFailure(Call<UserData> call, Throwable throwable) {
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
                 activity.register(STATUS_NO_INTERNET);
             }
         });
     }
 
     //更新图片
-    public void updateUserImage(String account, String password) {
+    public void updateUserImage(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -130,13 +177,13 @@ public class UserPresenter {
         body = MultipartBody.Part.createFormData("background", backgroundFile.getName(), requestFile);
         list.add(body);
 
-        RequestBody accountBody = RequestBody.create(MediaType.parse("text/plain"),account);
+        RequestBody accountBody = RequestBody.create(MediaType.parse("text/plain"), getAccount(context));
 
-        Call<UserData> dataCall = api.temp(accountBody, list);
+        Call<UserData> dataCall = api.updateImage(accountBody, list);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.updateUserImage(STATUS_UPDATE_ERROR);
                 else if (tempData.getMsg().equals("0"))
@@ -148,21 +195,82 @@ public class UserPresenter {
             }
 
             @Override
-            public void onFailure(Call<UserData> call, Throwable throwable) {
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
                 activity.updateUserImage(STATUS_NO_INTERNET);
             }
         });
     }
 
     //更新数据
-    public void updateUserData(String account, String password) {
+    public void updateUserData(Context context) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Api api = retrofit.create(Api.class);
 
+        Call<UserData> dataCall = api.updateData(getAccount(context), getPassword(context), userData);
+
+        dataCall.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
+                UserData tempData = response.body();
+                if (tempData == null) activity.updateUserData(STATUS_UPDATE_ERROR);
+                else if (tempData.getMsg().equals("0"))
+                    activity.updateUserData(STATUS_UPDATE_ERROR);
+                else {
+                    userData = tempData;
+                    activity.updateUserData(STATUS_SUCCESS);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
+                activity.updateUserData(STATUS_NO_INTERNET);
+            }
+        });
     }
 
-    //追踪数据，如果不一致则令客户端与服务端一致
-    public void trackUserData(String account, String password) {
-
+    //路径初始化
+    public void initImagesPath(Context context) {
+        headImagePath = context.getFilesDir().getAbsolutePath() + "/headImage.jpg";
+        backgroundImagePath = context.getFilesDir().getAbsolutePath() + "/backgroundImage.jpg";
     }
 
 
+    //bitmap的占用内存很大，在此不设置全局变量
+    public void saveImage(Bitmap bitmap, int MODE) throws IOException {
+        File headImage = new File(headImagePath);
+        Log.d(TAG, "开始保存图片");
+        if (!headImage.exists())
+            try {
+                headImage.createNewFile();
+                Log.d(TAG, "首次设置头像");
+            } catch (IOException e) {
+                Log.d(TAG, "???");
+            }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(headImage);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            Log.d(TAG, "保存成功");
+        } catch (IOException e) {
+            Log.d(TAG, "焯！头像修改失败\nheadImage = " + headImage.getAbsolutePath());
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                }
+        }
+    }
+
+    public String getHeadImagePath() {
+        return headImagePath;
+    }
+
+    public String getBackgroundImagePath() {
+        return backgroundImagePath;
+    }
 }

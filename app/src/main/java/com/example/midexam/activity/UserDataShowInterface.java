@@ -7,7 +7,5 @@ public interface UserDataShowInterface {
 
     void updateUserData(int STATUS);
 
-    void trackUserData(int STATUS);
-
     void updateUserImage(int STATUS);
 }
