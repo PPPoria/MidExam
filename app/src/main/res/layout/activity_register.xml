@@ -5,14 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/wave_vertical"
-    tools:context=".activity.LogActivity">
+    tools:context=".activity.RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/log_tittle"
+        android:id="@+id/register_tittle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/log_layout"
+        app:layout_constraintBottom_toTopOf="@id/register_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,9 +20,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Focus Life\n登录用户"
+            android:text="Focus Life\n注册用户"
             android:textColor="@color/white"
+            android:gravity="center"
             android:textSize="50dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +33,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/log_layout"
+        android:id="@+id/register_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
@@ -45,11 +44,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/log_tittle"
+        app:layout_constraintTop_toBottomOf="@id/register_tittle"
         app:layout_constraintVertical_weight="2">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/log_account_layout"
+            android:id="@+id/register_account_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="20dp"
@@ -64,17 +63,17 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/log_account"
+                android:id="@+id/register_account"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:digits="0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
                 android:gravity="center"
-                android:hint="输入账号" />
+                android:hint="输入注册账号" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/log_password_layout"
+            android:id="@+id/register_password_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="20dp"
@@ -86,45 +85,59 @@
             app:boxCornerRadiusTopStart="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/log_account_layout">
+            app:layout_constraintTop_toBottomOf="@id/register_account_layout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/log_password"
+                android:id="@+id/register_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:digits="0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
                 android:gravity="center"
-                android:hint="输入密码"
+                android:hint="输入注册密码"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/register_password_again_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            app:boxCornerRadiusBottomEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusTopStart="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_password_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/register_password_again"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:digits="0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+                android:gravity="center"
+                android:hint="请再输入密码"
                 android:inputType="textPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/log_button"
+            android:id="@+id/register_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="20dp"
             android:backgroundTint="@color/shadow_blue"
-            android:text="登录"
+            android:text="注册"
             android:textColor="@color/white"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/log_password_layout" />
-
-        <TextView
-            android:id="@+id/toRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="没有账号？立刻注册"
-            android:textColor="@color/green"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/log_button" />
+            app:layout_constraintTop_toBottomOf="@id/register_password_again_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
