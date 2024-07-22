@@ -50,11 +50,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     Button btFocusChart;
     Button btWaterChart;
-    Button btDay;
-    Button btMonth;
-    Button btYear;
-    Button btClearDay;
-    Button btClearMonth;
 
     ViewPager2 statisticsViewPager;
 
@@ -139,27 +134,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     }
 
-    //当pager发生变化时调用
-    public void Pagerchange(){
-        statisticsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-               // pagePosition = position;
-                switch (position) {
-                    case 0: {
-
-                        break;
-                    }
-                    case 1: {
-
-                        break;
-                    }
-                    default:
-                        break;
-                }
-            }
-        });
-    }
 
     @Override
     public void onClick(View v) {
@@ -211,6 +185,27 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    //当pager发生变化时调用
+    public void Pagerchange(){
+        statisticsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                // pagePosition = position;
+                switch (position) {
+                    case 0: {
+
+                        break;
+                    }
+                    case 1: {
+
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        });
+    }
 
 
 

@@ -3,10 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
     tools:context=".fragment.StatisticWaterPageFragment">
 
-    <include
-        layout="@layout/statistic_switchbutton"
-        android:id="@+id/statistic_switchbutton_water"/>
+    <ScrollView
+        android:id="@+id/time_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/fs_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/statistic_switchbutton"
+                android:id="@+id/statistic_switchbutton_water"/>
+
+            <include
+                layout="@layout/barchart" android:id="@+id/bar_1"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

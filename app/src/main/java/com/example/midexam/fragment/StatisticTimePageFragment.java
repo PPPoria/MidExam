@@ -14,7 +14,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -40,13 +43,18 @@ import java.util.List;
  * Use the {@link StatisticTimePageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StatisticTimePageFragment extends Fragment {
+public class StatisticTimePageFragment extends Fragment implements View.OnClickListener{
 
+    Button btDay;
+    Button btMonth;
+    Button btYear;
     Description description;
     LinearLayout legendLinerLayout;
+
     PieChart mPieChart;
     ScrollView scrollView;
     TextView title;
+    PopupWindow currentPop=null;
 
     List<PieEntry> addList=null;
     List<PieEntry> pieEntriesDay;
@@ -90,12 +98,14 @@ public class StatisticTimePageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
          mColorPie = getColorPie();
-        //增添数据
-        pieEntriesDay=dataManager.getInstance().getDayDataList();
-        pieEntriesDay.add(new PieEntry(1, "读书",23321));
-        pieEntriesDay.add(new PieEntry(2f, "吃饭aaaaaa"));
-        pieEntriesDay.add(new PieEntry(3, "睡觉"));
-        pieEntriesDay.add(new PieEntry(4,"好"));
+        pieEntriesDay = dataManager.getInstance().getDayDataList();
+        //增添数据,判断防多次创建时导致的数据多次加载
+        if(pieEntriesDay.size()==0) {
+            pieEntriesDay.add(new PieEntry(1, "读书"));
+            pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
+            pieEntriesDay.add(new PieEntry(3, "睡觉"));
+            pieEntriesDay.add(new PieEntry(4, "好"));
+        }
 
 
         initview(view);
@@ -108,16 +118,20 @@ public class StatisticTimePageFragment extends Fragment {
     }
 
     private void initview(View view) {
-       legendLinerLayout=view.findViewById(R.id.pie_1).findViewById(R.id.pie_linerayout);
-       mPieChart=view.findViewById(R.id.pie_1).findViewById(R.id.pie_chart);
-       scrollView=view.findViewById(R.id.time_scroll);
-       title=view.findViewById(R.id.pie_1).findViewById(R.id.title);
+        btDay=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_day);
+        btMonth=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_month);
+        btYear=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_year);
+        legendLinerLayout=view.findViewById(R.id.pie_1).findViewById(R.id.pie_linerayout);
+        mPieChart=view.findViewById(R.id.pie_1).findViewById(R.id.pie_chart);
+        scrollView=view.findViewById(R.id.time_scroll);
+        title=view.findViewById(R.id.pie_1).findViewById(R.id.title);
+
+
+
+        btDay.setOnClickListener(this);
+        btMonth.setOnClickListener(this);
+        btYear.setOnClickListener(this);
     }
-
-
-
-
-
 
 
     private void addData(List<PieEntry> mlist, List<PieEntry> root) {
@@ -145,6 +159,7 @@ public class StatisticTimePageFragment extends Fragment {
     private LinearLayout getLineLegend(Integer color, String label, int data) {
         LinearLayout.LayoutParams lp=new LinearLayout.
                 LayoutParams(legendLinerLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0,0,0,50);
         lp.weight=1;//设置比重为1
 
 
@@ -164,18 +179,17 @@ public class StatisticTimePageFragment extends Fragment {
 
         //添加label
         TextView labelTV=new TextView(getActivity());
-        labelTV.setMaxLines(2);//最大行
+        labelTV.setMaxLines(1);//最大行
         labelTV.setWidth(legendLinerLayout.getWidth()/4);//宽度
         labelTV.setEllipsize(TextUtils.TruncateAt.END);//省略模式
         labelTV.setText(label+" ");
-        if(labelTV.getLineCount()>1)labelTV.setTextSize(10);//字体大小
-        else labelTV.setTextSize(20);
+        labelTV.setTextSize(15);
         layout.addView(labelTV);
 
         //添加data
         TextView dataTV=new TextView(getActivity());
         dataTV.setText(data+""+"min");
-        dataTV.setTextSize(20);
+        dataTV.setTextSize(15);
         layout.addView(dataTV);
         return layout;
     }
@@ -238,12 +252,13 @@ public class StatisticTimePageFragment extends Fragment {
         mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
         mPieChart.setEntryLabelColor(Color.BLACK);
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
+        if(currentPop!=null) currentPop.dismiss();
     }
 
     private void updataPieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
-        Legend legend=mPieChart.getLegend();
-        legend.setEnabled(false);
+        Legend legendOrigin=mPieChart.getLegend();
+        legendOrigin.setEnabled(false);
         legendLinerLayout.removeAllViews();
         //在视图布局完成后调用
         legendLinerLayout.post(new Runnable() {
@@ -254,9 +269,15 @@ public class StatisticTimePageFragment extends Fragment {
                 //装数据入单个布局
                 for (int i = 0; i < pieEntries.size(); i++) {
                     //获取图例
-                    LinearLayout legend = getLineLegend//第一个参数是获得到字符串转为数字传入的意思
+                   LinearLayout legend = getLineLegend//第一个参数是获得到字符串转为数字传入的意思
                             (Color.parseColor(mColor1.get(i%mColor1.size())), pieEntries.get(i).getLabel(), (int) pieEntries.get(i).getValue());
 
+                    legend.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showDetailedInfo(legend);
+                        }
+                    });
                     //超过num时再创建一个新的行，否则复用
                     if (i%num==0) {
                         linelayout= null;//单个图例的布局
@@ -285,6 +306,51 @@ public class StatisticTimePageFragment extends Fragment {
         mPieChart.invalidate();//更新图表
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+          case R.id.bt_day:
+                init_Pie();
+                pieEntriesDay=dataManager.getInstance().getDayDataList();
+                updataPie(pieEntriesDay);
+
+                break;
+
+            case R.id.bt_month:
+                init_Pie();
+                pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+
+                updataPie(pieEntriesMonth);
+                break;
+
+            case R.id.bt_year:
+                pieEntriesMonth.add(new PieEntry(1.0f,"打搅"));
+                break;
+
+            default:
+                break;
+        }
+    }
+    private void showDetailedInfo(LinearLayout layout) {
+        if (currentPop!=null) {
+            currentPop.dismiss();
+        }
+        // 创建一个布局，用于显示详细信息
+        View popupView = getLayoutInflater().inflate(R.layout.statistics_popwindow, null);
+
+        // 初始化PopupWindow
+        PopupWindow popupWindow = new PopupWindow(popupView,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT);
+        TextView show=popupWindow.getContentView().findViewById(R.id.statistics_popText);
+        TextView labelView=(TextView) layout.getChildAt(1);
+        String label=labelView.getText().toString();
+        show.setText("活动:"+label);
+        currentPop=popupWindow;
+        // 设置PopupWindow的显示位置
+        popupWindow.showAsDropDown(layout, 0, 0);
+        // 如果需要，你还可以为popupView中的元素设置监听器等
+    }
 
     class MyMarkerView extends MarkerView {//设置点击显示
 
@@ -306,7 +372,7 @@ public class StatisticTimePageFragment extends Fragment {
             float value = pieEntry.getY();
             float percent = (float) (value / getTotal()) * 100f; // getTotal() 是你需要自定义的方法来获取所有Entry的Y值之和
 
-            tvContent.setText("活动:"+pieEntry.getLabel()+"\n"+"时长: " + value+"\n"+"占比："+(String.format("%.2f", percent) + "%"));
+            tvContent.setText("时长: " + value+"\n"+"占比："+(String.format("%.2f", percent) + "%"));
             tvContent.setBackgroundColor(Color.parseColor("#FFCCCCCC"));
             tvContent.setTextColor(Color.BLACK);
             super.refreshContent(e, highlight);
