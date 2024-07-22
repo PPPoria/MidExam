@@ -21,7 +21,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.util.ArrayList;
@@ -34,14 +33,16 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
     Button btMonth;
     Button btYear;
 
-    BarChart dayWaterChart;
+    BarChart WaterChart;
     TextView tvTitle;
+    TextView tipsNoData;
 
     List<BarEntry> dayData;
     List<BarEntry> monthData;
     List<BarEntry> yearData;
     List<String> dayDate;
-
+    List<String> monthDate;
+    List<String> yearDate;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -94,34 +95,49 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
         dayDate.add("7月25日");
 
         initView(view);
-        initBar(dayWaterChart,dayData,dayDate);
+        setDataInBar(WaterChart,dayData,dayDate,"日饮水量");
     }
 
     public void initView(View v){
 
         btDay=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_day);
-        dayWaterChart=v.findViewById(R.id.bar_1).findViewById(R.id.bar_chart);
+        btMonth=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_month);
+        btYear=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_year);
+        WaterChart =v.findViewById(R.id.bar_1).findViewById(R.id.bar_chart);
         tvTitle=v.findViewById(R.id.bar_1).findViewById(R.id.title);
+        tipsNoData=v.findViewById(R.id.tip_no_data);
 
         btDay.setOnClickListener(this);
+        btMonth.setOnClickListener(this);
+        btYear.setOnClickListener(this);
 
-        tvTitle.setText("日饮水量");
     }
 
-    public void initBar(BarChart barChart,List<BarEntry> dataList,List<String> dateList){
-        BarDataSet dataSet=new BarDataSet(dataList,null);
-        barChart.getLegend().setEnabled(false);
-        dataSet.setColors(Color.parseColor("#ADD8E6"));//设置柱子多种颜色  循环使用
-        dataSet.setBarBorderColor(Color.WHITE);//柱子边框颜色
-        dataSet.setBarBorderWidth(1);       //柱子边框厚度
-        dataSet.setBarShadowColor(Color.RED);
-        dataSet.setHighlightEnabled(false);//选中柱子是否高亮显示  默认为true
-        dataSet.setStackLabels(new String[]{"aaa","bbb","ccc"});
-        barChart.getDescription().setEnabled(false);
-        //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
-        BarData barData=new BarData(dataSet);
-        initAxis(barChart,dateList);
-        barChart.setData(barData);
+    public void setDataInBar(BarChart barChart, List<BarEntry> dataList, List<String> dateList, String title){
+
+        if(dataList==null||dataList.size()==0){
+            barChart.setVisibility(View.INVISIBLE);
+            tvTitle.setVisibility(View.INVISIBLE);
+            tipsNoData.setVisibility(View.VISIBLE);
+        }else{
+            BarDataSet dataSet=new BarDataSet(dataList,null);
+            barChart.getLegend().setEnabled(false);
+            dataSet.setColors(Color.parseColor("#ADD8E6"));//设置柱子多种颜色  循环使用
+            dataSet.setBarBorderColor(Color.WHITE);//柱子边框颜色
+            dataSet.setBarBorderWidth(1);       //柱子边框厚度
+            dataSet.setBarShadowColor(Color.RED);
+            dataSet.setHighlightEnabled(false);//选中柱子是否高亮显示  默认为true
+            barChart.getDescription().setEnabled(false);
+            //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
+            BarData barData=new BarData(dataSet);
+            initAxis(barChart,dateList);
+            barChart.setData(barData);
+            barChart.setVisibility(View.VISIBLE);
+            tvTitle.setVisibility(View.VISIBLE);
+            tipsNoData.setVisibility(View.INVISIBLE);
+        }
+
+
     }
 
 
@@ -165,12 +181,15 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bt_day:
+                setDataInBar(WaterChart,dayData,dayDate,"日饮水量");
                 break;
 
             case R.id.bt_month:
+                setDataInBar(WaterChart,monthData,dayDate,"月饮水量");
                 break;
 
             case R.id.bt_year:
+                setDataInBar(WaterChart,monthData,dayDate,"年饮水量");
                 break;
 
             default:

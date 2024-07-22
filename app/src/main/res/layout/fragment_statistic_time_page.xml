@@ -19,7 +19,16 @@
             <include
                 layout="@layout/statistic_switchbutton"
                 android:id="@+id/statistic_switchbutton_time"/>
-
+            <TextView
+                android:layout_marginTop="100dp"
+                android:id="@+id/tip_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="暂无数据"
+                android:visibility="gone"/>
             <include
                 layout="@layout/piechart" android:id="@+id/pie_1"/>
 

@@ -54,6 +54,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     PieChart mPieChart;
     ScrollView scrollView;
     TextView title;
+    TextView tipsNoData;
     PopupWindow currentPop=null;
 
     List<PieEntry> addList=null;
@@ -98,23 +99,18 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
          mColorPie = getColorPie();
-        pieEntriesDay = dataManager.getInstance().getDayDataList();
-        //增添数据,判断防多次创建时导致的数据多次加载
-        if(pieEntriesDay.size()==0) {
-            pieEntriesDay.add(new PieEntry(1, "读书"));
-            pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
-            pieEntriesDay.add(new PieEntry(3, "睡觉"));
-            pieEntriesDay.add(new PieEntry(4, "好"));
-        }
+         pieEntriesDay = dataManager.getInstance().getDayDataList();
+         initview(view);
+         init_Pie();
+          pieEntriesDay.add(new PieEntry(1, "读书"));
+          pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
+          pieEntriesDay.add(new PieEntry(3, "睡觉"));
+          pieEntriesDay.add(new PieEntry(4, "好"));
 
-
-        initview(view);
-        init_Pie();
-        updataPie(pieEntriesDay);
-        List<PieEntry> testList=new ArrayList<>();
-        testList.add(new PieEntry(12,"睡觉"));
-        addData(testList,pieEntriesDay);
-
+          List<PieEntry> testList=new ArrayList<>();
+          testList.add(new PieEntry(12,"睡觉"));
+          addData(testList,pieEntriesDay);
+          showChart(pieEntriesDay);
     }
 
     private void initview(View view) {
@@ -125,15 +121,13 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         mPieChart=view.findViewById(R.id.pie_1).findViewById(R.id.pie_chart);
         scrollView=view.findViewById(R.id.time_scroll);
         title=view.findViewById(R.id.pie_1).findViewById(R.id.title);
-
-
+        tipsNoData=view.findViewById(R.id.tip_no_data);
 
         btDay.setOnClickListener(this);
         btMonth.setOnClickListener(this);
         btYear.setOnClickListener(this);
     }
-
-
+//增加数据
     private void addData(List<PieEntry> mlist, List<PieEntry> root) {
         if (mlist!=null) {
             boolean noConflict=true;
@@ -156,6 +150,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             }
         }
     }
+//单个图例
     private LinearLayout getLineLegend(Integer color, String label, int data) {
         LinearLayout.LayoutParams lp=new LinearLayout.
                 LayoutParams(legendLinerLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -193,7 +188,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         layout.addView(dataTV);
         return layout;
     }
-
+//饼图颜色
     @NonNull
     private static List<String> getColorPie() {
         //设置圆弧颜色
@@ -210,7 +205,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         mColorPie.add("#FFC0CB");
         return mColorPie;
     }
-
+//初始化饼图数据
     @NonNull
     private static PieDataSet init_PieDataSet(List<PieEntry> pieEntries, List<String> colorPie) {
         //图解
@@ -239,7 +234,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         iPieDataSet.setValueTextSize(20);
         return iPieDataSet;
     }
-
+//饼图初始化图像
     private void init_Pie() {
         //  mPieChart.setDescription(null);//设置描述
         mPieChart.setUsePercentValues(true);//百分比显示
@@ -254,7 +249,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
         if(currentPop!=null) currentPop.dismiss();
     }
-
+//饼图图例更新
     private void updataPieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
         Legend legendOrigin=mPieChart.getLegend();
@@ -295,6 +290,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             }
         });
     }
+//饼图数据更新
     private void updataPie(List<PieEntry> dataResourse) {
         PieDataSet iPieDataSet = init_PieDataSet(dataResourse, mColorPie);
         PieData pieData = new PieData(iPieDataSet);
@@ -310,17 +306,16 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
           case R.id.bt_day:
-                init_Pie();
+
                 pieEntriesDay=dataManager.getInstance().getDayDataList();
-                updataPie(pieEntriesDay);
+                showChart(pieEntriesDay);
 
                 break;
 
             case R.id.bt_month:
-                init_Pie();
-                pieEntriesMonth=dataManager.getInstance().getMonthDataList();
 
-                updataPie(pieEntriesMonth);
+                pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+                showChart(pieEntriesMonth);
                 break;
 
             case R.id.bt_year:
@@ -331,6 +326,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 break;
         }
     }
+//展示图例具体信息
     private void showDetailedInfo(LinearLayout layout) {
         if (currentPop!=null) {
             currentPop.dismiss();
@@ -351,7 +347,23 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         popupWindow.showAsDropDown(layout, 0, 0);
         // 如果需要，你还可以为popupView中的元素设置监听器等
     }
+//展示饼图
+    private void showChart(List<PieEntry> dataList){
+      if(dataList.size()==0||dataList==null){
+          tipsNoData.setVisibility(View.VISIBLE);
+          mPieChart.setVisibility(View.INVISIBLE);
+          title.setVisibility(View.INVISIBLE);
+          legendLinerLayout.setVisibility(View.INVISIBLE);
 
+      }else{
+          updataPie(dataList);
+          tipsNoData.setVisibility(View.GONE);
+          mPieChart.setVisibility(View.VISIBLE);
+          title.setVisibility(View.VISIBLE);
+          legendLinerLayout.setVisibility(View.VISIBLE);
+      }
+    }
+//饼图点击
     class MyMarkerView extends MarkerView {//设置点击显示
 
         private TextView tvContent;
@@ -393,7 +405,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             return new MPPointF(-(getWidth() / 2), -getHeight());
         }
     }
-
+//获取单例
     static class dataManager{
         List<PieEntry> dayDataList;
         List<PieEntry> monthDataList;
