@@ -18,6 +18,9 @@
         android:theme="@style/Theme.MidExam"
         tools:targetApi="31">
         <activity
+            android:name=".activity.UserDataSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.RegisterActivity"
             android:exported="false" />
         <activity

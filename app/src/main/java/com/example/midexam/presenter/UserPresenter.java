@@ -50,7 +50,7 @@ public class UserPresenter {
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.getUserData("log", account, password);
+        Call<UserData> dataCall = api.log(account, password);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
@@ -87,7 +87,7 @@ public class UserPresenter {
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.getUserData("register", account, password);
+        Call<UserData> dataCall = api.register(account, password, userData);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
@@ -130,7 +130,9 @@ public class UserPresenter {
         body = MultipartBody.Part.createFormData("background", backgroundFile.getName(), requestFile);
         list.add(body);
 
-        Call<UserData> dataCall = api.updateUserImage("updateImage", account, password, list);
+        RequestBody accountBody = RequestBody.create(MediaType.parse("text/plain"),account);
+
+        Call<UserData> dataCall = api.temp(accountBody, list);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
@@ -154,61 +156,13 @@ public class UserPresenter {
 
     //更新数据
     public void updateUserData(String account, String password) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.updateUserData("updateData", account, password, userData);
-
-        dataCall.enqueue(new Callback<UserData>() {
-            @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
-                UserData tempData = response.body();
-                if (tempData == null) activity.updateUserData(STATUS_UPDATE_ERROR);
-                else if (tempData.getMsg().equals("0"))
-                    activity.updateUserData(STATUS_UPDATE_ERROR);
-                else {
-                    userData = tempData;
-                    activity.updateUserData(STATUS_SUCCESS);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserData> call, Throwable throwable) {
-                activity.updateUserData(STATUS_NO_INTERNET);
-            }
-        });
     }
 
     //追踪数据，如果不一致则令客户端与服务端一致
     public void trackUserData(String account, String password) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.updateUserData("trackData", account, password, userData);
-
-        dataCall.enqueue(new Callback<UserData>() {
-            @Override
-            public void onResponse(Call<UserData> call, Response<UserData> response) {
-                UserData tempData = response.body();
-                if (tempData == null) activity.trackUserData(STATUS_NO_INTERNET);
-                else if (tempData.getMsg().equals("0"))
-                    activity.trackUserData(STATUS_NO_INTERNET);
-                else {
-                    userData = tempData;
-                    activity.trackUserData(STATUS_SUCCESS);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserData> call, Throwable throwable) {
-                activity.trackUserData(STATUS_NO_INTERNET);
-            }
-        });
     }
+
+
 }

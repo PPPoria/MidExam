@@ -28,6 +28,7 @@ import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
 import com.example.midexam.fragment.WaterFragment;
+import com.example.midexam.presenter.UserPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,12 +124,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
 
     //初始化fragment并添加
     private void initPages() {
-        jobPage = new JobFragment();
         waterPage = new WaterFragment();
+        jobPage = new JobFragment();
         statisticsPage = new StatisticsFragment();
         personPage = new PersonFragment();
-        pages.add(jobPage);
         pages.add(waterPage);
+        pages.add(jobPage);
         pages.add(statisticsPage);
         pages.add(personPage);
         pagesContainer.setAdapter(new DesktopAdapter(this));
