@@ -60,23 +60,12 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
     }
 
     @Override
-    public void logSuccess(int STATUS) {
+    public void log(int STATUS) {
 
     }
 
     @Override
-    public void logFail(int STATUS) {
-
-    }
-
-    @Override
-    public void registerSuccess(int STATUS) {
-        Log.d(TAG, "registerSuccess");
-        Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void registerFail(int STATUS) {
+    public void register(int STATUS) {
         Log.d(TAG, "registerFail: STATUS = " + STATUS);
         if (STATUS == UserPresenter.STATUS_NO_INTERNET)
             Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -86,5 +75,24 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
             Toast.makeText(this, "两次输入的密码不一致", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE)
             Toast.makeText(this, "账号或密码必须大于八位", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_SUCCESS) {
+            Log.d(TAG, "registerSuccess");
+            Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void trackUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
     }
 }
