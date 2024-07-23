@@ -2,43 +2,52 @@ package com.example.midexam.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.midexam.R;
+import com.example.midexam.adapter.ItemAdapter;
+import com.example.midexam.model.ItemData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link JobFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class JobFragment extends Fragment {
+public class JobFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    Button addJob;
+    RecyclerView jobContent;
+    TextView jobGreeting;
+    EditJobFragment editJobFragment;
+
+    private List<ItemData> jobList = new ArrayList<>();
+    private static FragmentManager fragmentManager;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     public JobFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment JobFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static JobFragment newInstance(String param1, String param2) {
         JobFragment fragment = new JobFragment();
         Bundle args = new Bundle();
@@ -62,5 +71,64 @@ public class JobFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_job, container, false);
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        initView(view);
+        initNewsListView();
+    }
+    private void initView(View v){
+        jobContent=v.findViewById(R.id.job_content);
+        addJob=v.findViewById(R.id.add_job);
+        jobGreeting =v.findViewById(R.id.greeting);
+
+
+
+        fragmentManager= getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
+        editJobFragment=new EditJobFragment();
+
+        addJob.setOnClickListener(this);
+    }
+
+    private void initNewsListView() {
+        jobContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        jobContent.setAdapter(new ItemAdapter(getActivity(),getActivity(), jobList));
+
+        if (jobList==null||jobList.size()==0) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    jobList.add(new ItemData("乙烯一克一克"));
+                    jobList.add(new ItemData("注意看，这个男人叫小帅。"));
+                    jobContent.getAdapter().notifyDataSetChanged();
+                }
+            });
+          /*  new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    jobList.add(new ItemData("乙烯一克一克"));
+                    jobList.add(new ItemData("注意看，这个男人叫小帅。"));
+                   // jobContent.getAdapter().notifyDataSetChanged();
+                }
+            }).start();*/
+        }
+    }
+    //用于后面弹出任务编辑调用
+    public static FragmentManager getfragmentManager(){
+        return fragmentManager;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.add_job:
+                editJobFragment.setTitle("添加待办");
+                editJobFragment.show(getfragmentManager(),"addJobs");
+                break;
+            default:
+                break;
+        }
     }
 }

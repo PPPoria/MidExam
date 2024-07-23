@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/slide_layout"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="2dp">
 
     <com.example.midexam.overrideview.HorizontalScrollMenu
+        android:id="@+id/scroll_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -22,28 +25,34 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginEnd="5dp"
-                android:layout_marginBottom="1dp"
-                android:background="@drawable/square_all_4">
+                android:layout_marginBottom="1dp">
 
-                <TextView
-                    android:id="@+id/item_text"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center"
-                    android:text="TestNews"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:cardCornerRadius="15dp">
 
+                    <TextView
+                        android:id="@+id/item_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:text="TestNews"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/success"
+                android:id="@+id/option"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
-                <TextView
+               <!-- <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="end"
@@ -55,8 +64,26 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />-->
+                <Button
+                    android:id="@+id/btForEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="编辑"
+                    android:textSize="14dp">
+                </Button>
 
+                <Button
+                    android:id="@+id/btForDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toEndOf="@+id/btForEdit"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="删除"
+                    android:textSize="14dp">
+                </Button>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

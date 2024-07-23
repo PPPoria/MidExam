@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -16,8 +18,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.midexam.R;
+import com.example.midexam.activity.DesktopActivity;
 import com.example.midexam.activity.ItemActivity;
+import com.example.midexam.fragment.EditJobFragment;
+import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.model.ItemData;
+import com.example.midexam.overrideview.HorizontalScrollMenu;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -29,6 +35,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     private Activity activity;
     private Context context;
     private List<ItemData> itemList;
+
 
     public ItemAdapter(Activity activity, Context context, List<ItemData> itemList) {
         this.activity = activity;
@@ -54,11 +61,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         return itemList.size();
     }
 
-    public class ItemHolder extends RecyclerView.ViewHolder {
+
+
+    public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView itemText;
         public ConstraintLayout slideItem;
         public ConstraintLayout slideLayout;
-        public ConstraintLayout success;
+        public ConstraintLayout option;
+        public HorizontalScrollMenu scroll;
+        private Button btEdit;
+        private Button btDelete;
         public int openState = 0;//展开状态，0为未展开，1为二者之间，2为已展开
 
         public ItemHolder(@NonNull View itemView) {
@@ -66,11 +78,33 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
             itemText = itemView.findViewById(R.id.item_text);
             slideItem = itemView.findViewById(R.id.slide_item);
             slideLayout = itemView.findViewById(R.id.slide_layout);
-            success = itemView.findViewById(R.id.success);
+            option = itemView.findViewById(R.id.option);
+            btEdit=itemView.findViewById(R.id.btForEdit);
+            btDelete=itemView.findViewById(R.id.btForDelete);
+            scroll=itemView.findViewById(R.id.scroll_item);
+
+            btEdit.setOnClickListener(this);
+            btDelete.setOnClickListener(this);
         }
 
         public float getActionWidth(){
-            return success.getWidth();
+            return option.getWidth();
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()){
+                case R.id.btForEdit:
+                    /*DesktopActivity.replaceFragment(1);*/
+                    EditJobFragment dialogFragment = new EditJobFragment();
+                    dialogFragment.setTitle("修改待办");
+                    dialogFragment.show(JobFragment.getfragmentManager(),"myDialog");
+                    scroll.smoothScrollTo(0,0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
+                    break;
+                case R.id.btForDelete:
+                    Toast.makeText(v.getContext(), "按删除",Toast.LENGTH_LONG).show();
+                    break;
+            }
         }
     }
 }

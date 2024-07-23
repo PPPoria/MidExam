@@ -14,10 +14,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
+import com.example.midexam.fragment.EditJobFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
@@ -29,13 +31,15 @@ import java.util.List;
 public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
 
-    private ViewPager2 pagesContainer;
-    private List<Fragment> pages = new ArrayList<>();
+    private static ViewPager2 pagesContainer;
+    private static List<Fragment> pages = new ArrayList<>();
+    private static DesktopAdapter adapter;
     private int pagePosition = 0;
-    private Fragment jobPage;
+    private static Fragment jobPage;
     private Fragment waterPage;
     private Fragment statisticsPage;
     private Fragment personPage;
+    private static Fragment editJobFragment;
 
     private ConstraintLayout navigationBar;
     private ConstraintLayout jobButton;
@@ -121,11 +125,13 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         jobPage = new JobFragment();
         statisticsPage = new StatisticsFragment();
         personPage = new PersonFragment();
+        editJobFragment=new EditJobFragment();
         pages.add(waterPage);
         pages.add(jobPage);
         pages.add(statisticsPage);
         pages.add(personPage);
-        pagesContainer.setAdapter(new DesktopAdapter(this));
+        adapter=new DesktopAdapter(this);
+        pagesContainer.setAdapter(adapter);
     }
 
     private void initView() {
@@ -153,25 +159,27 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         pagesContainer.setCurrentItem(pagePosition);
     }
 
-    @Override
-    public void log(int STATUS) {
-
-    }
-
-    @Override
-    public void register(int STATUS) {
-
-    }
-
-    @Override
-    public void updateUserData(int STATUS) {
-
-    }
-
-    @Override
-    public void updateUserImage(int STATUS) {
-
-    }
+  /*  public static void replaceFragment(int which){
+       if(which==0){
+           for (int i = 0; i < pages.size(); i++) {
+               if(pages.get(i).equals(editJobFragment)){
+                   pages.set(i,jobPage);
+                    pagesContainer.setAdapter(adapter);
+                    pagesContainer.setCurrentItem(1);
+                   break;
+               }
+           }
+       }else if(which==1){
+           for (int i = 0; i < pages.size(); i++) {
+               if(pages.get(i).equals(jobPage)){
+                   pages.set(i,editJobFragment);
+                   pagesContainer.setAdapter(adapter);
+                   pagesContainer.setCurrentItem(1);
+                   break;
+               }
+           }
+       }
+    }*/
 
     class DesktopAdapter extends FragmentStateAdapter {
 

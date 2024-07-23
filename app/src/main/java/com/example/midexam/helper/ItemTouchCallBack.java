@@ -53,7 +53,7 @@ public class ItemTouchCallBack extends ItemTouchHelper.Callback {
         else if (dX > 0f) dX = 0f;
 
         holder.slideItem.setTranslationX(dX);
-        holder.success.setTranslationX(dX);
+        holder.option.setTranslationX(dX);
 
         Log.d(TAG, "onChildDraw: " + dX);
     }
