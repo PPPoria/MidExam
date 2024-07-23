@@ -1,5 +1,7 @@
 package com.example.midexam.activity;
 
+import com.example.midexam.observer.UserObserver;
+
 public interface UserDataShowInterface {
     void log(int STATUS);
 
@@ -7,7 +9,8 @@ public interface UserDataShowInterface {
 
     void updateUserData(int STATUS);
 
-    void trackUserData(int STATUS);
-
     void updateUserImage(int STATUS);
+    default void registerObserver(UserDataShowInterface observedView){
+        UserObserver.registerObserver(observedView);
+    };
 }

@@ -3,11 +3,13 @@ package com.example.midexam.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
-import com.example.midexam.activity.DesktopActivity;
 import com.example.midexam.activity.LogActivity;
-import com.example.midexam.activity.UserDataSettingActivity;
+import com.example.midexam.activity.UpdateInformationActivity;
+import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.helper.ScaleHelper;
+import com.example.midexam.presenter.UserPresenter;
 
-public class PersonFragment extends Fragment {
+public class PersonFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "PersonFragment";
     private View view;
-
-    private SharedPreferences sp;
-    private SharedPreferences.Editor ed;
     private boolean isLogged = false;
 
     private ImageView userBackgroundImage;
@@ -46,27 +49,10 @@ public class PersonFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_person, container, false);
 
-        sp = getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
-        ed = sp.edit();
-
         initView();
         initListener();
-        initUserData();
-        initUserImage();
+        initUserDataInformation();
         return view;
-    }
-
-    private void initUserData() {
-        String name = "登录/注册";
-        try {
-            if (sp.getBoolean("log", false)) {
-                name = sp.getString("name", "登录/注册");
-                isLogged = true;
-            }
-        } catch (Exception e) {
-        }
-
-        userName.setText(name);
     }
 
     private void initListener() {
@@ -79,7 +65,7 @@ public class PersonFragment extends Fragment {
             Toast.makeText(getContext(), "清理完成", Toast.LENGTH_SHORT).show();
         });
         toUserDataButton.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), UserDataSettingActivity.class));
+            startActivity(new Intent(getActivity(), UpdateInformationActivity.class));
         });
     }
 
@@ -96,9 +82,28 @@ public class PersonFragment extends Fragment {
     }
 
     //设置图片
-    private void initUserImage() {
-        Glide.with(view).load(R.drawable.head).circleCrop().into(userHeadImage);
-        Glide.with(view).load(R.drawable.background).centerCrop().into(userBackgroundImage);
+    private void initUserDataInformation() {
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
+
+        String name = "登录/注册";
+        isLogged = userPresenter.isLogged(view.getContext());
+        if (isLogged)
+            name = userPresenter.getUserName();
+        userName.setText(name);
+
+        String headImagePath = userPresenter.getHeadImagePath();
+        Log.d(TAG, "headImagePath = " + headImagePath);
+        Glide.with(view)
+                .load(BitmapFactory.decodeFile(headImagePath))
+                .circleCrop()
+                .into(userHeadImage);
+
+        String backgroundImagePath = userPresenter.getBackgroundImagePath();
+        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(view.getContext(), 10)));
+        Glide.with(view)
+                .load(BitmapFactory.decodeFile(backgroundImagePath))
+                .apply(options)
+                .into(userBackgroundImage);
     }
 
     //清除图片缓存，不然图片更改不成功
@@ -122,5 +127,30 @@ public class PersonFragment extends Fragment {
                 Glide.get(view.getContext()).clearMemory();
             }
         });
+    }
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
+
+    @Override
+    public void registerObserver(UserDataShowInterface observedView) {
+        UserDataShowInterface.super.registerObserver(observedView);
     }
 }
