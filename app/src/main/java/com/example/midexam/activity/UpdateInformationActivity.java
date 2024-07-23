@@ -1,12 +1,15 @@
 package com.example.midexam.activity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -16,7 +19,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
+import com.example.midexam.helper.ScaleHelper;
 import com.example.midexam.presenter.UserPresenter;
 import com.soundcloud.android.crop.Crop;
 
@@ -30,7 +37,9 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
 
     private EditText newNameView;
     private ConstraintLayout changeHeadButton;
+    private ImageView newHead;
     private ConstraintLayout changeBackgroundButton;
+    private ImageView newBackground;
     private Button saveButton;
 
     @Override
@@ -46,6 +55,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
+        initUserDataInformation();
         initListener();
     }
 
@@ -60,16 +70,41 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
             Crop.pickImage(this);
         });
         saveButton.setOnClickListener(v -> {
-
+            UserPresenter userPresenter = UserPresenter.getInstance(this);
+            userPresenter.updateUserData(this);
+            userPresenter.updateUserImage(this);
         });
     }
 
     private void initView() {
         newNameView = findViewById(R.id.new_name);
         changeHeadButton = findViewById(R.id.change_head_button);
+        newHead = findViewById(R.id.new_head);
         changeBackgroundButton = findViewById(R.id.change_background_button);
+        newBackground = findViewById(R.id.new_background);
         saveButton = findViewById(R.id.save_personal_information);
         measureXY = findViewById(R.id.measure_xy);
+    }
+
+
+    private void initUserDataInformation() {
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
+
+        newNameView.setText(userPresenter.getUserName());
+
+        String headImagePath = userPresenter.getHeadImagePath();
+        Log.d(TAG, "headImagePath = " + headImagePath);
+        Glide.with(this)
+                .load(BitmapFactory.decodeFile(headImagePath))
+                .circleCrop()
+                .into(newHead);
+
+        String backgroundImagePath = userPresenter.getBackgroundImagePath();
+        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(this, 10)));
+        Glide.with(this)
+                .load(BitmapFactory.decodeFile(backgroundImagePath))
+                .apply(options)
+                .into(newBackground);
     }
 
     @Override
@@ -87,7 +122,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
             Crop.of(data.getData(), destinationUri).withAspect(measureXY.getWidth(), measureXY.getHeight()).start(this);
             Log.d(TAG, "x = " + measureXY.getWidth());
             Log.d(TAG, "y = " + measureXY.getHandler());
-        }
+        } else if (requestCode == Crop.REQUEST_CROP) initUserDataInformation();
     }
 
     @Override
@@ -102,11 +137,21 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
 
     @Override
     public void updateUserData(int STATUS) {
-
+        if (STATUS == UserPresenter.STATUS_SUCCESS)
+            Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+            Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void updateUserImage(int STATUS) {
-
+        if (STATUS == UserPresenter.STATUS_SUCCESS)
+            Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+            Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
     }
 }

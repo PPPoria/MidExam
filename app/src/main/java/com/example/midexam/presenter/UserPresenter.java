@@ -3,9 +3,6 @@ package com.example.midexam.presenter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,9 +12,6 @@ import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserPresenter {
     private static final String TAG = "UserPresenter";
-    public String baseUrl = "https://what/";
+    public String baseUrl = "http://192.168.31.176:8080/";
     public String backgroundImagePath;
     public String headImagePath;
     public UserData userData;
@@ -59,6 +53,14 @@ public class UserPresenter {
     public String getAccount(Context context) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         return sp.getString("account", "null");
+    }
+
+    public void changeName(String newName){
+        userData.setName(newName);
+    }
+
+    public String getUserName(){
+        return userData.getName();
     }
 
     public void accordAccount(Context context, String account) {
@@ -104,12 +106,16 @@ public class UserPresenter {
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.log(STATUS_ACCOUNT_NOT_EXIST);
-                else if (tempData.getMsg().equals("0")) activity.log(STATUS_ACCOUNT_NOT_EXIST);
+                else if ("accountNotExist".equals(tempData.getMsg()))
+                    activity.log(STATUS_ACCOUNT_NOT_EXIST);
+                else if (tempData.getMsg().equals("passwordIncorrect"))
+                    activity.log(STATUS_PASSWORD_INCORRECT);
                 else {
                     accordAccount(context, account);
                     accordPassword(context, password);
                     accordLoggedStatus(context, true);
                     userData = tempData;
+                    userData.setAccount(account);
                     activity.log(STATUS_SUCCESS);
                 }
             }
@@ -144,13 +150,14 @@ public class UserPresenter {
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.register(STATUS_NO_INTERNET);
-                else if (tempData.getMsg().equals("0"))
+                else if (tempData.getMsg().equals("accountAlreadyExist"))
                     activity.register(STATUS_ACCOUNT_ALREADY_EXIST);
                 else {
                     accordAccount(context, account);
                     accordPassword(context, password);
                     accordLoggedStatus(context, true);
                     userData = tempData;
+                    userData.setAccount(account);
                     activity.register(STATUS_SUCCESS);
                 }
             }
@@ -169,34 +176,28 @@ public class UserPresenter {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api api = retrofit.create(Api.class);
-        List<MultipartBody.Part> list = new ArrayList<>();
-        RequestBody requestFile;
-        MultipartBody.Part body;
 
-        File headFile = new File("app/src/main/res/drawable/head.jpg");
-        requestFile = RequestBody.create(MediaType.parse("image/*"), headFile);
-        body = MultipartBody.Part.createFormData("head", headFile.getName(), requestFile);
-        list.add(body);
+        File headFile = new File(getHeadImagePath());
+        RequestBody requestHead = RequestBody.create(MediaType.parse("image/*"), headFile);
+        MultipartBody.Part head = MultipartBody.Part.createFormData("imageA", headFile.getName(), requestHead);
 
-        File backgroundFile = new File("app/src/main/res/drawable/background.jpg");
-        requestFile = RequestBody.create(MediaType.parse("image/*"), headFile);
-        body = MultipartBody.Part.createFormData("background", backgroundFile.getName(), requestFile);
-        list.add(body);
+        File backgroundFile = new File(getBackgroundImagePath());
+        RequestBody requestBackground = RequestBody.create(MediaType.parse("image/*"), headFile);
+        MultipartBody.Part background = MultipartBody.Part.createFormData("imageB", backgroundFile.getName(), requestBackground);
 
-        RequestBody accountBody = RequestBody.create(MediaType.parse("text/plain"), getAccount(context));
+        RequestBody accountBody = RequestBody.create(MediaType.parse("text/plain"), userData.getAccount());
 
-        Call<UserData> dataCall = api.updateImage(accountBody, list);
+        Call<UserData> dataCall = api.updateImage(userData.getMsg(), accountBody, head, background);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.updateUserImage(STATUS_UPDATE_ERROR);
-                else if (tempData.getMsg().equals("0"))
+                else if ("updateError".equals(userData.getMsg()))
                     activity.updateUserImage(STATUS_UPDATE_ERROR);
                 else {
-                    userData = tempData;
-                    activity.register(STATUS_SUCCESS);
+                    activity.updateUserImage(STATUS_SUCCESS);
                 }
             }
 
@@ -215,23 +216,24 @@ public class UserPresenter {
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.updateData(getAccount(context), getPassword(context), userData);
+        Log.d(TAG, "update msg = " + userData.getMsg());
+        Call<UserData> dataCall = api.updateData(userData.getMsg(), userData);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.updateUserData(STATUS_UPDATE_ERROR);
-                else if (tempData.getMsg().equals("0"))
+                else if ("updateError".equals(userData.getMsg()))
                     activity.updateUserData(STATUS_UPDATE_ERROR);
                 else {
-                    userData = tempData;
                     activity.updateUserData(STATUS_SUCCESS);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
+                System.out.println(throwable.toString());
                 activity.updateUserData(STATUS_NO_INTERNET);
             }
         });

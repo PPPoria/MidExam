@@ -30,9 +30,6 @@ import com.example.midexam.presenter.UserPresenter;
 public class PersonFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "PersonFragment";
     private View view;
-
-    private SharedPreferences sp;
-    private SharedPreferences.Editor ed;
     private boolean isLogged = false;
 
     private ImageView userBackgroundImage;
@@ -52,23 +49,10 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_person, container, false);
 
-        sp = getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
-        ed = sp.edit();
-
         initView();
         initListener();
-        initUserData();
-        initUserImage();
+        initUserDataInformation();
         return view;
-    }
-
-    private void initUserData() {
-        String name = "登录/注册";
-        isLogged = UserPresenter.getInstance(this).isLogged(view.getContext());
-        Log.d(TAG, "isLogged = " + isLogged);
-        if (isLogged)
-            name = sp.getString("name", "登录/注册");
-        userName.setText(name);
     }
 
     private void initListener() {
@@ -98,16 +82,24 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     }
 
     //设置图片
-    private void initUserImage() {
-        String headImagePath = UserPresenter.getInstance(this).getHeadImagePath();
+    private void initUserDataInformation() {
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
+
+        String name = "登录/注册";
+        isLogged = userPresenter.isLogged(view.getContext());
+        if (isLogged)
+            name = userPresenter.getUserName();
+        userName.setText(name);
+
+        String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
         Glide.with(view)
                 .load(BitmapFactory.decodeFile(headImagePath))
                 .circleCrop()
                 .into(userHeadImage);
 
-        String backgroundImagePath = UserPresenter.getInstance(this).getBackgroundImagePath();
-        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(view.getContext(),10)));
+        String backgroundImagePath = userPresenter.getBackgroundImagePath();
+        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(view.getContext(), 10)));
         Glide.with(view)
                 .load(BitmapFactory.decodeFile(backgroundImagePath))
                 .apply(options)
@@ -155,5 +147,10 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     @Override
     public void updateUserImage(int STATUS) {
 
+    }
+
+    @Override
+    public void registerObserver(UserDataShowInterface observedView) {
+        UserDataShowInterface.super.registerObserver(observedView);
     }
 }
