@@ -60,4 +60,5 @@ dependencies {
     annotationProcessor("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
 
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation("com.soundcloud.android:android-crop:1.0.1@aar")
 }

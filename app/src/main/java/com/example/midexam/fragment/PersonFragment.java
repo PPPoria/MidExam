@@ -18,10 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
 import com.example.midexam.activity.LogActivity;
 import com.example.midexam.activity.UpdateInformationActivity;
 import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.helper.ScaleHelper;
 import com.example.midexam.presenter.UserPresenter;
 
 public class PersonFragment extends Fragment implements UserDataShowInterface {
@@ -103,9 +106,12 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                 .circleCrop()
                 .into(userHeadImage);
 
+        String backgroundImagePath = UserPresenter.getInstance(this).getBackgroundImagePath();
+        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(view.getContext(),10)));
         Glide.with(view)
-                .load(R.drawable.background)
-                .centerCrop().into(userBackgroundImage);
+                .load(BitmapFactory.decodeFile(backgroundImagePath))
+                .apply(options)
+                .into(userBackgroundImage);
     }
 
     //清除图片缓存，不然图片更改不成功

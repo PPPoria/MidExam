@@ -1,11 +1,10 @@
 package com.example.midexam.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -19,18 +18,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.midexam.R;
 import com.example.midexam.presenter.UserPresenter;
+import com.soundcloud.android.crop.Crop;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
 public class UpdateInformationActivity extends AppCompatActivity implements UserDataShowInterface {
     private static final String TAG = "UserDataSettingActivity";
-    private final int MODE_HEAD_CROP = 1;
-    private final int MODE_BACKGROUND_CROP = 2;
-    private Uri headUri;
-    private Uri backgroundUri;
-    private Bitmap headBitmap;
-    private Bitmap backgroundBitmap;
+
+    private int mode;
+    private ConstraintLayout measureXY;
 
     private EditText newNameView;
     private ConstraintLayout changeHeadButton;
@@ -53,12 +49,15 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         initListener();
     }
 
+
     private void initListener() {
         changeHeadButton.setOnClickListener(v -> {
-            openGallery(MODE_HEAD_CROP);
+            mode = UserPresenter.MODE_HEAD_CROP;
+            Crop.pickImage(this);
         });
         changeBackgroundButton.setOnClickListener(v -> {
-            openGallery(MODE_BACKGROUND_CROP);
+            mode = UserPresenter.MODE_BACKGROUND_CROP;
+            Crop.pickImage(this);
         });
         saveButton.setOnClickListener(v -> {
 
@@ -70,13 +69,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         changeHeadButton = findViewById(R.id.change_head_button);
         changeBackgroundButton = findViewById(R.id.change_background_button);
         saveButton = findViewById(R.id.save_personal_information);
-    }
-
-    private void openGallery(int MODE) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, MODE);
+        measureXY = findViewById(R.id.measure_xy);
     }
 
     @Override
@@ -86,43 +79,15 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         if (data == null) return;
         else if (data.getData() == null) return;
 
-        if (requestCode == MODE_HEAD_CROP) {
-            Log.d(TAG, "修改头像");
-            headUri = data.getData();
-            headBitmap = uriToBitmap(headUri);
-
-            if (headBitmap != null) {
-                try {
-                    UserPresenter.getInstance(this).saveImage(headBitmap,MODE_HEAD_CROP);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } else
-                Log.d(TAG, "更改背景错误\nheadUri = " + headUri + "\nheadBitmap = " + headBitmap);
+        if (requestCode == Crop.REQUEST_PICK && mode == UserPresenter.MODE_HEAD_CROP) {
+            Uri destinationUri = Uri.fromFile(new File(UserPresenter.getInstance(this).getHeadImagePath()));
+            Crop.of(data.getData(), destinationUri).withAspect(1, 1).start(this);
+        } else if (requestCode == Crop.REQUEST_PICK && mode == UserPresenter.MODE_BACKGROUND_CROP) {
+            Uri destinationUri = Uri.fromFile(new File(UserPresenter.getInstance(this).getBackgroundImagePath()));
+            Crop.of(data.getData(), destinationUri).withAspect(measureXY.getWidth(), measureXY.getHeight()).start(this);
+            Log.d(TAG, "x = " + measureXY.getWidth());
+            Log.d(TAG, "y = " + measureXY.getHandler());
         }
-    }
-
-    //将Uri实例转为Bitmap实例
-    private Bitmap uriToBitmap(Uri uri) {
-        InputStream inputStream = null;
-        Bitmap bitmap = null;
-
-        //将uri处理成输入流，再解码成bitmap
-        try {
-            inputStream = getContentResolver().openInputStream(uri);
-            bitmap = BitmapFactory.decodeStream(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bitmap != null || inputStream != null) {//关闭流
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return bitmap;
     }
 
     @Override

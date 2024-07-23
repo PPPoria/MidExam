@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import com.example.midexam.model.UserData;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,8 @@ public class UserPresenter {
     public UserDataShowInterface activity;
     public static UserPresenter presenter = new UserPresenter();
 
+    public static final int MODE_HEAD_CROP = 98;
+    public static final int MODE_BACKGROUND_CROP = 99;
     public static final int STATUS_SUCCESS = 100;
     public static final int STATUS_NO_INTERNET = 0;
     public static final int STATUS_ACCOUNT_ALREADY_EXIST = 1;
@@ -44,6 +49,7 @@ public class UserPresenter {
     public static final int STATUS_PASSWORD_INCORRECT = 4;
     public static final int STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE = 5;
     public static final int STATUS_UPDATE_ERROR = 6;
+
 
     public static UserPresenter getInstance(UserDataShowInterface activity) {
         presenter.activity = activity;
@@ -235,35 +241,6 @@ public class UserPresenter {
     public void initImagesPath(Context context) {
         headImagePath = context.getFilesDir().getAbsolutePath() + "/headImage.jpg";
         backgroundImagePath = context.getFilesDir().getAbsolutePath() + "/backgroundImage.jpg";
-    }
-
-
-    //bitmap的占用内存很大，在此不设置全局变量
-    public void saveImage(Bitmap bitmap, int MODE) throws IOException {
-        File headImage = new File(headImagePath);
-        Log.d(TAG, "开始保存图片");
-        if (!headImage.exists())
-            try {
-                headImage.createNewFile();
-                Log.d(TAG, "首次设置头像");
-            } catch (IOException e) {
-                Log.d(TAG, "???");
-            }
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(headImage);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            Log.d(TAG, "保存成功");
-        } catch (IOException e) {
-            Log.d(TAG, "焯！头像修改失败\nheadImage = " + headImage.getAbsolutePath());
-        } finally {
-            if (fos != null)
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                }
-        }
     }
 
     public String getHeadImagePath() {
