@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/jobEdit_title"
+            android:id="@+id/jobEdit_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
@@ -33,6 +33,7 @@
             </Button>
 
             <TextView
+                android:id="@+id/dialog_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -53,7 +54,7 @@
             android:id="@+id/sc_jobEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/jobEdit_title">
+            app:layout_constraintTop_toBottomOf="@id/jobEdit_title_layout">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -73,6 +74,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tved_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="事项名称"
@@ -90,6 +92,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvlayout_name">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tved_startTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="起始时间"
@@ -107,6 +110,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvlayout_startTime">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tved_duringTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="持续时间"

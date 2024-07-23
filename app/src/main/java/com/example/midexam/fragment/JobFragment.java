@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.midexam.R;
 import com.example.midexam.adapter.ItemAdapter;
@@ -26,10 +27,13 @@ import java.util.List;
  * Use the {@link JobFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class JobFragment extends Fragment {
+public class JobFragment extends Fragment implements View.OnClickListener {
 
 
+    Button addJob;
     RecyclerView jobContent;
+    TextView jobGreeting;
+    EditJobFragment editJobFragment;
 
     private List<ItemData> jobList = new ArrayList<>();
     private static FragmentManager fragmentManager;
@@ -77,8 +81,15 @@ public class JobFragment extends Fragment {
     }
     private void initView(View v){
         jobContent=v.findViewById(R.id.job_content);
-        //获取下发这个为了给编辑代办时代码运用
-        fragmentManager= getActivity().getSupportFragmentManager();
+        addJob=v.findViewById(R.id.add_job);
+        jobGreeting =v.findViewById(R.id.greeting);
+
+
+
+        fragmentManager= getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
+        editJobFragment=new EditJobFragment();
+
+        addJob.setOnClickListener(this);
     }
 
     private void initNewsListView() {
@@ -107,5 +118,17 @@ public class JobFragment extends Fragment {
     //用于后面弹出任务编辑调用
     public static FragmentManager getfragmentManager(){
         return fragmentManager;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.add_job:
+                editJobFragment.setTitle("添加待办");
+                editJobFragment.show(getfragmentManager(),"addJobs");
+                break;
+            default:
+                break;
+        }
     }
 }

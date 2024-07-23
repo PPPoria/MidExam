@@ -97,8 +97,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
                 case R.id.btForEdit:
                     /*DesktopActivity.replaceFragment(1);*/
                     EditJobFragment dialogFragment = new EditJobFragment();
+                    dialogFragment.setTitle("修改待办");
                     dialogFragment.show(JobFragment.getfragmentManager(),"myDialog");
-                    scroll.smoothScrollTo(0,0);
+                    scroll.smoothScrollTo(0,0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
                     break;
                 case R.id.btForDelete:
                     Toast.makeText(v.getContext(), "按删除",Toast.LENGTH_LONG).show();
