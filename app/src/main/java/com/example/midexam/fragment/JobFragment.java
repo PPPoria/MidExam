@@ -131,4 +131,14 @@ public class JobFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
+    public void addItem(ItemData itemData){
+        jobList.add(itemData);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jobContent.getAdapter().notifyDataSetChanged();
+            }
+        });
+    }
 }

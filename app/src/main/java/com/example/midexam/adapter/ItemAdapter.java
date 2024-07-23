@@ -1,5 +1,6 @@
 package com.example.midexam.adapter;
 
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -71,6 +72,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         public HorizontalScrollMenu scroll;
         private Button btEdit;
         private Button btDelete;
+        private Button btComplete;
+        private TextView tvdate;
+        private TextView tvduring;
+
         public int openState = 0;//展开状态，0为未展开，1为二者之间，2为已展开
 
         public ItemHolder(@NonNull View itemView) {
@@ -82,9 +87,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
             btEdit=itemView.findViewById(R.id.btForEdit);
             btDelete=itemView.findViewById(R.id.btForDelete);
             scroll=itemView.findViewById(R.id.scroll_item);
+            btComplete=itemView.findViewById(R.id.bt_complete);
+            tvdate=itemText.findViewById(R.id.item_date);
+            tvduring=itemText.findViewById(R.id.item_during);
 
             btEdit.setOnClickListener(this);
             btDelete.setOnClickListener(this);
+            btComplete.setOnClickListener(this);
         }
 
         public float getActionWidth(){
@@ -95,7 +104,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         public void onClick(View v) {
             switch(v.getId()){
                 case R.id.btForEdit:
-                    /*DesktopActivity.replaceFragment(1);*/
                     EditJobFragment dialogFragment = new EditJobFragment();
                     dialogFragment.setTitle("修改待办");
                     dialogFragment.show(JobFragment.getfragmentManager(),"myDialog");
@@ -103,6 +111,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
                     break;
                 case R.id.btForDelete:
                     Toast.makeText(v.getContext(), "按删除",Toast.LENGTH_LONG).show();
+                    break;
+                case R.id.bt_complete:
+                    Toast.makeText(v.getContext(), "启用",Toast.LENGTH_LONG).show();
                     break;
             }
         }
