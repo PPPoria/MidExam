@@ -1,8 +1,6 @@
 package com.example.midexam.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -24,20 +22,26 @@ import com.example.midexam.R;
 import com.example.midexam.activity.LogActivity;
 import com.example.midexam.activity.UpdateInformationActivity;
 import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.activity.WaterSettingActivity;
 import com.example.midexam.helper.ScaleHelper;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 
 public class PersonFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "PersonFragment";
+    private UserObserver observer;
     private View view;
     private boolean isLogged = false;
 
     private ImageView userBackgroundImage;
     private ImageView userHeadImage;
     private TextView userName;
+    private TextView userAccount;
     private ConstraintLayout clearButton;
     private ConstraintLayout toUserDataButton;
-
+    private ConstraintLayout toWaterSettingButton;
+    private ConstraintLayout logOut;
+    private boolean delayedLogOut = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,33 +56,73 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         initView();
         initListener();
         initUserDataInformation();
+        observer = registerObserver(this);
         return view;
     }
 
     private void initListener() {
         userName.setOnClickListener(v -> {
-            if (isLogged) changeUserName();
-            else startActivity(new Intent(getActivity(), LogActivity.class));
+            if (!isLogged) startActivity(new Intent(getActivity(), LogActivity.class));
         });
+
         clearButton.setOnClickListener(v -> {
             clearImageMemoryAndDisk();
             Toast.makeText(getContext(), "清理完成", Toast.LENGTH_SHORT).show();
         });
+
         toUserDataButton.setOnClickListener(v -> {
+            if (!isLogged) {
+                Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                return;
+            }
             startActivity(new Intent(getActivity(), UpdateInformationActivity.class));
         });
-    }
 
-    private void changeUserName() {
+        toWaterSettingButton.setOnClickListener(v -> {
+            if (!isLogged) {
+                Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            startActivity(new Intent(getActivity(), WaterSettingActivity.class));
+        });
 
+        logOut.setOnClickListener(v -> {
+            if (!isLogged) {
+                Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (!delayedLogOut) {
+                Toast.makeText(getContext(), "双击退出", Toast.LENGTH_SHORT).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        delayedLogOut = true;
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            delayedLogOut = false;
+                        }
+                    }
+                }).start();
+            } else if (delayedLogOut) {
+                UserPresenter.getInstance(this).accordLoggedStatus(getContext(), false);
+                UserPresenter.getInstance(this).resetHeadImage();
+                UserPresenter.getInstance(this).resetBackgroundImage();
+                observer.updateObservedViews();
+            }
+        });
     }
 
     private void initView() {
         userBackgroundImage = view.findViewById(R.id.user_background_image);
         userHeadImage = view.findViewById(R.id.user_head_image);
         userName = view.findViewById(R.id.user_name);
+        userAccount = view.findViewById(R.id.user_account);
         clearButton = view.findViewById(R.id.clear);
         toUserDataButton = view.findViewById(R.id.to_user_data);
+        toWaterSettingButton = view.findViewById(R.id.to_water_setting);
+        logOut = view.findViewById(R.id.log_out);
     }
 
     //设置图片
@@ -86,15 +130,20 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         UserPresenter userPresenter = UserPresenter.getInstance(this);
 
         String name = "登录/注册";
+        String account = "account";
         isLogged = userPresenter.isLogged(view.getContext());
-        if (isLogged)
+        if (isLogged) {
             name = userPresenter.getUserName();
+            account = userPresenter.getAccount();
+        }
         userName.setText(name);
+        userAccount.setText(account);
 
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
         Glide.with(view)
                 .load(BitmapFactory.decodeFile(headImagePath))
+                .error(R.drawable.head)
                 .circleCrop()
                 .into(userHeadImage);
 
@@ -102,6 +151,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(view.getContext(), 10)));
         Glide.with(view)
                 .load(BitmapFactory.decodeFile(backgroundImagePath))
+                .error(R.drawable.wave_vertical)
                 .apply(options)
                 .into(userBackgroundImage);
     }
@@ -150,7 +200,12 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     }
 
     @Override
-    public void registerObserver(UserDataShowInterface observedView) {
-        UserDataShowInterface.super.registerObserver(observedView);
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
+    }
+
+    @Override
+    public void receiveUpdate() {
+        initUserDataInformation();
     }
 }

@@ -6,12 +6,15 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -24,6 +27,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
 import com.example.midexam.helper.ScaleHelper;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.soundcloud.android.crop.Crop;
 
@@ -31,6 +35,7 @@ import java.io.File;
 
 public class UpdateInformationActivity extends AppCompatActivity implements UserDataShowInterface {
     private static final String TAG = "UserDataSettingActivity";
+    private UserObserver observer;
 
     private int mode;
     private ConstraintLayout measureXY;
@@ -57,6 +62,21 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         initView();
         initUserDataInformation();
         initListener();
+        observer = registerObserver(this);
+        overrideBackMethod();
+    }
+
+    //重写回退方法
+    private void overrideBackMethod() {
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                observer.updateObservedViews();
+                finish();
+            }
+        };
+        dispatcher.addCallback(callback);
     }
 
 
@@ -96,6 +116,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         Log.d(TAG, "headImagePath = " + headImagePath);
         Glide.with(this)
                 .load(BitmapFactory.decodeFile(headImagePath))
+                .error(R.drawable.head)
                 .circleCrop()
                 .into(newHead);
 
@@ -103,6 +124,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(ScaleHelper.dp2px(this, 10)));
         Glide.with(this)
                 .load(BitmapFactory.decodeFile(backgroundImagePath))
+                .error(R.drawable.wave_vertical)
                 .apply(options)
                 .into(newBackground);
     }
@@ -153,5 +175,10 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
             Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
             Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
     }
 }

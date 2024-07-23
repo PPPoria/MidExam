@@ -48,7 +48,11 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
         logButton.setOnClickListener(v -> {
             String accountStr = Objects.requireNonNull(account.getText()).toString();
             String passwordStr = Objects.requireNonNull(password.getText()).toString();
-            UserPresenter.getInstance(this).requestLog(this,accountStr, passwordStr);
+            if(accountStr.isEmpty() || passwordStr.isEmpty()){
+                Toast.makeText(this, "请输入", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            UserPresenter.getInstance(this).requestLog(this, accountStr, passwordStr);
         });
         toRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -68,8 +72,21 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
             Toast.makeText(this, "账号或密码错误", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
             Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
-        else if (STATUS == UserPresenter.STATUS_SUCCESS)
-            finish();
+        else if (STATUS == UserPresenter.STATUS_SUCCESS) {
+            Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(800);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        finish();
+                    }
+                }
+            }).start();
+        }
     }
 
     @Override

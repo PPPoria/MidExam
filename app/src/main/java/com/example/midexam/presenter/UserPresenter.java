@@ -3,17 +3,20 @@ package com.example.midexam.presenter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -50,16 +53,15 @@ public class UserPresenter {
         return presenter;
     }
 
-    public String getAccount(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
-        return sp.getString("account", "null");
+    public String getAccount() {
+        return userData.getAccount();
     }
 
-    public void changeName(String newName){
+    public void changeName(String newName) {
         userData.setName(newName);
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return userData.getName();
     }
 
@@ -251,5 +253,56 @@ public class UserPresenter {
 
     public String getBackgroundImagePath() {
         return backgroundImagePath;
+    }
+
+    //重置图片二人组，这俩通常一块使用
+    public void resetHeadImage() {
+        File image = new File(headImagePath);
+        if (!image.exists())
+            try {
+                image.createNewFile();
+            } catch (IOException e) {
+            }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(image);
+            fos.write(new byte[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "焯！");
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    public void resetBackgroundImage() {
+        File image = new File(backgroundImagePath);
+        if (!image.exists())
+            try {
+                image.createNewFile();
+            } catch (IOException e) {
+            }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(image);
+            fos.write(new byte[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "焯！");
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 }

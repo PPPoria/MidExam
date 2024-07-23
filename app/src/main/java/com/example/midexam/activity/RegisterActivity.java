@@ -77,6 +77,19 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
         else if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Log.d(TAG, "registerSuccess");
             Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(800);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    finally {
+                        finish();
+                    }
+                }
+            }).start();
         }
     }
 

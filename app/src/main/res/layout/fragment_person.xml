@@ -40,6 +40,7 @@
             android:backgroundTint="@color/black_transparent40" />
 
         <View
+            android:id="@+id/view"
             android:layout_width="92dp"
             android:layout_height="92dp"
             android:background="@drawable/oval"
@@ -70,17 +71,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_head_image" />
 
+        <TextView
+            android:id="@+id/user_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="account"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clear"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:background="@color/white_transparent25"
+            android:background="@drawable/square_all_4"
+            android:backgroundTint="@color/white_transparent25"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_name">
+            app:layout_constraintTop_toBottomOf="@+id/to_water_setting">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,12 +114,13 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="10dp"
-            android:background="@color/white_transparent25"
+            android:background="@drawable/square_all_4"
+            android:backgroundTint="@color/white_transparent25"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/clear">
+            app:layout_constraintTop_toBottomOf="@+id/user_name">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -127,7 +142,8 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:background="@color/white_transparent25"
+            android:background="@drawable/square_all_4"
+            android:backgroundTint="@color/white_transparent25"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/to_user_data">
@@ -137,6 +153,32 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="喝水偏好"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/log_out"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/square_all_4"
+            android:backgroundTint="@color/white_transparent25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clear">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="退出登录"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
