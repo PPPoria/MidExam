@@ -39,7 +39,7 @@ public class ItemActivity extends AppCompatActivity {
         initView();
         initNewsListView();
         //initItemSlide();
-    }
+    }//////////////////////////////
 
     private void initItemSlide() {
         ItemTouchCallBack callBack = new ItemTouchCallBack();
