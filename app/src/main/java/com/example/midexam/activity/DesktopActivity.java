@@ -159,6 +159,31 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         pagesContainer.setCurrentItem(pagePosition);
     }
 
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
+
+    @Override
+    public void registerObserver(UserDataShowInterface observedView) {
+        UserDataShowInterface.super.registerObserver(observedView);
+    }
+
   /*  public static void replaceFragment(int which){
        if(which==0){
            for (int i = 0; i < pages.size(); i++) {
