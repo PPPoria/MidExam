@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -26,13 +27,12 @@ public interface Api {
     Call<UserData> register(@Field("account") String account,
                             @Field("password") String password);
 
-    @FormUrlEncoded
-    @POST("user/update")
-    Call<UserData> update(@Field("account") String account,
-                          @Field("password") String password,
-                          @Body UserData body);
+
+    @POST("user/updateData")
+    Call<UserData> updateData(@Header("token") String token,
+                              @Body UserData body);
 
     @Multipart
     @POST("user/image")
-    Call<UserData> temp(@Part("account") RequestBody body, @Part List<MultipartBody.Part> images);
+    Call<UserData> updateImage(@Header("token") String token,@Part("account") RequestBody body, @Part MultipartBody.Part head, @Part MultipartBody.Part background);
 }

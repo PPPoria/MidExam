@@ -4,8 +4,9 @@ import java.util.List;
 
 public class UserData {
     private String msg = "success";
-    private String name;
-    private String color;
+    private String account = "account";
+    private String name = "UserName";
+    private String color = "#6bbef2";
     private String headImageUrl;
     private String backgroundImageUrl;
     private String intervalTime;
@@ -24,6 +25,14 @@ public class UserData {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     public String getName() {

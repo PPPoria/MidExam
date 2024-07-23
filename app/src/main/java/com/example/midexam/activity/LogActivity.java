@@ -3,7 +3,6 @@ package com.example.midexam.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +17,6 @@ import com.example.midexam.R;
 import com.example.midexam.presenter.UserPresenter;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class LogActivity extends AppCompatActivity implements UserDataShowInterface {
@@ -50,7 +48,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
         logButton.setOnClickListener(v -> {
             String accountStr = Objects.requireNonNull(account.getText()).toString();
             String passwordStr = Objects.requireNonNull(password.getText()).toString();
-            UserPresenter.getInstance(this).requestLog(accountStr, passwordStr);
+            UserPresenter.getInstance(this).requestLog(this,accountStr, passwordStr);
         });
         toRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -86,13 +84,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
     }
 
     @Override
-    public void trackUserData(int STATUS) {
-
-    }
-
-    @Override
     public void updateUserImage(int STATUS) {
-
     }
 
 }

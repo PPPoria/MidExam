@@ -4,10 +4,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
-import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -15,9 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,12 +24,11 @@ import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
 import com.example.midexam.fragment.WaterFragment;
-import com.example.midexam.presenter.UserPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DesktopActivity extends AppCompatActivity implements View.OnClickListener {
+public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
 
     private static ViewPager2 pagesContainer;
@@ -164,6 +157,31 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             pagePosition = 3;
         }
         pagesContainer.setCurrentItem(pagePosition);
+    }
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
+
+    @Override
+    public void registerObserver(UserDataShowInterface observedView) {
+        UserDataShowInterface.super.registerObserver(observedView);
     }
 
   /*  public static void replaceFragment(int which){
