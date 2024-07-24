@@ -24,6 +24,7 @@ import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
 import com.example.midexam.fragment.WaterFragment;
+import com.example.midexam.observer.UserObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,8 +181,8 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void registerObserver(UserDataShowInterface observedView) {
-        UserDataShowInterface.super.registerObserver(observedView);
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
     }
 
   /*  public static void replaceFragment(int which){
