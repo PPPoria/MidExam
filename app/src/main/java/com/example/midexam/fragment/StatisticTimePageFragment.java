@@ -99,18 +99,18 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
          mColorPie = getColorPie();
-         pieEntriesDay = dataManager.getInstance().getDayDataList();
+
          initview(view);
          init_Pie();
-          pieEntriesDay.add(new PieEntry(1, "读书"));
-          pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
-          pieEntriesDay.add(new PieEntry(3, "睡觉"));
-          pieEntriesDay.add(new PieEntry(4, "好"));
+         pieEntriesDay.add(new PieEntry(1, "读书"));
+         pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
+         pieEntriesDay.add(new PieEntry(3, "睡觉"));
+         pieEntriesDay.add(new PieEntry(4, "好"));
 
-          List<PieEntry> testList=new ArrayList<>();
-          testList.add(new PieEntry(12,"睡觉"));
-          addData(testList,pieEntriesDay);
-          showChart(pieEntriesDay);
+         List<PieEntry> testList=new ArrayList<>();
+         testList.add(new PieEntry(12,"睡觉"));
+         addData(testList,pieEntriesDay);
+         showChart(pieEntriesDay);
     }
 
     private void initview(View view) {
@@ -126,6 +126,25 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         btDay.setOnClickListener(this);
         btMonth.setOnClickListener(this);
         btYear.setOnClickListener(this);
+
+        pieEntriesDay = dataManager.getInstance().getDayDataList();
+        pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+        pieEntriesYear=dataManager.getInstance().getYearDataList();
+    }
+//饼图初始化图像
+    private void init_Pie() {
+        //  mPieChart.setDescription(null);//设置描述
+        mPieChart.setUsePercentValues(true);//百分比显示
+        mPieChart.setCenterText("专注时间");//圆环中心文字
+        mPieChart.setCenterTextSize(20);//设置中心文字大小
+        description=mPieChart.getDescription();
+        description.setText("专注图");//图例
+        description.setTextSize(10f); // 设置字体大小
+        MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
+        mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
+        mPieChart.setEntryLabelColor(Color.BLACK);
+        mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
+        if(currentPop!=null) currentPop.dismiss();
     }
 //增加数据
     private void addData(List<PieEntry> mlist, List<PieEntry> root) {
@@ -149,6 +168,23 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 }
             }
         }
+    }
+//展示饼图
+    private void showChart(List<PieEntry> dataList){
+        if(dataList.size()==0||dataList==null){
+            tipsNoData.setVisibility(View.VISIBLE);
+            mPieChart.setVisibility(View.INVISIBLE);
+            title.setVisibility(View.INVISIBLE);
+            legendLinerLayout.setVisibility(View.INVISIBLE);
+
+        }else{
+            updataPie(dataList);
+            tipsNoData.setVisibility(View.GONE);
+            mPieChart.setVisibility(View.VISIBLE);
+            title.setVisibility(View.VISIBLE);
+            legendLinerLayout.setVisibility(View.VISIBLE);
+        }
+        if(currentPop!=null) currentPop.dismiss();
     }
 //单个图例
     private LinearLayout getLineLegend(Integer color, String label, int data) {
@@ -234,21 +270,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         iPieDataSet.setValueTextSize(20);
         return iPieDataSet;
     }
-//饼图初始化图像
-    private void init_Pie() {
-        //  mPieChart.setDescription(null);//设置描述
-        mPieChart.setUsePercentValues(true);//百分比显示
-        mPieChart.setCenterText("专注时间");//圆环中心文字
-        mPieChart.setCenterTextSize(20);//设置中心文字大小
-        description=mPieChart.getDescription();
-        description.setText("专注图");//图例
-        description.setTextSize(10f); // 设置字体大小
-        MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
-        mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
-        mPieChart.setEntryLabelColor(Color.BLACK);
-        mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
-        if(currentPop!=null) currentPop.dismiss();
-    }
+
 //饼图图例更新
     private void updataPieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
@@ -347,22 +369,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         popupWindow.showAsDropDown(layout, 0, 0);
         // 如果需要，你还可以为popupView中的元素设置监听器等
     }
-//展示饼图
-    private void showChart(List<PieEntry> dataList){
-      if(dataList.size()==0||dataList==null){
-          tipsNoData.setVisibility(View.VISIBLE);
-          mPieChart.setVisibility(View.INVISIBLE);
-          title.setVisibility(View.INVISIBLE);
-          legendLinerLayout.setVisibility(View.INVISIBLE);
 
-      }else{
-          updataPie(dataList);
-          tipsNoData.setVisibility(View.GONE);
-          mPieChart.setVisibility(View.VISIBLE);
-          title.setVisibility(View.VISIBLE);
-          legendLinerLayout.setVisibility(View.VISIBLE);
-      }
-    }
 //饼图点击
     class MyMarkerView extends MarkerView {//设置点击显示
 

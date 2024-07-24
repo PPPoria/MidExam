@@ -41,21 +41,21 @@ public class ItemActivity extends AppCompatActivity {
         //initItemSlide();
     }//////////////////////////////
 
-    private void initItemSlide() {
+   /* private void initItemSlide() {
         ItemTouchCallBack callBack = new ItemTouchCallBack();
         ItemTouchHelper helper = new ItemTouchHelper(callBack);
         helper.attachToRecyclerView(rv);
-    }
+    }*/
 
     private void initNewsListView() {
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new ItemAdapter(this,this,itemList));
+    //    rv.setAdapter(new ItemAdapter(this,this,itemList,this));
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                itemList.add(new ItemData("乙烯一克一克"));
-                itemList.add(new ItemData("注意看，这个男人叫小帅。"));
+                itemList.add(new ItemData("乙烯一克一克","2022-1-1","3min"));
+                itemList.add(new ItemData("注意看，这个男人叫小帅。","2023-1-4","2min"));
                 rv.getAdapter().notifyDataSetChanged();
             }
         }).start();

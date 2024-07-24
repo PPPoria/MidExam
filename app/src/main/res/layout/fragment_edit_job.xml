@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="代办编辑"
+                android:text="NULL"
                 android:textSize="35dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -113,9 +113,24 @@
                         android:id="@+id/tved_duringTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="持续时间"
-                        android:maxLines="1" />
+                        android:hint="持续时间(min)"
+                        android:inputType="number"
+                        android:digits="0123456789"
+                        android:maxLength="10" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tipsDuringUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="分钟"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvlayout_duringTime"
+                    app:layout_constraintEnd_toEndOf="@+id/tvlayout_duringTime"
+                    app:layout_constraintStart_toStartOf="@+id/tvlayout_duringTime"
+                    app:layout_constraintTop_toTopOf="@+id/tvlayout_duringTime"
+                    app:layout_constraintVertical_bias="0.6"
+                    app:layout_constraintHorizontal_bias="0.9"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/bt_confirm"

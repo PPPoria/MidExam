@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.midexam.R;
 
+import com.example.midexam.activity.UserDataShowInterface;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -46,7 +47,7 @@ import java.util.List;
  * Use the {@link StatisticsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StatisticsFragment extends Fragment implements View.OnClickListener{
+public class StatisticsFragment extends Fragment implements View.OnClickListener, UserDataShowInterface {
 
     Button btFocusChart;
     Button btWaterChart;
@@ -102,19 +103,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     }
 
-
-
-
-
-
-
-
     private void initview(View view) {
 
         btFocusChart =view.findViewById(R.id.bt_pie_focus);
         btWaterChart=view.findViewById(R.id.bt_bar_water);
         statisticsViewPager=view.findViewById(R.id.statistics_viewpager);
-        /*title=view.findViewById(R.id.pie_1).findViewById(R.id.title);*/
 
         statisticTimePageFragment=new StatisticTimePageFragment();
         statisticWaterPageFragment=new StatisticWaterPageFragment();
@@ -127,25 +120,12 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         btFocusChart.setOnClickListener(this);
         btWaterChart.setOnClickListener(this);
-        /*btDay.setOnClickListener(this);
-        btMonth.setOnClickListener(this);
-        btYear.setOnClickListener(this);*/
-
 
     }
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bt_pie_focus:
-                /*List<PieEntry> mlist=new ArrayList<>();
-                mlist.add(new PieEntry(10,"打搅"));
-                mlist.add(new PieEntry(5,"睡觉"));
-                Toast.makeText(getActivity(),"已增加",Toast.LENGTH_LONG).show();
-                addList=mlist;
-                addData(addList,pieEntriesDay);
-                updataPie(pieEntriesDay);*/
                 statisticsViewPager.setCurrentItem(0);
 
                 break;
@@ -154,60 +134,30 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 statisticsViewPager.setCurrentItem(1);
                 break;
 
-         /*   case R.id.bt_pie_day:
-                init_Pie();
-                pieEntriesDay=dataManager.getInstance().getDayDataList();
-                updataPie(pieEntriesDay);
-
-                break;
-
-            case R.id.bt_pie_month:
-                init_Pie();
-                pieEntriesMonth=dataManager.getInstance().getMonthDataList();
-                //pieEntriesMonth.add(new PieEntry(1.0f,"打搅"));
-                updataPie(pieEntriesMonth);
-                break;
-
-            case R.id.bt_pie_year:
-
-                break;
-*/
-           /* case R.id.bt_pie_clearday:
-
-                break;
-
-            case R.id.bt_pie_clearmonth:
-
-                break;
-*/
             default:
                 break;
         }
     }
 
-    //当pager发生变化时调用
-    public void Pagerchange(){
-        statisticsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                // pagePosition = position;
-                switch (position) {
-                    case 0: {
+    @Override
+    public void log(int STATUS) {
 
-                        break;
-                    }
-                    case 1: {
-
-                        break;
-                    }
-                    default:
-                        break;
-                }
-            }
-        });
     }
 
+    @Override
+    public void register(int STATUS) {
 
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
 
     class statisticsAdapter extends FragmentStateAdapter {
 

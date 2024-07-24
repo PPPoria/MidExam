@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         this.activity = activity;
         this.context = context;
         this.itemList = itemList;
+
     }
 
     @NonNull
@@ -54,6 +56,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
         holder.itemText.setText(itemList.get(position).getItemText());
+        holder.tvdate.setText(itemList.get(position).getJobData());
+        holder.tvduring.setText(itemList.get(position).getJobDuring());
+        holder.position= holder.getAdapterPosition();
+        holder.showTaskLayout.setOnLongClickListener(v -> {
+            // 处理长按事件
+            showPopupMenu(v, position);
+            return true; // 返回 true 表示事件已被处理
+        });
     }
 
     @Override
@@ -62,19 +72,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         return itemList.size();
     }
 
-
-
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView itemText;
         public ConstraintLayout slideItem;
         public ConstraintLayout slideLayout;
         public ConstraintLayout option;
+        public ConstraintLayout showTaskLayout;
         public HorizontalScrollMenu scroll;
+
         private Button btEdit;
         private Button btDelete;
         private Button btComplete;
+        private TextView tipsdate;
+        private TextView tipsduring;
         private TextView tvdate;
         private TextView tvduring;
+        private int position;
 
         public int openState = 0;//展开状态，0为未展开，1为二者之间，2为已展开
 
@@ -84,16 +97,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
             slideItem = itemView.findViewById(R.id.slide_item);
             slideLayout = itemView.findViewById(R.id.slide_layout);
             option = itemView.findViewById(R.id.option);
+            showTaskLayout=itemView.findViewById(R.id.item_show_clayout);
             btEdit=itemView.findViewById(R.id.btForEdit);
             btDelete=itemView.findViewById(R.id.btForDelete);
             scroll=itemView.findViewById(R.id.scroll_item);
             btComplete=itemView.findViewById(R.id.bt_complete);
-            tvdate=itemText.findViewById(R.id.item_date);
-            tvduring=itemText.findViewById(R.id.item_during);
+            tvdate=itemView.findViewById(R.id.item_date);
+            tvduring=itemView.findViewById(R.id.item_during);
+            tipsdate=itemView.findViewById(R.id.item_tipsDate);
+            tipsduring=itemView.findViewById(R.id.item_tipsDuring);
 
             btEdit.setOnClickListener(this);
             btDelete.setOnClickListener(this);
             btComplete.setOnClickListener(this);
+            showTaskLayout.setOnClickListener(this);
         }
 
         public float getActionWidth(){
@@ -104,18 +121,42 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
         public void onClick(View v) {
             switch(v.getId()){
                 case R.id.btForEdit:
-                    EditJobFragment dialogFragment = new EditJobFragment();
-                    dialogFragment.setTitle("修改待办");
-                    dialogFragment.show(JobFragment.getfragmentManager(),"myDialog");
+                    JobFragment.setItemPosition(position);
+                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
                     scroll.smoothScrollTo(0,0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
                     break;
                 case R.id.btForDelete:
-                    Toast.makeText(v.getContext(), "按删除",Toast.LENGTH_LONG).show();
+                    JobFragment.deleteItem(position);
+
                     break;
                 case R.id.bt_complete:
                     Toast.makeText(v.getContext(), "启用",Toast.LENGTH_LONG).show();
                     break;
+                case R.id.item_show_clayout:
+                    JobFragment.setItemPosition(position);
+                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                    break;
             }
         }
+    }
+
+    private void showPopupMenu(View view, int position) {
+        PopupMenu popup = new PopupMenu(view.getContext(), view);
+        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_delete:
+                    JobFragment.deleteItem(position);
+                    return true;
+                case R.id.menu_edit:
+                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                    return true;
+                default:
+                    return false;
+            }
+        });
+
+        popup.show();
     }
 }
