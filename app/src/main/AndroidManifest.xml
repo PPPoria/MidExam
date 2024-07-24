@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MidExam"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.WaterSettingActivity"
+            android:exported="false" />
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
             android:name=".activity.UpdateInformationActivity"
@@ -34,9 +37,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.LineGraph"
-            android:exported="false" />
-        <activity
-            android:name=".activity.ItemActivity"
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"

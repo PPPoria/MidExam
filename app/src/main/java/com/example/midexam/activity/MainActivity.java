@@ -2,6 +2,8 @@ package com.example.midexam.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import com.example.midexam.R;
 import com.example.midexam.presenter.UserPresenter;
 
 public class MainActivity extends AppCompatActivity implements UserDataShowInterface {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,30 +28,39 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
             return insets;
         });
         getWindow().setNavigationBarColor(getColor(R.color.blue));
-        UserPresenter.getInstance(this).initImagesPath(this);
+
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
+        userPresenter.initImagesPath(this);
+
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (!userPresenter.isLogged(MainActivity.this)) {
+                    userPresenter.resetHeadImage();
+                    userPresenter.resetBackgroundImage();
+                } else {
+                    String account = userPresenter.getAccount();
+                    String password = userPresenter.getPassword(MainActivity.this);
+                    userPresenter.requestLog(MainActivity.this, account, password);
+                }
+
                 try {
                     Thread.sleep(800);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {
-                    goToDesktopActivity();
+                    startActivity(new Intent(MainActivity.this, DesktopActivity.class));
+                    finish();
                 }
             }/////
         }).start();
     }
 
-    private void goToDesktopActivity() {
-        startActivity(new Intent(this, DesktopActivity.class));
-        finish();
-    }
-
     @Override
     public void log(int STATUS) {
-
+        if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+            Toast.makeText(this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -3,17 +3,22 @@ package com.example.midexam.presenter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Random;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -50,16 +55,40 @@ public class UserPresenter {
         return presenter;
     }
 
-    public String getAccount(Context context) {
+    //判断上次登录是否部位今天
+    //上次登录是今天，返回false；否则true。--------别搞混了
+    public boolean isNextDay(Context context) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
-        return sp.getString("account", "null");
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
+
+        String date = sp.getString("date", null);
+        Calendar calendar = Calendar.getInstance();
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        String tempDate = month + "月" + day + "日";
+
+        if (date == null) {//判读是否未app安装后首次启动，且必须先判断date是否为空，不然的话会导致空指针错误
+            date = tempDate;
+            ed.putString("date", date);
+            ed.commit();
+            return true;
+        } else if (!date.equals(tempDate)) {//判断是否隔日打开app，如果是则更新luckyValue
+            date = tempDate;
+            ed.putString("date", date);
+            ed.commit();
+            return true;
+        } else return false;
     }
 
-    public void changeName(String newName){
+    public String getAccount() {
+        return userData.getAccount();
+    }
+
+    public void changeUserName(String newName) {
         userData.setName(newName);
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return userData.getName();
     }
 
@@ -67,6 +96,7 @@ public class UserPresenter {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
         ed.putString("account", account);
+        ed.commit();
     }
 
     public String getPassword(Context context) {
@@ -78,8 +108,10 @@ public class UserPresenter {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
         ed.putString("password", password);
+        ed.commit();
     }
 
+    //获取登录状态，已登录则返回true
     public boolean isLogged(Context context) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         return sp.getBoolean("isLogged", false);
@@ -89,9 +121,23 @@ public class UserPresenter {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
         ed.putBoolean("isLogged", isLogged);
+        ed.commit();
     }
 
-    //获取登录状态，并通过STATUS状态码调用UserDataShowInterface实现类的函数
+    //获取登录状态，并通过STATUS状态码调用UserDataShowInterface实现类的log(int STATUS)方法
+    /*
+    TODO 推荐UserPresenter.getInstance(this).requestLog(mContext, account, password)
+
+    TODO **如果存在需要连续使用UserPresenter内的方法的情况（即可能需要多次使用且确保其他实现类或方法此时不会使用的情况），
+    TODO **允许单独获取UserPresenter实例mUserPresenter，以实现mUserPresenter.requestLog(account, password)
+    TODO **完成业务后，应该销毁mPresenter，禁止跨方法复用
+
+    TODO STATUS有四种 使用时应该在实现类的对应方法里根据STATUS做出相应处理以提醒用户
+    STATUS_ACCOUNT_NOT_EXIST--------账号不存在
+    STATUS_PASSWORD_INCORRECT--------账号存在但密码不匹配
+    STATUS_SUCCESS--------登录成功
+    STATUS_NO_INTERNET--------无网络，请求失败
+     */
     public void requestLog(Context context, String account, String password) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -127,7 +173,15 @@ public class UserPresenter {
         });
     }
 
-    //获取注册状态，并通过STATUS状态码回调UserDataShowInterface的函数
+    //获取注册状态，并通过STATUS状态码调用UserDataShowInterface实现类的register(int STATUS)方法
+    /*
+    TODO STATUS有五种
+    STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE--------格式错误，账号密码小于八位
+    STATUS_PASSWORDS_INCONSISTENT--------两次输入的密码不一致
+    STATUS_ACCOUNT_ALREADY_EXIST--------账号已存在
+    STATUS_SUCCESS--------成功
+    STATUS_NO_INTERNET--------无网络
+     */
     public void requestRegister(Context context, String account, String password, String passwordAgain) {
         if (account.length() < 8 || password.length() < 8 || passwordAgain.length() < 8) {
             activity.register(STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE);
@@ -169,7 +223,13 @@ public class UserPresenter {
         });
     }
 
-    //更新图片
+    //获取更新图片状态，并通过STATUS状态码调用UserDataShowInterface实现类的updateUserImage(int STATUS)方法
+    /*
+    TODO STATUS有三种
+    STATUS_UPDATE_ERROR--------未知错误
+    STATUS_SUCCESS--------成功
+    STATUS_NO_INTERNET--------无网络
+     */
     public void updateUserImage(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -208,7 +268,13 @@ public class UserPresenter {
         });
     }
 
-    //更新数据
+    //获取更新数据状态，并通过STATUS状态码调用UserDataShowInterface实现类的updateUserData(int STATUS)方法
+    /*
+    TODO STATUS有三种
+    STATUS_UPDATE_ERROR--------未知错误
+    STATUS_SUCCESS--------成功
+    STATUS_NO_INTERNET--------无网络
+     */
     public void updateUserData(Context context) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -245,11 +311,65 @@ public class UserPresenter {
         backgroundImagePath = context.getFilesDir().getAbsolutePath() + "/backgroundImage.jpg";
     }
 
+    //获取头像的文件路径
     public String getHeadImagePath() {
         return headImagePath;
     }
 
+    //获取背景图片的文件路径
     public String getBackgroundImagePath() {
         return backgroundImagePath;
+    }
+
+    //重置图片,谨慎使用
+    public void resetHeadImage() {
+        File image = new File(headImagePath);
+        if (!image.exists())
+            try {
+                image.createNewFile();
+            } catch (IOException e) {
+            }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(image);
+            fos.write(new byte[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "焯！");
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    //重置图片,谨慎使用
+    public void resetBackgroundImage() {
+        File image = new File(backgroundImagePath);
+        if (!image.exists())
+            try {
+                image.createNewFile();
+            } catch (IOException e) {
+            }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(image);
+            fos.write(new byte[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "焯！");
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 }

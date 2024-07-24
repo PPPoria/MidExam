@@ -15,4 +15,9 @@ public class UserObserver {
         observedViewList.add(observedView);
         return observer;
     }
+
+    public void updateObservedViews() {
+        for (UserDataShowInterface view : observedViewList)
+            view.receiveUpdate();
+    }
 }
