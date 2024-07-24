@@ -16,7 +16,10 @@
     <color name="macaroon_green">#D9E8DB</color>
 
     <color name="blue">#2983bb</color>
+    <color name="blue_transparent40">#662983BB</color>
     <color name="shadow_blue">#6bbef2</color>
+    <color name="shadow_blue_transparent40">#666BBEF2</color>
+    <color name="shadow_blue_transparent25">#BF6BBEF2</color>
 
 
 </resources>

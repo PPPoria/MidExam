@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements UserDataShowI
         else if (STATUS == UserPresenter.STATUS_PASSWORDS_INCONSISTENT)
             Toast.makeText(this, "两次输入的密码不一致", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE)
-            Toast.makeText(this, "账号或密码必须大于八位", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "账号或密码必须不小于八位", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Log.d(TAG, "registerSuccess");
             Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
