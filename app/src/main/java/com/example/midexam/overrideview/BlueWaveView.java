@@ -60,13 +60,13 @@ public class BlueWaveView extends View {
 
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a+200);
+                path.moveTo(-(4 * lambdaH) + step, a+300);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
                 }
                 path.rLineTo(0, 1200);
-                path.lineTo(-(4 * lambdaH) + step, 1200 + a+200);
+                path.lineTo(-(4 * lambdaH) + step, 1200 + a+300);
                 path.close();
 
                 invalidate();

@@ -34,5 +34,13 @@ public interface Api {
 
     @Multipart
     @POST("user/image")
-    Call<UserData> updateImage(@Header("token") String token,@Part("account") RequestBody body, @Part MultipartBody.Part head, @Part MultipartBody.Part background);
+    Call<UserData> updateImage(@Header("token") String token, @Part("account") RequestBody body, @Part MultipartBody.Part head, @Part MultipartBody.Part background);
+
+    @FormUrlEncoded
+    @POST("user/heart")
+    Call<UserData> heart(@Header("token") String token, @Field("account") String account);
+
+    @FormUrlEncoded
+    @POST("user/weather")
+    Call<UserData> weather(@Field("weather") int weather);
 }

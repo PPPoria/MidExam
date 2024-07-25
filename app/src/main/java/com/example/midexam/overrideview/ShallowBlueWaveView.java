@@ -14,7 +14,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class ShadowBlueWaveView extends View {
+public class ShallowBlueWaveView extends View {
     private static final String TAG = "ShadowBlueWaveView";
     private Paint clearPaint;
     private Path path;
@@ -26,7 +26,7 @@ public class ShadowBlueWaveView extends View {
     private float lambdaH = 140f;
     private float lambdaQ = lambdaH / 2;
 
-    public ShadowBlueWaveView(Context context) {
+    public ShallowBlueWaveView(Context context) {
         super(context);
         init();
     }
@@ -61,13 +61,13 @@ public class ShadowBlueWaveView extends View {
 
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a + 200);
+                path.moveTo(-(4 * lambdaH) + step, a + 300);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
                 }
                 path.rLineTo(0, 600);
-                path.lineTo(-(4 * lambdaH) + step, 600 + a + 200);
+                path.lineTo(-(4 * lambdaH) + step, 600 + a + 300);
                 path.close();
 
                 invalidate();
@@ -94,17 +94,17 @@ public class ShadowBlueWaveView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    public ShadowBlueWaveView(Context context, @Nullable AttributeSet attrs) {
+    public ShallowBlueWaveView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ShadowBlueWaveView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ShallowBlueWaveView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public ShadowBlueWaveView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ShallowBlueWaveView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }

@@ -106,7 +106,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="20dp"
-            android:backgroundTint="@color/shadow_blue"
+            android:backgroundTint="@color/shallow_blue"
             android:text="登录"
             android:textColor="@color/white"
             android:textSize="15sp"

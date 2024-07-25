@@ -34,9 +34,13 @@ public class UserData {
     private List<String> waterToday;
     private List<String> waterPerDay;
     private List<String> waterPerMonth;
+    private List<String> waterToday;
     private List<String> jobs;
     private List<String> finishJobs;
     private int focusSum;
+
+    //TODO 天气 晴天0，多云1，阴天2，下雨3
+    private int weather;
 
     public String getMsg() {
         return msg;
@@ -156,5 +160,13 @@ public class UserData {
 
     public void setFocusSum(int focusSum) {
         this.focusSum = focusSum;
+    }
+
+    public int getWeather() {
+        return weather;
+    }
+
+    public void setWeather(int weather) {
+        this.weather = weather;
     }
 }

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/wave_vertical"
+    android:background="@color/grey"
     tools:context=".activity.DesktopActivity">
 
     <androidx.viewpager2.widget.ViewPager2
@@ -25,7 +25,7 @@
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/square_all"
-        android:backgroundTint="@color/shadow_blue"
+        android:backgroundTint="@color/shallow_blue"
         android:translationZ="2dp"
         app:layout_constraintBottom_toBottomOf="@+id/pages_container"
         app:layout_constraintEnd_toEndOf="parent"
