@@ -55,7 +55,7 @@ public class UserPresenter {
         return presenter;
     }
 
-    //判断上次登录是否部位今天
+    //判断上次登录是否为今天
     //上次登录是今天，返回false；否则true。--------别搞混了
     public boolean isNextDay(Context context) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);

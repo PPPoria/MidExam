@@ -1,17 +1,17 @@
 package com.example.midexam.fragment;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.midexam.R;
-import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.adapter.ItemAdapter;
-import com.example.midexam.helper.ItemTouchCallBack;
+import com.example.midexam.adapter.ItemSelectedAdapter;
 import com.example.midexam.model.ItemData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class JobFragment extends Fragment implements View.OnClickListener {
     Button addJob;
+    Button multipleSelect;
+    Button multipleDelete;
+    Button multipleCancel;
     static RecyclerView jobContent;
     TextView jobGreeting;
     static EditJobFragment editJobFragment;
@@ -39,9 +42,11 @@ public class JobFragment extends Fragment implements View.OnClickListener {
     private static List<ItemData> jobList = new ArrayList<>();
     private static FragmentManager fragmentManager;
     private ItemAdapter itemAdapter;
+    private ItemSelectedAdapter itemSelectedAdapter;
 
     static int itemPosition=0;
     static Activity activity;
+    static List<Integer> deleteList;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -89,30 +94,55 @@ public class JobFragment extends Fragment implements View.OnClickListener {
         jobContent=v.findViewById(R.id.job_content);
         addJob=v.findViewById(R.id.add_job);
         jobGreeting =v.findViewById(R.id.greeting);
+        multipleSelect=v.findViewById(R.id.bt_mutipleSelect);
+        multipleDelete=v.findViewById(R.id.bt_mutipleSelect_delete);
+        multipleCancel=v.findViewById(R.id.bt_mutipleSelect_cancel);
 
         activity=getActivity();
         fragmentManager= getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
         editJobFragment =new EditJobFragment();
         timePickFragment=new TimePickFragment();
+        deleteList=new ArrayList<>();
 
         editJobFragment.setJobFragment(this);//设置说明这个碎片所在的碎片位置
 
         addJob.setOnClickListener(this);
+        multipleSelect.setOnClickListener(this);
+        multipleDelete.setOnClickListener(this);
+        multipleCancel.setOnClickListener(this);
 
+        multipleDelete.setVisibility(View.GONE);
+        multipleCancel.setVisibility(View.GONE);
     }
 
     private void initNewsListView() {
+        jobList.add(new ItemData("1","1","b"));
+        jobList.add(new ItemData("2","c","d"));
+        jobList.add(new ItemData("3","1","b"));
+        jobList.add(new ItemData("4","c","d"));
+        jobList.add(new ItemData("5","1","b"));
+        jobList.add(new ItemData("6","c","d"));
+        jobList.add(new ItemData("7","1","b"));
+        jobList.add(new ItemData("8","c","d"));
+        jobList.add(new ItemData("9","1","b"));
+        jobList.add(new ItemData("10","c","d"));
+        jobList.add(new ItemData("11","1","b"));
+        jobList.add(new ItemData("12","c","d"));
+        jobList.add(new ItemData("13","1","b"));
+        jobList.add(new ItemData("14","c","d"));
+        jobList.add(new ItemData("15","1","b"));
+        jobList.add(new ItemData("16","c","d"));
+        jobList.add(new ItemData("17","1","b"));
+        jobList.add(new ItemData("18","c","d"));
+        jobList.add(new ItemData("19","1","b"));
+        jobList.add(new ItemData("20","c","d"));
+
+
         itemAdapter=new ItemAdapter(getActivity(),getActivity(), jobList);
+        itemSelectedAdapter=new ItemSelectedAdapter(getActivity(),getActivity(), jobList);
         jobContent.setLayoutManager(new LinearLayoutManager(getActivity()));
         jobContent.setAdapter(itemAdapter);
 
-
-        /*ItemTouchHelper.Callback callback = new ItemTouchCallBack(0,0,itemAdapter);
-
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(jobContent);
-*/
         updataList();
     }
 
@@ -135,6 +165,26 @@ public class JobFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()){
             case R.id.add_job:
                 switchDialog(JobFragment.ADD_JOB);
+                break;
+            case R.id.bt_mutipleSelect:
+                addJob.setVisibility(View.GONE);
+                multipleDelete.setVisibility(View.VISIBLE);
+                multipleCancel.setVisibility(View.VISIBLE);
+                jobContent.setAdapter(itemSelectedAdapter);
+                updataList();
+                break;
+            case R.id.bt_mutipleSelect_delete:
+                deleteByList(itemSelectedAdapter.getSelectedItems());
+                addJob.setVisibility(View.VISIBLE);
+                multipleDelete.setVisibility(View.GONE);
+                multipleCancel.setVisibility(View.GONE);
+          //      Toast.makeText(getContext(),"多选删除",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.bt_mutipleSelect_cancel:
+                addJob.setVisibility(View.VISIBLE);
+                multipleDelete.setVisibility(View.INVISIBLE);
+                multipleCancel.setVisibility(View.INVISIBLE);
+                jobContent.setAdapter(itemAdapter);
                 break;
             default:
                 break;
@@ -194,4 +244,13 @@ public class JobFragment extends Fragment implements View.OnClickListener {
         updataList();
         Toast.makeText(jobContent.getContext(), "已删除",Toast.LENGTH_LONG).show();
     }
+    private void deleteByList(List<Integer> deleteList){
+        Collections.sort(deleteList, Collections.reverseOrder());
+        Log.i("this",String.valueOf(deleteList));
+        for (int i = 0; i < deleteList.size(); i++) {
+            deleteItem(deleteList.get(i));
+        }
+        deleteList.clear();
+    }
+
 }

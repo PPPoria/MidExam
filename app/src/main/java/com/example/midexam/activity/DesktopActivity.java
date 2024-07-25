@@ -19,6 +19,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
+import com.example.midexam.adapter.ItemAdapter;
 import com.example.midexam.fragment.EditJobFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
@@ -40,7 +41,11 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     private Fragment waterPage;
     private Fragment statisticsPage;
     private Fragment personPage;
-    private static Fragment editJobFragment;
+    /*private static Fragment editJobFragment;*/
+
+    public static ViewPager2 getPagesContainer() {
+        return pagesContainer;
+    }
 
     private ConstraintLayout navigationBar;
     private ConstraintLayout jobButton;
@@ -126,7 +131,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         jobPage = new JobFragment();
         statisticsPage = new StatisticsFragment();
         personPage = new PersonFragment();
-        editJobFragment=new EditJobFragment();
+        /*editJobFragment=new EditJobFragment();*/
         pages.add(waterPage);
         pages.add(jobPage);
         pages.add(statisticsPage);
@@ -185,27 +190,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         return UserDataShowInterface.super.registerObserver(observedView);
     }
 
-  /*  public static void replaceFragment(int which){
-       if(which==0){
-           for (int i = 0; i < pages.size(); i++) {
-               if(pages.get(i).equals(editJobFragment)){
-                   pages.set(i,jobPage);
-                    pagesContainer.setAdapter(adapter);
-                    pagesContainer.setCurrentItem(1);
-                   break;
-               }
-           }
-       }else if(which==1){
-           for (int i = 0; i < pages.size(); i++) {
-               if(pages.get(i).equals(jobPage)){
-                   pages.set(i,editJobFragment);
-                   pagesContainer.setAdapter(adapter);
-                   pagesContainer.setCurrentItem(1);
-                   break;
-               }
-           }
-       }
-    }*/
+
 
     class DesktopAdapter extends FragmentStateAdapter {
 

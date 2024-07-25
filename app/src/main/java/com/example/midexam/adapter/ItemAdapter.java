@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,10 +19,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
 import com.example.midexam.activity.DesktopActivity;
-import com.example.midexam.activity.ItemActivity;
+
 import com.example.midexam.fragment.EditJobFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.model.ItemData;
@@ -30,7 +32,7 @@ import com.example.midexam.overrideview.HorizontalScrollMenu;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
     private static final String TAG = "ItemAdapter";
 
@@ -39,11 +41,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
     private List<ItemData> itemList;
 
 
+
     public ItemAdapter(Activity activity, Context context, List<ItemData> itemList) {
         this.activity = activity;
         this.context = context;
         this.itemList = itemList;
-
     }
 
     @NonNull
@@ -55,6 +57,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ItemHolder holder, int position) {
+
         holder.itemText.setText(itemList.get(position).getItemText());
         holder.tvdate.setText(itemList.get(position).getJobData());
         holder.tvduring.setText(itemList.get(position).getJobDuring());
@@ -82,7 +85,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
         private Button btEdit;
         private Button btDelete;
-        private Button btComplete;
         private TextView tipsdate;
         private TextView tipsduring;
         private TextView tvdate;
@@ -101,7 +103,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
             btEdit=itemView.findViewById(R.id.btForEdit);
             btDelete=itemView.findViewById(R.id.btForDelete);
             scroll=itemView.findViewById(R.id.scroll_item);
-            btComplete=itemView.findViewById(R.id.bt_complete);
+
             tvdate=itemView.findViewById(R.id.item_date);
             tvduring=itemView.findViewById(R.id.item_during);
             tipsdate=itemView.findViewById(R.id.item_tipsDate);
@@ -109,7 +111,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
             btEdit.setOnClickListener(this);
             btDelete.setOnClickListener(this);
-            btComplete.setOnClickListener(this);
+
             showTaskLayout.setOnClickListener(this);
         }
 
@@ -128,9 +130,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
                 case R.id.btForDelete:
                     JobFragment.deleteItem(position);
 
-                    break;
-                case R.id.bt_complete:
-                    Toast.makeText(v.getContext(), "启用",Toast.LENGTH_LONG).show();
                     break;
                 case R.id.item_show_clayout:
                     JobFragment.setItemPosition(position);
@@ -156,7 +155,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
                     return false;
             }
         });
-
         popup.show();
     }
 }
