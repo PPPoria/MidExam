@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.midexam.R;
+import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.model.UserData;
+import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,11 +27,14 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
-public class StatisticWaterPageFragment extends Fragment implements View.OnClickListener{
+public class StatisticWaterPageFragment extends Fragment implements UserDataShowInterface {
 
     Button btDay;
     Button btMonth;
@@ -36,6 +43,7 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
     BarChart WaterChart;
     TextView tvTitle;
     TextView tipsNoData;
+    UserPresenter userPresenter=UserPresenter.getInstance(this);
 
     List<BarEntry> dayData;
     List<BarEntry> monthData;
@@ -81,80 +89,104 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //增添数据
-        dayData= StatisticWaterPageFragment.dataManager.getInstance().getDayDataList();
-        dayData.add(new BarEntry(1,200));
-        dayData.add(new BarEntry(2,500));
-        dayData.add(new BarEntry(3,6000));
-        dayData.add(new BarEntry(4,15000));
+        if (userPresenter.isLogged(getContext())) {
+            //增添数据
+            dayData = dataManager.getInstance().getDayDataList();
+            monthData = dataManager.getInstance().getMonthDataList();
+            yearData = dataManager.getInstance().getYearDataList();
+            dayDate = new ArrayList<>();
+            monthDate = new ArrayList<>();
+            yearDate = new ArrayList<>();//这几个要在上面以避免空指针，否则就老老实实找用法加判断
 
-        dayDate=new ArrayList<>();
-        dayDate.add("7月22日");
-        dayDate.add("7月23日");
-        dayDate.add("7月24日");
-        dayDate.add("7月25日");
-
-        initView(view);
-        setDataInBar(WaterChart,dayData,dayDate,"日饮水量");
+            initView(view);
+            initBarData();
+            setDataInBar(WaterChart, dayData, dayDate, "日饮水量");
+        }
     }
 
-    public void initView(View v){
+    public void initView(View v) {
 
-        btDay=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_day);
-        btMonth=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_month);
-        btYear=v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_year);
-        WaterChart =v.findViewById(R.id.bar_1).findViewById(R.id.bar_chart);
-        tvTitle=v.findViewById(R.id.bar_1).findViewById(R.id.title);
-        tipsNoData=v.findViewById(R.id.tip_no_data);
-
-        btDay.setOnClickListener(this);
-        btMonth.setOnClickListener(this);
-        btYear.setOnClickListener(this);
-
+        btDay = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_day);
+        btMonth = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_month);
+        btYear = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_year);
+        WaterChart = v.findViewById(R.id.bar_1).findViewById(R.id.bar_chart);
+        tvTitle = v.findViewById(R.id.bar_1).findViewById(R.id.title);
+        tipsNoData = v.findViewById(R.id.tip_no_data);
+        initListener();
+        initMonthDate();
+        initYearDate();
     }
 
-    public void setDataInBar(BarChart barChart, List<BarEntry> dataList, List<String> dateList, String title){
+    private void initListener() {
+        btDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDataInBar(WaterChart, dayData, dayDate, "日饮水量");
+            }
+        });
+        btMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDataInBar(WaterChart, monthData, monthDate, "月饮水量");
+            }
+        });
+        btYear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDataInBar(WaterChart, yearData, yearDate, "年饮水量");
+            }
+        });
+    }
 
-        if(dataList==null||dataList.size()==0){
+    public void setDataInBar(BarChart barChart, List<BarEntry> dataList, List<String> dateList, String title) {
+
+        if (dataList == null || dataList.size() == 0) {
             barChart.setVisibility(View.INVISIBLE);
             tvTitle.setVisibility(View.INVISIBLE);
             tipsNoData.setVisibility(View.VISIBLE);
-        }else{
-            BarDataSet dataSet=new BarDataSet(dataList,null);
-            barChart.getLegend().setEnabled(false);
-            dataSet.setColors(Color.parseColor("#ADD8E6"));//设置柱子多种颜色  循环使用
-            dataSet.setBarBorderColor(Color.WHITE);//柱子边框颜色
-            dataSet.setBarBorderWidth(1);       //柱子边框厚度
-            dataSet.setBarShadowColor(Color.RED);
-            dataSet.setHighlightEnabled(false);//选中柱子是否高亮显示  默认为true
-            barChart.getDescription().setEnabled(false);
+        } else {
+
+            BarDataSet dataSet = initDataSet(barChart, dataList);
+
             //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
-            BarData barData=new BarData(dataSet);
-            initAxis(barChart,dateList);
+            BarData barData = new BarData(dataSet);
+
+
+            initAxis(barChart, dateList);
+
+
             barChart.setData(barData);
+            barChart.invalidate();//更新视图
+
             barChart.setVisibility(View.VISIBLE);
             tvTitle.setVisibility(View.VISIBLE);
+            tvTitle.setText(title);
             tipsNoData.setVisibility(View.INVISIBLE);
         }
 
 
     }
 
-
-    public void initAxis(BarChart barChart,List<String> dateList){
-        initXAxis(barChart,dateList);
-        initYAxis(barChart);
+    @NonNull
+    private static BarDataSet initDataSet(BarChart barChart, List<BarEntry> dataList) {
+        BarDataSet dataSet = new BarDataSet(dataList, null);
+        barChart.getLegend().setEnabled(false);
+        dataSet.setColors(Color.parseColor("#ADD8E6"));//设置柱子多种颜色  循环使用
+        dataSet.setBarBorderColor(Color.WHITE);//柱子边框颜色
+        dataSet.setBarBorderWidth(1);       //柱子边框厚度
+        dataSet.setBarShadowColor(Color.RED);
+        dataSet.setBarBorderWidth(0.5f);
+        dataSet.setHighlightEnabled(false);//选中柱子是否高亮显示  默认为true
+        barChart.getDescription().setEnabled(false);
+        return dataSet;
     }
-    public void initXAxis(BarChart barChart,List<String> dateList){
-        int labelcount=6;
-        XAxis xAxis=barChart.getXAxis();
+
+    public void initXAxis(BarChart barChart, List<String> dateList) {
+
+        XAxis xAxis = barChart.getXAxis();
 
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setLabelCount(labelcount,false);
 
-        //坐标范围
-        xAxis.setAxisMaximum(labelcount);
-        xAxis.setAxisMinimum(0);
         xAxis.setDrawGridLines(false);//禁用竖线
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -166,38 +198,104 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
                     return dateList.get((int)(value-1))/*String.valueOf(value)*/;
                 }
                 // 如果索引无效，可以返回一个默认字符串或空字符串
-                return /*String.valueOf(value)*/"";
+                return "";
             }
         });
     }
 
-    public void initYAxis(BarChart barChart){
-        YAxis yAxis=barChart.getAxisLeft();
+    public void initAxis(BarChart barChart, List<String> dateList) {
+        initXAxis(barChart, dateList);
+        initYAxis(barChart);
+    }
+
+    public void initYAxis(BarChart barChart) {
+        YAxis yAxis = barChart.getAxisLeft();
         yAxis.setAxisMinimum(0);
         yAxis.setDrawGridLines(false);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.bt_day:
-                setDataInBar(WaterChart,dayData,dayDate,"日饮水量");
-                break;
 
-            case R.id.bt_month:
-                setDataInBar(WaterChart,monthData,dayDate,"月饮水量");
-                break;
+    public void initMonthDate() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        // 创建一个LocalDate实例，表示该月的第一天
+        LocalDate firstDayOfMonth = LocalDate.of(year, Month.of(month), 1);
 
-            case R.id.bt_year:
-                setDataInBar(WaterChart,monthData,dayDate,"年饮水量");
-                break;
+        // 获取该月的最后一天
+        LocalDate lastDayOfMonth = firstDayOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
 
-            default:
-                break;
+        // 打印该月的每一天
+        for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDayOfMonth); date = date.plusDays(1)) {
+            int everyDay = date.getDayOfMonth();
+            monthDate.add( String.valueOf(everyDay) + "日");
+            Log.d("this", String.valueOf(everyDay) + "日");
+        }
+
+
+    }
+
+    public void initYearDate() {
+        for (int i = 1; i < 13; i++) {
+            yearDate.add(String.valueOf(i) + "月");
         }
     }
 
-    static class dataManager{
+    public void initBarData(){
+
+        UserData userData=userPresenter.userData;
+        List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+        List<String> month=userData.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
+        List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
+
+        for (int i = 0; i < day.size(); i++) {
+            String hour=day.get(i).substring(0,2);
+            String min=day.get(i).substring(2,4);
+            String water=day.get(i).substring(4);
+            int volumn=Integer.valueOf(water);
+            dayData.add(new BarEntry(i,volumn));
+            dayDate.add(hour+":"+min);
+        }
+        for (int i = 0; i < month.size(); i++) {
+            String Month=day.get(i).substring(0,2);
+            String Day=day.get(i).substring(2,4);
+            String water=day.get(i).substring(4);
+            int volumn=Integer.valueOf(water);
+            monthData.add(new BarEntry(Integer.valueOf(Day),volumn));
+
+        }
+        for (int i = 0; i < year.size(); i++) {
+            String Month=day.get(i).substring(0,2);
+            String water=day.get(i).substring(4);
+            int volumn=Integer.valueOf(water);
+            monthData.add(new BarEntry(Integer.valueOf(Month),volumn));
+        }
+
+
+    }
+
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
+
+    static class dataManager {
         List<BarEntry> dayDataList;
         List<BarEntry> monthDataList;
         List<BarEntry> yearDataList;
@@ -209,15 +307,16 @@ public class StatisticWaterPageFragment extends Fragment implements View.OnClick
         }
 
         //2.静态内部类初始化
-        private static final class dataManagerHolder{
-            private static final StatisticWaterPageFragment.dataManager INSTANCE=new StatisticWaterPageFragment.dataManager(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        private static final class dataManagerHolder {
+            private static final StatisticWaterPageFragment.dataManager INSTANCE = new StatisticWaterPageFragment.dataManager(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
+
         //3.对外提供静态类方法获取该对象
-        public static StatisticWaterPageFragment.dataManager getInstance(){
+        public static StatisticWaterPageFragment.dataManager getInstance() {
             return StatisticWaterPageFragment.dataManager.dataManagerHolder.INSTANCE;
         }
 
-        public List<BarEntry> getDayDataList(){
+        public List<BarEntry> getDayDataList() {
             return dayDataList;
         }
 

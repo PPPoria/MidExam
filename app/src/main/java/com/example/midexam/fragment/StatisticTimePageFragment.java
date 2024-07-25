@@ -20,8 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.midexam.R;
+import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.model.UserData;
+import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -43,13 +47,14 @@ import java.util.List;
  * Use the {@link StatisticTimePageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StatisticTimePageFragment extends Fragment implements View.OnClickListener{
+public class StatisticTimePageFragment extends Fragment implements View.OnClickListener,UserDataShowInterface {
 
     Button btDay;
     Button btMonth;
     Button btYear;
     Description description;
     LinearLayout legendLinerLayout;
+    UserPresenter userPresenter=UserPresenter.getInstance(this);
 
     PieChart mPieChart;
     ScrollView scrollView;
@@ -62,6 +67,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     List<PieEntry> pieEntriesMonth;
     List<PieEntry> pieEntriesYear;
     List<String> mColorPie;
+
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
@@ -98,19 +105,19 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-         mColorPie = getColorPie();
 
-         initview(view);
-         init_Pie();
-         pieEntriesDay.add(new PieEntry(1, "读书"));
-         pieEntriesDay.add(new PieEntry(2f, "吃饭一二三四五六七八九"));
-         pieEntriesDay.add(new PieEntry(3, "睡觉"));
-         pieEntriesDay.add(new PieEntry(4, "好"));
+        if (userPresenter.isLogged(getContext())) {
+            pieEntriesDay = dataManager.getInstance().getDayDataList();
+            pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+            pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
+            mColorPie = getColorPie();
+            initview(view);
+            init_Pie();
+            initPieData();
+            showChart(pieEntriesDay);
+        }
 
-         List<PieEntry> testList=new ArrayList<>();
-         testList.add(new PieEntry(12,"睡觉"));
-         addData(testList,pieEntriesDay);
-         showChart(pieEntriesDay);
+
     }
 
     private void initview(View view) {
@@ -126,10 +133,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         btDay.setOnClickListener(this);
         btMonth.setOnClickListener(this);
         btYear.setOnClickListener(this);
-
-        pieEntriesDay = dataManager.getInstance().getDayDataList();
-        pieEntriesMonth=dataManager.getInstance().getMonthDataList();
-        pieEntriesYear=dataManager.getInstance().getYearDataList();
     }
 //饼图初始化图像
     private void init_Pie() {
@@ -328,7 +331,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
           case R.id.bt_day:
-
                 pieEntriesDay=dataManager.getInstance().getDayDataList();
                 showChart(pieEntriesDay);
 
@@ -341,7 +343,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 break;
 
             case R.id.bt_year:
-                pieEntriesMonth.add(new PieEntry(1.0f,"打搅"));
+                pieEntriesYear=dataManager.getInstance().getMonthDataList();
+                showChart(pieEntriesYear);
                 break;
 
             default:
@@ -370,7 +373,57 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         // 如果需要，你还可以为popupView中的元素设置监听器等
     }
 
-//饼图点击
+    private void initPieData(){
+        /*"finishJobs": ["x","y"]
+"072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
+  */
+        UserData userData=userPresenter.userData;
+        List<String> finishJobs=userData.getFinishJobs();
+        List<PieEntry> year=new ArrayList<>();//这里可以优化内存
+        List<PieEntry> month=new ArrayList<>();
+        List<PieEntry> day=new ArrayList<>();
+        for (int i = 0; i < finishJobs.size(); i++) {
+            String Month=finishJobs.get(i).substring(0,2);
+            String Day=finishJobs.get(i).substring(2,4);
+            String duringHour=finishJobs.get(i).substring(8,10);
+            String duringmin=finishJobs.get(i).substring(10,12);
+            String eventName=finishJobs.get(i).substring(12);
+            int duringTime=Integer.valueOf(duringHour)*60+Integer.valueOf(duringmin);
+
+            PieEntry YearPie=new PieEntry(duringTime,Month+"月");
+            PieEntry MonthPie=new PieEntry(duringTime,Day+"日");
+            PieEntry DayPie=new PieEntry(duringTime,eventName);
+
+            year.add(YearPie);
+            month.add(MonthPie);
+            day.add(DayPie);
+        }
+        addData(day,pieEntriesDay);
+        addData(month,pieEntriesMonth);
+        addData(year,pieEntriesYear);
+    }
+
+    @Override
+    public void log(int STATUS) {
+
+    }
+
+    @Override
+    public void register(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserData(int STATUS) {
+
+    }
+
+    @Override
+    public void updateUserImage(int STATUS) {
+
+    }
+
+    //饼图点击
     class MyMarkerView extends MarkerView {//设置点击显示
 
         private TextView tvContent;

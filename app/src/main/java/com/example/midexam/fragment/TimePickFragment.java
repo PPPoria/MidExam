@@ -8,12 +8,10 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -21,8 +19,14 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.midexam.R;
+import com.example.midexam.helper.UpDownSwitch;
+import com.example.midexam.model.ItemData;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import cn.hutool.core.date.DateUtil;
 
 
 public class TimePickFragment extends DialogFragment implements View.OnClickListener {
@@ -33,7 +37,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     TextView title;
     TimePicker timePicker;
     DatePicker datePicker;
-
+    JobFragment jbf;
     String sYear;
     String sMonth;
     String sDay;
@@ -85,7 +89,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         long minDate = calendar.getTimeInMillis(); // 转换为毫秒数
 
 // 设置最大日期为今年年底
-        calendar.set(Calendar.YEAR, 9999); //
+        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR)); //
         calendar.set(Calendar.MONTH, Calendar.DECEMBER); //
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // 获取该月的最后一天
         long maxDate = calendar.getTimeInMillis(); // 转换为毫秒数
@@ -101,7 +105,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 // 在这里处理时间变化
                 // 例如，更新 UI 或将时间保存到某个变量中
-                sHour=String.valueOf(hourOfDay);
+                sHour=formatHour(hourOfDay);
                 sMin=formatMin(minute);
                 time=sHour+":"+sMin;
                 Log.d("时间",String.valueOf(hourOfDay+"+"+minute));
@@ -114,8 +118,8 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
                     // 处理日期改变事件(month比原来的小一个月)
                     int Month=month+1;
                     sYear=String.valueOf(year);
-                    sMonth=String.valueOf(Month);
-                    sDay=String.valueOf(dayOfMonth);
+                    sMonth=formatMonth(month);
+                    sDay=formatDay(dayOfMonth);
                     date=sYear+"-"+sMonth+"-"+sDay;
                     Log.d("时间",String.valueOf(year+"+"+month+"+"+dayOfMonth));
                 }
@@ -156,24 +160,24 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         String dateAndTime=null;
         int min=0;//当为一位数时处理用，没别的，即23：6转23：06
         if(date==null) {
-            sDay=String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-            sMonth=String.valueOf(calendar.get(Calendar.MONTH));
+            sDay=formatDay(calendar.get(Calendar.DAY_OF_MONTH));
+            sMonth=formatMonth(calendar.get(Calendar.MONTH));
             sYear=String.valueOf(calendar.get(Calendar.YEAR));
             date=sYear+"-"+sMonth+"-"+sDay;
         }//此时日期必有值
 
         if(time==null) {//此时时间必有值
-            sHour=String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+            sHour=formatHour(calendar.get(Calendar.HOUR_OF_DAY));
             sMin=formatMin(calendar.get(Calendar.MINUTE));
             time=sHour+":"+sMin;
-            dateAndTime=date+"  "+time;
+            dateAndTime=date+" "+time;
             Log.e("时间",dateAndTime);
             dismiss();
         }else{
             //有时间在优化时间判定
             if(judgeLegalTime(calendar)) {
                 time=sHour+":"+sMin;
-                dateAndTime=date+"  "+time;
+                dateAndTime=date+" "+time;
                 Log.e("时间",dateAndTime);
                 dismiss();
             }
@@ -184,12 +188,19 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
 
     private boolean judgeLegalTime(Calendar calendar) {
         boolean legel=true;
+        List<ItemData> tempList= jbf.getJobList().stream()
+                .collect(Collectors.toList());
+
+        tempList.remove(jbf.itemPosition);
         if(Integer.valueOf(sYear)== calendar.get(Calendar.YEAR)&& Integer.valueOf(sMonth)==(calendar.get(Calendar.MONTH)+1)&& Integer.valueOf(sDay)== calendar.get(Calendar.DAY_OF_MONTH)){
-           //时间判定
-            if(Integer.valueOf(sHour)< calendar.get(Calendar.HOUR_OF_DAY)){
-               legel=false;
-            } else if (Integer.valueOf(sHour)== calendar.get(Calendar.HOUR_OF_DAY)) {
-                if(Integer.valueOf(sMin)< calendar.get(Calendar.MINUTE)){
+            for (int i = 0; i < tempList.size(); i++) {
+                String begin= UpDownSwitch.getDateDownType(tempList.get(i).getJobData());//2024-01-01 12:12
+                String currentTime=begin+":00";//2024-01-01 12:12:00
+                long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
+                long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
+                long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMonth+":" +":00").getTime();//增添的任务开始时间戳
+                if (lStart>=beginTime&&lStart<endTime ) {
+                    Toast.makeText(getContext(),"时间冲突",Toast.LENGTH_SHORT).show();
                     legel=false;
                 }
             }
@@ -207,4 +218,39 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         }
         return minute;
     }
+
+    private String formatHour(int Hour){
+        String H=null;
+        if(Hour>=0&&Hour<=9){
+            H=String.valueOf("0"+Hour);
+        }else{
+            H=String.valueOf(Hour);
+        }
+        return H;
+    }
+
+    private String formatMonth(int Month){
+        String M=null;
+        if(Month>=0&&Month<=9){
+            M=String.valueOf("0"+Month);
+        }else{
+            M=String.valueOf(Month);
+        }
+        return M;
+    }
+
+    private String formatDay(int Day){
+        String D=null;
+        if(Day>=0&&Day<=9){
+            D=String.valueOf("0"+Day);
+        }else{
+            D=String.valueOf(Day);
+        }
+        return D;
+    }
+
+    public void setJobFragment(JobFragment jobFragment){
+        jbf=jobFragment;
+    }
+
 }

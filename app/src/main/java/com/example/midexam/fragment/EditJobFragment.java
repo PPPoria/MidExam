@@ -2,34 +2,25 @@ package com.example.midexam.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.midexam.R;
-import com.example.midexam.activity.DesktopActivity;
-import com.example.midexam.adapter.ItemAdapter;
 import com.example.midexam.model.ItemData;
-import com.example.midexam.overrideview.HorizontalScrollMenu;
-import com.github.mikephil.charting.components.XAxis;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class EditJobFragment extends DialogFragment implements View.OnClickListener {
@@ -44,7 +35,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
     TextInputEditText startTime;
     TextInputEditText duringTime;
 
-     int Type=3;//未指定类型：3
+    int Type=3;//未指定类型：3
     static String titleContain;
     static String sEventName;
     static String sStartTime;
@@ -108,11 +99,12 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
 
             case R.id.bt_confirm:
                 if(jugeDataList()){
-                    if(Type == EDIT){
+                    if(Type == EDIT){//直接数据源list
                         jbf.addItem(getItemData());
 
-                    }else if(Type==MODIFY){
-                        jbf.modify(getItemData());
+                    }else if(Type==MODIFY){//templist
+                        jbf.modify(getItemData());//这里再添加一个
+
                     }
                     dismiss();
                 }
@@ -124,7 +116,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
                 break;
         }
     }
-
+//时间判定
     private boolean jugeDataList(){
         boolean ready=false;
         List<String> data=new ArrayList<>();
@@ -135,23 +127,25 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
 
         if(eventname==null||eventname.equals("")){
             Toast.makeText(getContext(),"请输入事件名称",Toast.LENGTH_SHORT).show();
-            num++;
+
             return ready;
         }else{
             data.add(eventName.getText().toString());
             num++;
         }
+
         if(start==null||start.equals("")){
             Toast.makeText(getContext(),"请输入起始时间",Toast.LENGTH_SHORT).show();
-            num++;
+
             return ready;
         }else{
+            num++;
             data.add(startTime.getText().toString());
-            num++;
         }
+
         if(during==null||during.equals("")){
+
             Toast.makeText(getContext(),"请输入持续时间",Toast.LENGTH_SHORT).show();
-            num++;
             return ready;
         }else{
             data.add(duringTime.getText().toString());
@@ -161,12 +155,13 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
 
         return ready;
     }
+
     private ItemData getItemData(){
         String eventname=eventName.getText().toString().trim();
         String start=startTime.getText().toString().trim();
         String during=duringTime.getText().toString().trim();
         ItemData itemData=new ItemData(eventname,start,during);
-        return itemData;
+        return itemData;//自己重新封装一个传过去
     }
 
     public void setJobFragment(JobFragment jobFragment){

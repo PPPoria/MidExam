@@ -117,6 +117,7 @@ public class UserPresenter {
         return sp.getBoolean("isLogged", false);
     }
 
+    //登陆状态记录
     public void accordLoggedStatus(Context context, boolean isLogged) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor ed = sp.edit();
