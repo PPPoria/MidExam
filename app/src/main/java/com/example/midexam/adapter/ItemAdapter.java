@@ -16,7 +16,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.midexam.R;
-import com.example.midexam.activity.ItemActivity;
 import com.example.midexam.model.ItemData;
 
 import java.lang.reflect.Field;
