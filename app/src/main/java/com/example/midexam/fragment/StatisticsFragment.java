@@ -56,7 +56,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     ViewPager2 statisticsViewPager;
     ConstraintLayout layout;
     LinearLayout hidelayout;
-
+    TextView textView;
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
 
@@ -104,15 +104,14 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
-       if(userPresenter.isLogged(getContext())) {
 
-            layout.setVisibility(View.VISIBLE);
+      /* if(userPresenter.isLogged(getContext())) {
+
 
         }else{
 
-            layout.setVisibility(View.GONE);
 
-        }
+        }*/
 
     }
 
@@ -122,7 +121,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         btWaterChart=view.findViewById(R.id.bt_bar_water);
         statisticsViewPager=view.findViewById(R.id.statistics_viewpager);
         layout=view.findViewById(R.id.fs_constraint_statistics);
-
+        textView=view.findViewById(R.id.nothing);
 
         statisticTimePageFragment=new StatisticTimePageFragment();
         statisticWaterPageFragment=new StatisticWaterPageFragment();

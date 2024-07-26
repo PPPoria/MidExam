@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.model.UserData;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -35,6 +36,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
@@ -56,7 +58,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     Description description;
     LinearLayout legendLinerLayout;
     UserPresenter userPresenter=UserPresenter.getInstance(this);
-
+    UserObserver observer;
     PieChart mPieChart;
     ScrollView scrollView;
     TextView title;
@@ -110,6 +112,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         pieEntriesMonth=dataManager.getInstance().getMonthDataList();
         pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
         mColorPie = getColorPie();
+        observer=registerObserver(this);
         initview(view);
         init_Pie();
         initPieData();
@@ -133,13 +136,11 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     }
 //饼图初始化图像
     private void init_Pie() {
-        //  mPieChart.setDescription(null);//设置描述
-        mPieChart.setUsePercentValues(true);//百分比显示
+        description=null;
+        mPieChart.setDescription(description);
+        mPieChart.setUsePercentValues(true);//百分比显示，百分比重写形式在dataset
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
-        description=mPieChart.getDescription();
-        description.setText("专注图");//图例
-        description.setTextSize(10f); // 设置字体大小
         MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
         mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
         mPieChart.setEntryLabelColor(Color.BLACK);
@@ -273,7 +274,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         //设定图的细节
         iPieDataSet.setColors(colors);//图颜色
         iPieDataSet.setValueTextColors(Collections.singletonList(Color.BLACK));//图中文字的颜色,黑色给了个转换为集合才能接受
-        iPieDataSet.setValueTextSize(20);//图中文字的大小
         iPieDataSet.setSliceSpace(3);   // 每块之间的距离
         iPieDataSet.setValueLinePart1OffsetPercentage(80.f);
 
@@ -284,8 +284,14 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         iPieDataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
         iPieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
+        iPieDataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return value+"%";
+            }
+        });
 
-        iPieDataSet.setValueTextSize(20);
+        iPieDataSet.setValueTextSize(15);
         return iPieDataSet;
     }
 
@@ -339,6 +345,10 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         // PieDataSet
         iPieDataSet.setValueFormatter(new PercentFormatter());
         updataPieLegend(dataResourse, mColorPie);
+        if(dataResourse==pieEntriesDay){mPieChart.setCenterText("日专注图");}
+        else if(dataResourse==pieEntriesMonth){mPieChart.setCenterText("月专注图");}
+        else if(dataResourse==pieEntriesYear){mPieChart.setCenterText("年专注图");}
+
         mPieChart.setData(pieData);
         mPieChart.invalidate();//更新图表
     }
@@ -384,7 +394,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         TextView show=popupWindow.getContentView().findViewById(R.id.statistics_popText);
         TextView labelView=(TextView) layout.getChildAt(1);
         String label=labelView.getText().toString();
-        show.setText("活动:"+label);
+        show.setText(label);
         currentPop=popupWindow;
         // 设置PopupWindow的显示位置
         popupWindow.showAsDropDown(layout, 0, 0);
@@ -395,10 +405,15 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         /*"finishJobs": ["x","y"]
 "072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
   */
-        UserData userData=userPresenter.userData;
-        List<String> finishJobs=userData.getFinishJobs();
-       /* List<String> finishJobs=new ArrayList<>();
-        finishJobs.add("072517300145说的道理");*/
+       /* UserData userData=userPresenter.userData;
+        List<String> finishJobs=userData.getFinishJobs();*/
+        List<String> finishJobs=new ArrayList<>();
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072617300145说的道理");
+        finishJobs.add("072617300145说的道理");
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072517300145说的道理");
 
         List<PieEntry> year=new ArrayList<>();//这里可以优化内存改进
         List<PieEntry> month=new ArrayList<>();
@@ -449,6 +464,21 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     public void updateUserImage(int STATUS) {
 
     }
+
+    @Override
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
+    }
+
+    @Override
+    public void receiveUpdate() {
+        UserDataShowInterface.super.receiveUpdate();
+        init_Pie();
+        initPieData();
+        showChart(pieEntriesDay);
+        currentPieEntry=pieEntriesDay;
+    }
+
 
     //饼图点击
     class MyMarkerView extends MarkerView {//设置点击显示

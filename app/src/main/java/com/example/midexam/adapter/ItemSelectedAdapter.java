@@ -56,7 +56,7 @@ public class ItemSelectedAdapter extends RecyclerView.Adapter<ItemSelectedAdapte
         Log.d("this",String.valueOf(itemList.get(holder.getAdapterPosition()).getChosen()));
         holder.itemText.setText(itemList.get(holder.getAdapterPosition()).getItemText());
         holder.tvdate.setText(itemList.get(holder.getAdapterPosition()).getJobData());
-        holder.tvduring.setText(itemList.get(holder.getAdapterPosition()).getJobDuring());
+        holder.tvduring.setText(itemList.get(holder.getAdapterPosition()).getJobDuring()+"min");
         holder.position= holder.getAdapterPosition();
         holder.selected.setVisibility(View.VISIBLE);
         holder.selected.setChecked(false);
@@ -73,9 +73,14 @@ public class ItemSelectedAdapter extends RecyclerView.Adapter<ItemSelectedAdapte
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    mSelectedItems.put(holder.getAdapterPosition(), isChecked);
+                    if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        mSelectedItems.put(holder.getAdapterPosition(), isChecked);
+                    }
                 }else{
-
+                    if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        mSelectedItems.put(holder.getAdapterPosition(), isChecked);
+                        Log.d("this",String.valueOf(mSelectedItems));
+                    }
                 }
             }
         });
@@ -88,6 +93,7 @@ public class ItemSelectedAdapter extends RecyclerView.Adapter<ItemSelectedAdapte
                 selectedItems.add(mSelectedItems.keyAt(i));
             }
         }
+        mSelectedItems.clear();
         return selectedItems;
     }
     @Override

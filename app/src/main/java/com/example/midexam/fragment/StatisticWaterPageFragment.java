@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.model.UserData;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -46,7 +47,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     TextView tvTitle;
     TextView tipsNoData;
     UserPresenter userPresenter=UserPresenter.getInstance(this);
-
+    UserObserver observer;
     List<BarEntry> dayData;
     List<BarEntry> monthData;
     List<BarEntry> yearData;
@@ -99,6 +100,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
             dayDate = new ArrayList<>();
             monthDate = new ArrayList<>();
             yearDate = new ArrayList<>();//这几个要在上面以避免空指针，否则就老老实实找用法加判断
+            observer=registerObserver(this);
 
             initView(view);
             initBarData();
@@ -198,8 +200,12 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         xAxis.setGranularity(1f);
         xAxis.setLabelCount(dateList.size());
         xAxis.setLabelRotationAngle(-40.5f);
+
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dateList));
 
+
+
+        //xAxis.setDrawGridLines(false);
     }
 
     public void initAxis(BarChart barChart, List<String> dateList) {
@@ -254,15 +260,15 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     public void initBarData(){
 
         UserData userData=userPresenter.userData;
-       List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+   /*    List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
         List<String> month=userData.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
-        List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
-        /*List<String> day=new ArrayList<>();
+        List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。*/
+        List<String> day=new ArrayList<>();
                 List<String> month=new ArrayList<>();
                         List<String> year=new ArrayList<>();
                         day.add("1540180");
                         month.add("07255999");
-                        year.add("0751000");*/
+                        year.add("0751000");
         for (int i = 0; i < day.size(); i++) {
             String hour=day.get(i).substring(0,2);
             String min=day.get(i).substring(2,4);
@@ -288,8 +294,6 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
 
     }
-
-
     @Override
     public void log(int STATUS) {
 
@@ -313,6 +317,18 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     @Override
     public void updateUserImage(int STATUS) {
 
+    }
+
+    @Override
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
+    }
+
+    @Override
+    public void receiveUpdate() {
+        UserDataShowInterface.super.receiveUpdate();
+        initBarData();
+        setDataInBar(WaterChart, dayData, dayDate, "日饮水量");
     }
 
     static class dataManager {
