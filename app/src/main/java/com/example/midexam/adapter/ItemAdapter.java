@@ -121,20 +121,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
         @Override
         public void onClick(View v) {
-            switch(v.getId()){
-                case R.id.btForEdit:
-                    JobFragment.setItemPosition(position);
-                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
-                    scroll.smoothScrollTo(0,0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
-                    break;
-                case R.id.btForDelete:
-                    JobFragment.deleteItem(position);
-
-                    break;
-                case R.id.item_show_clayout:
-                    JobFragment.setItemPosition(position);
-                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
-                    break;
+            int id = v.getId();
+            if (id == R.id.btForEdit) {
+                JobFragment.setItemPosition(position);
+                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                scroll.smoothScrollTo(0, 0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
+            } else if (id == R.id.btForDelete) {
+                JobFragment.deleteItem(position);
+            } else if (id == R.id.item_show_clayout) {
+                JobFragment.setItemPosition(position);
+                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
             }
         }
     }
@@ -144,16 +140,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
 
         popup.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.menu_delete:
-                    JobFragment.deleteItem(position);
-                    return true;
-                case R.id.menu_edit:
-                    JobFragment.switchDialog(JobFragment.MODIFY_JOB);
-                    return true;
-                default:
-                    return false;
+            int itemId = item.getItemId();
+            if (itemId == R.id.menu_delete) {
+                JobFragment.deleteItem(position);
+                return true;
+            } else if (itemId == R.id.menu_edit) {
+                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                return true;
             }
+            return false;
         });
         popup.show();
     }
