@@ -257,7 +257,12 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
        List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
         List<String> month=userData.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
         List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
-
+        /*List<String> day=new ArrayList<>();
+                List<String> month=new ArrayList<>();
+                        List<String> year=new ArrayList<>();
+                        day.add("1540180");
+                        month.add("07255999");
+                        year.add("0751000");*/
         for (int i = 0; i < day.size(); i++) {
             String hour=day.get(i).substring(0,2);
             String min=day.get(i).substring(2,4);

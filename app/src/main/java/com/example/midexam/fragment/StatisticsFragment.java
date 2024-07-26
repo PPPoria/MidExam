@@ -104,7 +104,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
-        if(userPresenter.isLogged(getContext())) {
+       if(userPresenter.isLogged(getContext())) {
 
             layout.setVisibility(View.VISIBLE);
 
@@ -113,7 +113,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             layout.setVisibility(View.GONE);
 
         }
-
 
     }
 
@@ -193,14 +192,4 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(userPresenter.isLogged(getContext())) {
-            layout.setVisibility(View.VISIBLE);
-
-        }else{
-            layout.setVisibility(View.GONE);
-        }
-    }
 }

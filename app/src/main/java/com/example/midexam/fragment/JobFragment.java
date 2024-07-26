@@ -57,6 +57,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     static List<Integer> deleteList;
     static UserPresenter userPresenter;
 
+  /*  static List<String> jobs=new ArrayList<>();//////////////////////////////////////////////////////////////////////////////////////*/
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final String ADD_JOB = "AddJob";
@@ -99,11 +100,12 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         userPresenter=UserPresenter.getInstance(this);
         activity = getActivity();
         initView(view);
+       /* initNewsListView();*/
        if(userPresenter.isLogged(getContext())){
             fraglayout.setVisibility(View.VISIBLE);
             initNewsListView();
 
-        }else{
+       }else{
            fraglayout.setVisibility(View.INVISIBLE);
 
        }
@@ -199,8 +201,9 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     public void addItem(ItemData itemData) {
         jobList.add(itemData);
         userPresenter.userData.setJobs(UpDownSwitch.setJobUPType(jobList));
-        userPresenter.updateUserData(getContext());
+        userPresenter.updateUserData(getContext());/////////////////////////////////////////////////////////////////////////////////////////////////////////
         initNewsListView();
+        updataList();
     }
 
     public static void switchDialog(String dialogName) {
@@ -271,7 +274,15 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         /*### "jobs": ["x","y"]
 "072517300145说的道理"，表示待办任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。*/
         UserData userData=userPresenter.userData;
-        List<String> jobs=userData.getJobs();
+        List<String> jobs=userData.getJobs();//哟啊放出来//////////////////////////////////////////////////////////////////////////////////
+
+     /*   jobs.add("072517300145A");
+        jobs.add("072617300145B");
+        jobs.add("082517300145C");
+        jobs.add("092517300145D");
+        jobs.add("072517300167E");
+        jobs.add("072517300148F");
+        jobs.add("072517300195G");*/
         if(jobList!=null||jobList.size()!=0){jobList.clear();}
 
         for (int i = 0; i < jobs.size(); i++) {
@@ -285,7 +296,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
             Log.d("this",String.valueOf(jobList));
         }
     }
-
     @Override
     public void log(int STATUS) {
 

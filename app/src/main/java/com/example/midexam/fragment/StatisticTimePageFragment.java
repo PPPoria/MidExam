@@ -101,7 +101,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_statistic_time_page, container, false);
     }
 
@@ -398,6 +397,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
   */
         UserData userData=userPresenter.userData;
         List<String> finishJobs=userData.getFinishJobs();
+       /* List<String> finishJobs=new ArrayList<>();
+        finishJobs.add("072517300145说的道理");*/
 
         List<PieEntry> year=new ArrayList<>();//这里可以优化内存改进
         List<PieEntry> month=new ArrayList<>();
