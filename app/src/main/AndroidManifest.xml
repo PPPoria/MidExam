@@ -36,9 +36,6 @@
             android:name=".activity.DesktopActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.LineGraph"
-            android:exported="false" />
-        <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>

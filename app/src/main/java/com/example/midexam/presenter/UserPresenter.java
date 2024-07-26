@@ -88,11 +88,11 @@ public class UserPresenter {
         userData.setWaterDrink(waterTarget);
     }
 
-    public int getWaterDrink(){
+    public int getWaterDrink() {
         return userData.getWaterDrink();
     }
 
-    public void setWaterDrink(int waterDrink){
+    public void setWaterDrink(int waterDrink) {
         userData.setWaterDrink(waterDrink);
     }
 
@@ -112,7 +112,7 @@ public class UserPresenter {
 
     public String getAccount(Context context) {
         SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
-        return sp.getString("account",null);
+        return sp.getString("account", null);
     }
 
     public void accordAccount(Context context, String account) {
@@ -167,11 +167,14 @@ public class UserPresenter {
     STATUS_NO_INTERNET--------无网络，请求失败
      */
     public void requestLog(Context context, String account, String password) {
+        Log.d(TAG, "requestLog: 登录请求");
+        Log.d(TAG, "account = " + account + ", password = " + password);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api api = retrofit.create(Api.class);
+        Log.d(TAG, "baseUrl = " + baseUrl);
 
         Call<UserData> dataCall = api.log(account, password);
 

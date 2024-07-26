@@ -142,6 +142,9 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             waterTarget.setText(targetValue + "ml");
             waterDrink.setText(drinkValue +"ml");
             waterPercent.setText(percentVale + "%");
+
+            blueWave.y = blueWave.d * (1 - percentVale/100f);
+            shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale/100f);
         } else {
             waterName.setText("游客");
             waterTarget.setText("0ml");

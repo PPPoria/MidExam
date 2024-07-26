@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
@@ -111,14 +110,14 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         pieEntriesMonth=dataManager.getInstance().getMonthDataList();
         pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
         mColorPie = getColorPie();
-        initview(view);
+        initView(view);
         init_Pie();
         initPieData();
         showChart(pieEntriesDay);
         currentPieEntry=pieEntriesDay;
     }
 
-    private void initview(View view) {
+    private void initView(View view) {
         btDay=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_day);
         btMonth=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_month);
         btYear=view.findViewById(R.id.statistic_switchbutton_time).findViewById(R.id.bt_year);

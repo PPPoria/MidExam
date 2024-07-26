@@ -26,8 +26,7 @@ public class ShallowBlueWaveView extends View {
     private float lambdaH = 140f;
     private float lambdaQ = lambdaH / 2;
 
-    public float maxY;
-    public float minY;
+    public float d;
     public float y = 50f;
 
     public ShallowBlueWaveView(Context context) {
@@ -36,10 +35,7 @@ public class ShallowBlueWaveView extends View {
     }
 
     public void init() {
-        float r = Math.min(getWidth(), getHeight()) / 2f;
-        float centerY = getHeight() / 2f;
-        maxY = centerY + r - 100;
-        minY = centerY - r + 50;
+        d = Math.min(getWidth(), getHeight()) - 100;
 
         Log.d(TAG, "init: 波浪初始化");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -70,7 +66,7 @@ public class ShallowBlueWaveView extends View {
 
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a + y);
+                path.moveTo(-(4 * lambdaH) + step, a +50+ y);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
