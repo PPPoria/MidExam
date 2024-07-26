@@ -29,8 +29,8 @@ public class WaterDropletView extends View {
 
         Path path  = new Path();
         path.moveTo(x/2f,3);
-        path.cubicTo(x,y/2.5f,x,y-3,x/2f,y-3);
-        path.cubicTo(0,y-3,0,y/2.5f,x/2f,3);
+        path.cubicTo(x,y/2f,x,y-3,x/2f,y-3);
+        path.cubicTo(0,y-3,0,y/2f,x/2f,3);
         path.close();
         canvas.drawPath(path,paint);
 

@@ -41,18 +41,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     private Fragment waterPage;
     private Fragment statisticsPage;
     private Fragment personPage;
-    /*private static Fragment editJobFragment;*/
-
-    public static ViewPager2 getPagesContainer() {
-        return pagesContainer;
-    }
 
     private ConstraintLayout navigationBar;
     private ConstraintLayout jobButton;
     private ConstraintLayout waterButton;
     private ConstraintLayout statisticsButton;
     private ConstraintLayout personButton;
-    private View stroke;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -73,57 +67,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initListener() {
-        pagesContainer.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                pagePosition = position;
-                switch (position) {
-                    case 0: {
-                        moveStroke();
-                        break;
-                    }
-                    case 1: {
-                        moveStroke();
-                        break;
-                    }
-                    case 2: {
-                        moveStroke();
-                        break;
-                    }
-                    case 3: {
-                        moveStroke();
-                        break;
-                    }
-                }
-            }
-        });
-
         jobButton.setOnClickListener(this);
         waterButton.setOnClickListener(this);
         statisticsButton.setOnClickListener(this);
         personButton.setOnClickListener(this);
     }
 
-    //移动方框
-    private void moveStroke() {
-        if (stroke == null) return;
-
-        float buttonDistance = (float) navigationBar.getWidth() / 4;
-        ObjectAnimator animator = null;
-
-        if (pagePosition == 0)
-            animator = ObjectAnimator.ofFloat(stroke, "translationX", stroke.getTranslationX(), 0);
-        else if (pagePosition == 1)
-            animator = ObjectAnimator.ofFloat(stroke, "translationX", stroke.getTranslationX(), buttonDistance);
-        else if (pagePosition == 2)
-            animator = ObjectAnimator.ofFloat(stroke, "translationX", stroke.getTranslationX(), buttonDistance * 2);
-        else if (pagePosition == 3)
-            animator = ObjectAnimator.ofFloat(stroke, "translationX", stroke.getTranslationX(), buttonDistance * 3);
-
-        assert animator != null;
-        animator.setDuration(150);
-        animator.start();
-    }
 
     //初始化fragment并添加
     private void initPages() {
@@ -147,16 +96,15 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         waterButton = findViewById(R.id.water_page_button);
         statisticsButton = findViewById(R.id.statistics_page_button);
         personButton = findViewById(R.id.person_page_button);
-        stroke = findViewById(R.id.button_stroke);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.job_page_button) {
-            pagePosition = 0;
-        } else if (id == R.id.water_page_button) {
             pagePosition = 1;
+        } else if (id == R.id.water_page_button) {
+            pagePosition = 0;
         } else if (id == R.id.statistics_page_button) {
             pagePosition = 2;
         } else if (id == R.id.person_page_button) {
