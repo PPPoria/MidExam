@@ -80,8 +80,26 @@ public class UserPresenter {
         } else return false;
     }
 
-    public String getAccount() {
-        return userData.getAccount();
+    public int getWaterTarget() {
+        return userData.getWaterTarget();
+    }
+
+    public void setWaterTarget(int waterTarget) {
+        userData.setWaterDrink(waterTarget);
+    }
+
+    public int getWaterDrink(){
+        return userData.getWaterDrink();
+    }
+
+    public void setWaterDrink(int waterDrink){
+        userData.setWaterDrink(waterDrink);
+    }
+
+    public void drink(int drinkValue) {
+        int waterDrink = getWaterDrink();
+        waterDrink += drinkValue;
+        setWaterTarget(waterDrink);
     }
 
     public void changeUserName(String newName) {
@@ -90,6 +108,11 @@ public class UserPresenter {
 
     public String getUserName() {
         return userData.getName();
+    }
+
+    public String getAccount(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+        return sp.getString("account",null);
     }
 
     public void accordAccount(Context context, String account) {
@@ -124,6 +147,10 @@ public class UserPresenter {
         ed.putBoolean("isLogged", isLogged);
         ed.commit();
     }
+
+
+    //================================================================//
+
 
     //获取登录状态，并通过STATUS状态码调用UserDataShowInterface实现类的log(int STATUS)方法
     /*
@@ -305,6 +332,10 @@ public class UserPresenter {
             }
         });
     }
+
+
+    //================================================================//
+
 
     //路径初始化
     public void initImagesPath(Context context) {

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
                     userPresenter.resetHeadImage();
                     userPresenter.resetBackgroundImage();
                 } else {
-                    String account = userPresenter.getAccount();
+                    String account = userPresenter.getAccount(MainActivity.this);
                     String password = userPresenter.getPassword(MainActivity.this);
                     userPresenter.requestLog(MainActivity.this, account, password);
                 }

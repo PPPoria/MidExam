@@ -134,7 +134,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         isLogged = userPresenter.isLogged(view.getContext());
         if (isLogged) {
             name = userPresenter.getUserName();
-            account = userPresenter.getAccount();
+            account = userPresenter.getAccount(getContext());
         }
         userName.setText(name);
         userAccount.setText(account);

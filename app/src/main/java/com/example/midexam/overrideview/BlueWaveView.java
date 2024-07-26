@@ -26,12 +26,21 @@ public class BlueWaveView extends View {
     private float lambdaH = 165f;
     private float lambdaQ = lambdaH / 2;
 
+    public float maxY;
+    public float minY;
+    public float y = 50f;
+
     public BlueWaveView(Context context) {
         super(context);
         init();
     }
 
     public void init() {
+        float r = Math.min(getWidth(), getHeight()) / 2f;
+        float centerY = getHeight() / 2f;
+        maxY = centerY + r - 100;
+        minY = centerY - r + 50;
+
         Log.d(TAG, "init: 波浪初始化");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -60,13 +69,13 @@ public class BlueWaveView extends View {
 
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a+300);
+                path.moveTo(-(4 * lambdaH) + step, a + y);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
                 }
                 path.rLineTo(0, 1200);
-                path.lineTo(-(4 * lambdaH) + step, 1200 + a+300);
+                path.lineTo(-(4 * lambdaH) + step, 1200 + a + y);
                 path.close();
 
                 invalidate();

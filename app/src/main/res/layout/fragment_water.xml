@@ -57,7 +57,7 @@
                 <com.example.midexam.overrideview.StaticWaveView
                     android:id="@+id/static_wave"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="90dp"
                     app:layout_constraintBottom_toTopOf="@+id/view2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -81,7 +81,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
+                <TextClock
                     android:id="@+id/water_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -272,7 +272,7 @@
                     android:id="@+id/water_drink_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30sp"
+                    android:layout_marginTop="40dp"
                     android:text="今日已喝水"
                     android:textColor="@color/blue"
                     android:textSize="17sp"
@@ -285,7 +285,7 @@
                     android:id="@+id/water_drink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="30sp"
+                    android:layout_marginBottom="40dp"
                     android:text="1205ml"
                     android:textColor="@color/white"
                     android:textSize="20sp"
@@ -299,19 +299,31 @@
 
             <!---->
 
+            <TextView
+                android:id="@+id/history_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:text="今日喝水记录"
+                android:textColor="@color/text_grey"
+                android:textSize="17sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/wave_layout" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/water_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="70dp"
                 android:background="@drawable/square_all_20"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/wave_layout" />
+                app:layout_constraintTop_toBottomOf="@id/history_text" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

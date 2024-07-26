@@ -12,35 +12,16 @@ public class UserData {
     private String intervalTime;
     private int waterTarget;
     private int waterDrink;
-    private  int weather;
-
-    public int getWeather() {
-        return weather;
-    }
-
-    public void setWeather(int weather) {
-        this.weather = weather;
-    }
-
-    public List<String> getWaterToday() {
-        return waterToday;
-    }
-
-    public void setWaterToday(List<String> waterToday) {
-        this.waterToday = waterToday;
-    }
-
     private int waterSum;
     private List<String> waterToday;
     private List<String> waterPerDay;
     private List<String> waterPerMonth;
-
     private List<String> jobs;
     private List<String> finishJobs;
     private int focusSum;
 
     //TODO 天气 晴天0，多云1，阴天2，下雨3
-
+    private int weather;
 
     public String getMsg() {
         return msg;
@@ -122,6 +103,14 @@ public class UserData {
         this.waterSum = waterSum;
     }
 
+    public List<String> getWaterToday() {
+        return waterToday;
+    }
+
+    public void setWaterToday(List<String> waterToday) {
+        this.waterToday = waterToday;
+    }
+
     public List<String> getWaterPerDay() {
         return waterPerDay;
     }
@@ -162,5 +151,11 @@ public class UserData {
         this.focusSum = focusSum;
     }
 
+    public int getWeather() {
+        return weather;
+    }
 
+    public void setWeather(int weather) {
+        this.weather = weather;
+    }
 }
