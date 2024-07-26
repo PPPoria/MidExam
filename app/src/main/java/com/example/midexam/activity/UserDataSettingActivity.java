@@ -1,20 +1,17 @@
 package com.example.midexam.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,7 +30,7 @@ import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 
-public class UpdateInformationActivity extends AppCompatActivity implements UserDataShowInterface {
+public class UserDataSettingActivity extends AppCompatActivity implements UserDataShowInterface {
     private static final String TAG = "UserDataSettingActivity";
     private UserObserver observer;
 
@@ -41,6 +38,8 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
     private ConstraintLayout measureXY;
 
     private EditText newNameView;
+    private EditText newTargetView;
+    private EditText newIntervalView;
     private ConstraintLayout changeHeadButton;
     private ImageView newHead;
     private ConstraintLayout changeBackgroundButton;
@@ -51,7 +50,7 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_update_information);
+        setContentView(R.layout.activity_user_data_setting);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -63,23 +62,10 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         initUserDataInformation();
         initListener();
         observer = registerObserver(this);
-        overrideBackMethod();
-    }
-
-    //重写回退方法
-    private void overrideBackMethod() {
-        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                observer.updateObservedViews();
-                finish();
-            }
-        };
-        dispatcher.addCallback(callback);
     }
 
 
+    @SuppressLint("DefaultLocale")
     private void initListener() {
         changeHeadButton.setOnClickListener(v -> {
             mode = UserPresenter.MODE_HEAD_CROP;
@@ -90,7 +76,17 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
             Crop.pickImage(this);
         });
         saveButton.setOnClickListener(v -> {
+            int m = Integer.parseInt(newIntervalView.getText().toString());
+            int h = m / 60;
+            m = m - h * 60;
+            if (h > 99) {
+                Toast.makeText(this, "提醒间隔最大5999", Toast.LENGTH_SHORT).show();
+                return;
+            }
             UserPresenter userPresenter = UserPresenter.getInstance(this);
+            userPresenter.setUserName(newNameView.getText().toString());
+            userPresenter.setWaterTarget(Integer.parseInt(newTargetView.getText().toString()));
+            userPresenter.setIntervalStr(String.format("%02d%02d", h, m));
             userPresenter.updateUserData(this);
             userPresenter.updateUserImage(this);
         });
@@ -98,6 +94,8 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
 
     private void initView() {
         newNameView = findViewById(R.id.new_name);
+        newTargetView = findViewById(R.id.new_target);
+        newIntervalView = findViewById(R.id.new_interval);
         changeHeadButton = findViewById(R.id.change_head_button);
         newHead = findViewById(R.id.new_head);
         changeBackgroundButton = findViewById(R.id.change_background_button);
@@ -111,6 +109,12 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
         UserPresenter userPresenter = UserPresenter.getInstance(this);
 
         newNameView.setText(userPresenter.getUserName());
+
+        newTargetView.setText(String.valueOf(userPresenter.getWaterTarget()));
+
+        int h = Integer.parseInt(userPresenter.getIntervalStr().substring(0, 2));
+        int m = Integer.parseInt(userPresenter.getIntervalStr().substring(2, 4));
+        newIntervalView.setText(String.valueOf(h * 60 + m));
 
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
@@ -159,9 +163,10 @@ public class UpdateInformationActivity extends AppCompatActivity implements User
 
     @Override
     public void updateUserData(int STATUS) {
-        if (STATUS == UserPresenter.STATUS_SUCCESS)
+        if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
-        else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+            observer.updateObservedViews();
+        } else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
             Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
             Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();

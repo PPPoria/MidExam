@@ -20,9 +20,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.midexam.R;
 import com.example.midexam.activity.LogActivity;
-import com.example.midexam.activity.UpdateInformationActivity;
+import com.example.midexam.activity.UserDataSettingActivity;
 import com.example.midexam.activity.UserDataShowInterface;
-import com.example.midexam.activity.WaterSettingActivity;
 import com.example.midexam.helper.ScaleHelper;
 import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
@@ -39,7 +38,6 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     private TextView userAccount;
     private ConstraintLayout clearButton;
     private ConstraintLayout toUserDataButton;
-    private ConstraintLayout toWaterSettingButton;
     private ConstraintLayout logOut;
     private boolean delayedLogOut = false;
 
@@ -75,15 +73,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                 Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
                 return;
             }
-            startActivity(new Intent(getActivity(), UpdateInformationActivity.class));
-        });
-
-        toWaterSettingButton.setOnClickListener(v -> {
-            if (!isLogged) {
-                Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            startActivity(new Intent(getActivity(), WaterSettingActivity.class));
+            startActivity(new Intent(getActivity(), UserDataSettingActivity.class));
         });
 
         logOut.setOnClickListener(v -> {
@@ -121,7 +111,6 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         userAccount = view.findViewById(R.id.user_account);
         clearButton = view.findViewById(R.id.clear);
         toUserDataButton = view.findViewById(R.id.to_user_data);
-        toWaterSettingButton = view.findViewById(R.id.to_water_setting);
         logOut = view.findViewById(R.id.log_out);
     }
 

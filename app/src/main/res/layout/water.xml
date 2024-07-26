@@ -6,7 +6,7 @@
     android:background="@color/transparent">
 
     <TextView
-        android:id="@+id/drink_date"
+        android:id="@+id/drink_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"

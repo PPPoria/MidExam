@@ -1,27 +1,26 @@
 package com.example.midexam.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.midexam.R;
-import com.example.midexam.model.ItemData;
 
 import java.util.List;
 
-public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapter.WaterHistoryHolder>{
+public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapter.WaterHistoryHolder> {
 
     private Context context;
-    private List<String> waterList;
+    private List<String> drinkList;
 
-    public WaterHistoryAdapter( Context context, List<String> waterList) {
+    public WaterHistoryAdapter(Context context, List<String> drinkList) {
         this.context = context;
-        this.waterList = waterList;
+        this.drinkList = drinkList;
     }
 
     @NonNull
@@ -33,18 +32,25 @@ public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull WaterHistoryHolder holder, int position) {
-
+        String date = drinkList.get(position).substring(0, 2) + ":" + drinkList.get(position).substring(2, 4);
+        String value = drinkList.get(position).substring(4);
+        holder.drinkTime.setText(date);
+        holder.drinkValue.setText(value);
     }
 
     @Override
     public int getItemCount() {
-        return waterList.size();
+        return drinkList.size();
     }
 
-    class WaterHistoryHolder extends RecyclerView.ViewHolder{
+    class WaterHistoryHolder extends RecyclerView.ViewHolder {
+        public TextView drinkTime;
+        public TextView drinkValue;
 
         public WaterHistoryHolder(@NonNull View itemView) {
             super(itemView);
+            drinkTime = itemView.findViewById(R.id.drink_time);
+            drinkValue = itemView.findViewById(R.id.drink_value);
         }
     }
 }

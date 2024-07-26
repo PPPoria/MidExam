@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 
 import okhttp3.MediaType;
@@ -92,22 +93,34 @@ public class UserPresenter {
         return userData.getWaterDrink();
     }
 
-    public void setWaterDrink(int waterDrink) {
+    public void setWaterDrink(int waterDrink){
         userData.setWaterDrink(waterDrink);
     }
 
-    public void drink(int drinkValue) {
-        int waterDrink = getWaterDrink();
-        waterDrink += drinkValue;
-        setWaterTarget(waterDrink);
+    public List<String> getWaterToday(){
+        return userData.getWaterToday();
     }
 
-    public void changeUserName(String newName) {
-        userData.setName(newName);
+    public void drink(String date,int drinkValue) {
+        int waterDrink = getWaterDrink();
+        waterDrink += drinkValue;
+        setWaterDrink(waterDrink);
+        getWaterToday().add(date+waterDrink);
     }
 
     public String getUserName() {
         return userData.getName();
+    }
+    public void setUserName(String userName){
+        userData.setName(userName);
+    }
+
+    public String getIntervalStr(){
+        return userData.getIntervalTime();
+    }
+
+    public void setIntervalStr(String hhmm){
+        userData.setIntervalTime(hhmm);
     }
 
     public String getAccount(Context context) {

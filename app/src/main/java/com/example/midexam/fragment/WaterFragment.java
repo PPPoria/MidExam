@@ -14,17 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.adapter.WaterHistoryAdapter;
 import com.example.midexam.observer.UserObserver;
-import com.example.midexam.overrideview.AddButton;
 import com.example.midexam.overrideview.BlueWaveView;
 import com.example.midexam.overrideview.ShallowBlueWaveView;
 import com.example.midexam.presenter.UserPresenter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     private TextView waterDrink;
 
     private RecyclerView waterHistory;
-    private List<String> waterList = new ArrayList<>();
+    private final List<String> drinkList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,28 +60,35 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         observer = UserObserver.registerObserver(this);
 
         initView();
-        initHistory();
+
         initWaterData();
+        initHistory();
+
         initListener();
         return view;
     }
 
     private void initHistory() {
-        waterList.add("000");
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         waterHistory.setLayoutManager(layoutManager);
-        waterHistory.setAdapter(new WaterHistoryAdapter(getContext(), waterList));
+        waterHistory.setAdapter(new WaterHistoryAdapter(getContext(), drinkList));
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void addWater() {
-        waterList.add("over");
-        Objects.requireNonNull(waterHistory.getAdapter()).notifyDataSetChanged();
+    private void drink() {
+        int m = LocalDateTime.now().getMonth().getValue();
+        int d = LocalDateTime.now().getDayOfMonth();
+        @SuppressLint("DefaultLocale") String date = String.format("%02d%02d", m, d);
+        UserPresenter.getInstance(this).drink(date, 200);
+        observer.updateObservedViews();
     }
 
+    @SuppressLint("DefaultLocale")
     private void initListener() {
         addButton.setOnClickListener(v -> {
-            addWater();
+            if (!UserPresenter.getInstance(this).isLogged(requireContext())) {
+                Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
+            } else drink();
         });
         targetLayout.setOnClickListener(v -> {
 
@@ -123,7 +129,6 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             greet.setText("夜深了");
 
 
-
         if (UserPresenter.getInstance(this).isLogged(requireContext())) {
             UserPresenter userPresenter = UserPresenter.getInstance(this);
 
@@ -140,13 +145,13 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
             waterName.setText(nameValue);
             waterTarget.setText(targetValue + "ml");
-            waterDrink.setText(drinkValue +"ml");
+            waterDrink.setText(drinkValue + "ml");
             waterPercent.setText(percentVale + "%");
 
-            blueWave.y = blueWave.d * (1 - percentVale/100f);
-            shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale/100f);
+            blueWave.y = blueWave.d * (1 - percentVale / 100f);
+            shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale / 100f);
         } else {
-            waterName.setText("游客");
+            waterName.setText("请先登录/注册");
             waterTarget.setText("0ml");
             waterDrink.setText("0ml");
             waterPercent.setText("0%");
@@ -178,8 +183,10 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         return UserDataShowInterface.super.registerObserver(observedView);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void receiveUpdate() {
-        UserDataShowInterface.super.receiveUpdate();
+        initWaterData();
+        Objects.requireNonNull(waterHistory.getAdapter()).notifyDataSetChanged();
     }
 }

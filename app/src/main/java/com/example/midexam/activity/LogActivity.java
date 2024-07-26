@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.midexam.R;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -21,6 +22,7 @@ import java.util.Objects;
 
 public class LogActivity extends AppCompatActivity implements UserDataShowInterface {
     private static final String TAG = "LogActivity";
+    private UserObserver observer;
 
     private TextInputEditText account;
     private TextInputEditText password;
@@ -48,7 +50,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
         logButton.setOnClickListener(v -> {
             String accountStr = Objects.requireNonNull(account.getText()).toString();
             String passwordStr = Objects.requireNonNull(password.getText()).toString();
-            if(accountStr.isEmpty() || passwordStr.isEmpty()){
+            if (accountStr.isEmpty() || passwordStr.isEmpty()) {
                 Toast.makeText(this, "请输入", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -74,6 +76,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
             Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+            observer.updateObservedViews();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
