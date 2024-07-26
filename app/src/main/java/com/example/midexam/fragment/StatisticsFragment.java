@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.example.midexam.R;
 
 import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -53,12 +54,15 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     Button btWaterChart;
 
     ViewPager2 statisticsViewPager;
+    ConstraintLayout layout;
+    LinearLayout hidelayout;
 
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
 
 
     List<Fragment> pages;
+    UserPresenter userPresenter=UserPresenter.getInstance(this);
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -100,6 +104,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
+        if(userPresenter.isLogged(getContext())) {
+
+            layout.setVisibility(View.VISIBLE);
+
+        }else{
+
+            layout.setVisibility(View.GONE);
+
+        }
+
 
     }
 
@@ -108,6 +122,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         btFocusChart =view.findViewById(R.id.bt_pie_focus);
         btWaterChart=view.findViewById(R.id.bt_bar_water);
         statisticsViewPager=view.findViewById(R.id.statistics_viewpager);
+        layout=view.findViewById(R.id.fs_constraint_statistics);
+
 
         statisticTimePageFragment=new StatisticTimePageFragment();
         statisticWaterPageFragment=new StatisticWaterPageFragment();
@@ -174,6 +190,17 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         @Override
         public int getItemCount() {
             return pages.size();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(userPresenter.isLogged(getContext())) {
+            layout.setVisibility(View.VISIBLE);
+
+        }else{
+            layout.setVisibility(View.GONE);
         }
     }
 }

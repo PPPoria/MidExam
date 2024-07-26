@@ -35,7 +35,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
     TextInputEditText startTime;
     TextInputEditText duringTime;
 
-    int Type=3;//未指定类型：3
+    static int Type=3;//未指定类型：3
     static String titleContain;
     static String sEventName;
     static String sStartTime;
@@ -85,10 +85,10 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
         });
 
 
-        if(titleContain!=null){title.setText(titleContain);}
-        if(sEventName!=null){eventName.setText(sEventName);}
-        if(sStartTime!=null){startTime.setText(sStartTime);}
-        if(sDuringTime!=null){duringTime.setText(sDuringTime);}
+        if(titleContain!=null){title.setText(titleContain);titleContain=null;}//后面那个防复用
+        if(sEventName!=null){eventName.setText(sEventName);sEventName=null;}
+        if(sStartTime!=null){startTime.setText(sStartTime);sStartTime=null;}
+        if(sDuringTime!=null){duringTime.setText(sDuringTime);sDuringTime=null;}
     }
     @Override
     public void onClick(View v) {
@@ -185,5 +185,9 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
     }
     public  void setType(int s){
         Type=s;
+    }
+
+    public static int getType() {
+        return Type;
     }
 }

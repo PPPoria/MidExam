@@ -26,9 +26,11 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -89,7 +91,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (userPresenter.isLogged(getContext())) {
+
             //增添数据
             dayData = dataManager.getInstance().getDayDataList();
             monthData = dataManager.getInstance().getMonthDataList();
@@ -101,7 +103,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
             initView(view);
             initBarData();
             setDataInBar(WaterChart, dayData, dayDate, "日饮水量");
-        }
+
     }
 
     public void initView(View v) {
@@ -115,6 +117,8 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         initListener();
         initMonthDate();
         initYearDate();
+        initMonthData();
+        initYearData();
     }
 
     private void initListener() {
@@ -150,12 +154,14 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
             //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
             BarData barData = new BarData(dataSet);
-
+            barData.setBarWidth(0.8f);
 
             initAxis(barChart, dateList);
 
 
             barChart.setData(barData);
+            barChart.setFitBars(true);
+
             barChart.invalidate();//更新视图
 
             barChart.setVisibility(View.VISIBLE);
@@ -177,6 +183,8 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         dataSet.setBarShadowColor(Color.RED);
         dataSet.setBarBorderWidth(0.5f);
         dataSet.setHighlightEnabled(false);//选中柱子是否高亮显示  默认为true
+        dataSet.setDrawValues(true);
+
         barChart.getDescription().setEnabled(false);
         return dataSet;
     }
@@ -186,21 +194,12 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         XAxis xAxis = barChart.getXAxis();
 
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMinimum(-0.5f);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(dateList.size());
+        xAxis.setLabelRotationAngle(-40.5f);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(dateList));
 
-        xAxis.setDrawGridLines(false);//禁用竖线
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                float decimal = value%1;
-                // 检查索引是否在有效范围内
-                if (decimal == 0 && value <= dateList.size()&&value>0) {
-                    // 返回对应的标签
-                    return dateList.get((int)(value-1))/*String.valueOf(value)*/;
-                }
-                // 如果索引无效，可以返回一个默认字符串或空字符串
-                return "";
-            }
-        });
     }
 
     public void initAxis(BarChart barChart, List<String> dateList) {
@@ -211,9 +210,9 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     public void initYAxis(BarChart barChart) {
         YAxis yAxis = barChart.getAxisLeft();
         yAxis.setAxisMinimum(0);
+        barChart.getAxisRight().setEnabled(false);
         yAxis.setDrawGridLines(false);
     }
-
 
     public void initMonthDate() {
         Calendar calendar = Calendar.getInstance();
@@ -241,10 +240,21 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         }
     }
 
+    public void initYearData(){
+        for (int i = 0; i < 12; i++) {
+            yearData.add(new BarEntry(i,0));
+        }
+    }
+
+    public void initMonthData(){
+        for (int i = 0; i < monthDate.size(); i++) {
+            monthData.add(new BarEntry(i,0));
+        }
+    }
     public void initBarData(){
 
         UserData userData=userPresenter.userData;
-        List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+       List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
         List<String> month=userData.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
         List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
 
@@ -257,18 +267,18 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
             dayDate.add(hour+":"+min);
         }
         for (int i = 0; i < month.size(); i++) {
-            String Month=day.get(i).substring(0,2);
-            String Day=day.get(i).substring(2,4);
-            String water=day.get(i).substring(4);
+            String Month=month.get(i).substring(0,2);
+            String Day=month.get(i).substring(2,4);
+            String water=month.get(i).substring(4);
             int volumn=Integer.valueOf(water);
-            monthData.add(new BarEntry(Integer.valueOf(Day),volumn));
+            monthData.get(Integer.valueOf(Day)).setY(volumn);
 
         }
         for (int i = 0; i < year.size(); i++) {
-            String Month=day.get(i).substring(0,2);
-            String water=day.get(i).substring(4);
+            String Month=year.get(i).substring(0,2);
+            String water=year.get(i).substring(2);
             int volumn=Integer.valueOf(water);
-            monthData.add(new BarEntry(Integer.valueOf(Month),volumn));
+            yearData.get(Integer.valueOf(Month)).setY(volumn);
         }
 
 
@@ -287,7 +297,12 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     @Override
     public void updateUserData(int STATUS) {
-
+        initListener();
+        initMonthDate();
+        initYearDate();
+        initMonthData();
+        initYearData();
+        initBarData();
     }
 
     @Override

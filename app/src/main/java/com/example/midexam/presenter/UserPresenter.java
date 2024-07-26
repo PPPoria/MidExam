@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserPresenter {
     private static final String TAG = "UserPresenter";
-    public String baseUrl = "http://192.168.31.176:8080/";
+    public String baseUrl = "http://192.168.3.183:8081/";
     public String backgroundImagePath;
     public String headImagePath;
     public UserData userData;

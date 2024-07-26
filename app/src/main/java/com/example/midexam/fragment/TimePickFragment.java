@@ -118,7 +118,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
                     // 处理日期改变事件(month比原来的小一个月)
                     int Month=month+1;
                     sYear=String.valueOf(year);
-                    sMonth=formatMonth(month);
+                    sMonth=formatMonth(month+1);
                     sDay=formatDay(dayOfMonth);
                     date=sYear+"-"+sMonth+"-"+sDay;
                     Log.d("时间",String.valueOf(year+"+"+month+"+"+dayOfMonth));
@@ -161,7 +161,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         int min=0;//当为一位数时处理用，没别的，即23：6转23：06
         if(date==null) {
             sDay=formatDay(calendar.get(Calendar.DAY_OF_MONTH));
-            sMonth=formatMonth(calendar.get(Calendar.MONTH));
+            sMonth=formatMonth(calendar.get(Calendar.MONTH)+1);
             sYear=String.valueOf(calendar.get(Calendar.YEAR));
             date=sYear+"-"+sMonth+"-"+sDay;
         }//此时日期必有值
@@ -181,7 +181,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
                 Log.e("时间",dateAndTime);
                 dismiss();
             }
-            else Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
+
         }
         return dateAndTime;
     }
@@ -191,17 +191,30 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         List<ItemData> tempList= jbf.getJobList().stream()
                 .collect(Collectors.toList());
 
-        tempList.remove(jbf.itemPosition);
+        if (EditJobFragment.Type==EditJobFragment.MODIFY) {
+            tempList.remove(jbf.itemPosition);
+        }
         if(Integer.valueOf(sYear)== calendar.get(Calendar.YEAR)&& Integer.valueOf(sMonth)==(calendar.get(Calendar.MONTH)+1)&& Integer.valueOf(sDay)== calendar.get(Calendar.DAY_OF_MONTH)){
-            for (int i = 0; i < tempList.size(); i++) {
-                String begin= UpDownSwitch.getDateDownType(tempList.get(i).getJobData());//2024-01-01 12:12
-                String currentTime=begin+":00";//2024-01-01 12:12:00
-                long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
-                long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
-                long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMonth+":" +":00").getTime();//增添的任务开始时间戳
-                if (lStart>=beginTime&&lStart<endTime ) {
-                    Toast.makeText(getContext(),"时间冲突",Toast.LENGTH_SHORT).show();
+            if(Integer.valueOf(sHour)<calendar.get(Calendar.HOUR_OF_DAY)){
+                Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
+                legel=false;
+            }else if(Integer.valueOf(sHour)==calendar.get(Calendar.HOUR_OF_DAY)){
+                if (Integer.valueOf(sMin)<=calendar.get(Calendar.MINUTE)){
+                    Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
                     legel=false;
+                }
+            } else {
+                for (int i = 0; i < tempList.size(); i++) {
+                    String begin= tempList.get(i).getJobData();//2024-01-01 12:12
+                    String currentTime=begin+":00";//2024-01-01 12:12:00
+                    long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
+                    long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
+                    long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
+                    if (lStart>=beginTime&&lStart<endTime ) {
+                        Toast.makeText(getContext(),"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
+                        legel=false;
+                        break;
+                    }
                 }
             }
         }

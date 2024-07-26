@@ -39,6 +39,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     List<PieEntry> pieEntriesYear;
     List<String> mColorPie;
 
+    List<PieEntry> currentPieEntry=null;//拿来点击图的时候用(MarkView)
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -105,19 +107,15 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        if (userPresenter.isLogged(getContext())) {
-            pieEntriesDay = dataManager.getInstance().getDayDataList();
-            pieEntriesMonth=dataManager.getInstance().getMonthDataList();
-            pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
-            mColorPie = getColorPie();
-            initview(view);
-            init_Pie();
-            initPieData();
-            showChart(pieEntriesDay);
-        }
-
-
+        pieEntriesDay = dataManager.getInstance().getDayDataList();
+        pieEntriesMonth=dataManager.getInstance().getMonthDataList();
+        pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
+        mColorPie = getColorPie();
+        initview(view);
+        init_Pie();
+        initPieData();
+        showChart(pieEntriesDay);
+        currentPieEntry=pieEntriesDay;
     }
 
     private void initview(View view) {
@@ -154,6 +152,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         if (mlist!=null) {
             boolean noConflict=true;
             for (int i = 0; i < mlist.size(); i++) {
+                noConflict=true;//确保每一次都是当作没有重复的，不然的话有可能因为上一个数据为false导致这里没有及时更新
                 String label=mlist.get(i).getLabel();
                 float time=mlist.get(i).getValue();
                 for (int i1 = 0; i1 < root.size(); i1++) {
@@ -166,7 +165,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 }
                 if(noConflict){
                     root.add(mlist.get(i));
-                    //updataPie(pieEntriesDay);
                     noConflict=true;
                 }
             }
@@ -190,7 +188,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         if(currentPop!=null) currentPop.dismiss();
     }
 //单个图例
-    private LinearLayout getLineLegend(Integer color, String label, int data) {
+    private LinearLayout getLineLegend(Integer color, String label, int data,List<PieEntry> pieEntries) {
         LinearLayout.LayoutParams lp=new LinearLayout.
                 LayoutParams(legendLinerLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0,0,0,50);
@@ -214,7 +212,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         //添加label
         TextView labelTV=new TextView(getActivity());
         labelTV.setMaxLines(1);//最大行
-        labelTV.setWidth(legendLinerLayout.getWidth()/4);//宽度
+        labelTV.setWidth(legendLinerLayout.getWidth()/5);//宽度
         labelTV.setEllipsize(TextUtils.TruncateAt.END);//省略模式
         labelTV.setText(label+" ");
         labelTV.setTextSize(15);
@@ -222,7 +220,25 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
 
         //添加data
         TextView dataTV=new TextView(getActivity());
-        dataTV.setText(data+""+"min");
+
+        if(pieEntries==pieEntriesMonth){
+
+            int remainingMinutes = data % (24 * 60);
+            int hours = remainingMinutes / 60;
+            int minutes = remainingMinutes % 60;
+            dataTV.setText(hours+"时"+minutes+"分");
+        }
+        else if (pieEntries==pieEntriesYear) {
+            int remainingMinutes = data % (30 * 24 * 60);
+            int days = remainingMinutes / (24 * 60);
+            remainingMinutes = remainingMinutes % (24 * 60);
+            int hours = remainingMinutes / 60;
+            dataTV.setText(days+"天"+hours+"时");
+        }else {
+            int hours=data/60;
+            int mins=data%60;
+            dataTV.setText(hours+"时"+mins+"分");
+        }
         dataTV.setTextSize(15);
         layout.addView(dataTV);
         return layout;
@@ -290,7 +306,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 for (int i = 0; i < pieEntries.size(); i++) {
                     //获取图例
                    LinearLayout legend = getLineLegend//第一个参数是获得到字符串转为数字传入的意思
-                            (Color.parseColor(mColor1.get(i%mColor1.size())), pieEntries.get(i).getLabel(), (int) pieEntries.get(i).getValue());
+                            (Color.parseColor(mColor1.get(i%mColor1.size())), pieEntries.get(i).getLabel(),
+                                    (int) pieEntries.get(i).getValue(),pieEntries);
 
                     legend.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -333,18 +350,20 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
           case R.id.bt_day:
                 pieEntriesDay=dataManager.getInstance().getDayDataList();
                 showChart(pieEntriesDay);
-
+                currentPieEntry=pieEntriesDay;
                 break;
 
             case R.id.bt_month:
 
                 pieEntriesMonth=dataManager.getInstance().getMonthDataList();
                 showChart(pieEntriesMonth);
+                currentPieEntry=pieEntriesMonth;
                 break;
 
             case R.id.bt_year:
-                pieEntriesYear=dataManager.getInstance().getMonthDataList();
+                pieEntriesYear=dataManager.getInstance().getYearDataList();
                 showChart(pieEntriesYear);
+                currentPieEntry=pieEntriesYear;
                 break;
 
             default:
@@ -379,9 +398,12 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
   */
         UserData userData=userPresenter.userData;
         List<String> finishJobs=userData.getFinishJobs();
-        List<PieEntry> year=new ArrayList<>();//这里可以优化内存
+
+        List<PieEntry> year=new ArrayList<>();//这里可以优化内存改进
         List<PieEntry> month=new ArrayList<>();
         List<PieEntry> day=new ArrayList<>();
+
+
         for (int i = 0; i < finishJobs.size(); i++) {
             String Month=finishJobs.get(i).substring(0,2);
             String Day=finishJobs.get(i).substring(2,4);
@@ -389,14 +411,18 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             String duringmin=finishJobs.get(i).substring(10,12);
             String eventName=finishJobs.get(i).substring(12);
             int duringTime=Integer.valueOf(duringHour)*60+Integer.valueOf(duringmin);
+            if(Integer.valueOf(Month)==Calendar.getInstance().get(Calendar.MONTH)+1){
+                PieEntry MonthPie=new PieEntry(duringTime,Day+"日");
+                month.add(MonthPie);
+                if(Integer.valueOf(Day)== Calendar.getInstance().get(Calendar.DAY_OF_MONTH)){
+                    PieEntry DayPie=new PieEntry(duringTime,eventName);
+                    day.add(DayPie);
+                }//日
+            }//月
+
 
             PieEntry YearPie=new PieEntry(duringTime,Month+"月");
-            PieEntry MonthPie=new PieEntry(duringTime,Day+"日");
-            PieEntry DayPie=new PieEntry(duringTime,eventName);
-
-            year.add(YearPie);
-            month.add(MonthPie);
-            day.add(DayPie);
+            year.add(YearPie);//all进入年，后面函数自动判定合并，可优化逻辑
         }
         addData(day,pieEntriesDay);
         addData(month,pieEntriesMonth);
@@ -444,7 +470,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             float value = pieEntry.getY();
             float percent = (float) (value / getTotal()) * 100f; // getTotal() 是你需要自定义的方法来获取所有Entry的Y值之和
 
-            tvContent.setText("时长: " + value+"\n"+"占比："+(String.format("%.2f", percent) + "%"));
+            tvContent.setText("时长: " + value+"min\n"+"占比："+(String.format("%.2f", percent) + "%"));
             tvContent.setBackgroundColor(Color.parseColor("#FFCCCCCC"));
             tvContent.setTextColor(Color.BLACK);
             super.refreshContent(e, highlight);
@@ -453,8 +479,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         // 自定义方法来获取所有Entry的Y值之和，这取决于你如何管理你的数据集
         private float getTotal() {
             float sum=0;
-            for (int i = 0; i < pieEntriesDay.size(); i++) {
-                sum+= pieEntriesDay.get(i).getValue();
+            for (int i = 0; i < currentPieEntry.size(); i++) {
+                sum+= currentPieEntry.get(i).getValue();
             }
             return sum; // 示例值，应该替换为你的实际计算值
         }

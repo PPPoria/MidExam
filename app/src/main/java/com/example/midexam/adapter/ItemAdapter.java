@@ -60,7 +60,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
         holder.itemText.setText(itemList.get(position).getItemText());
         holder.tvdate.setText(itemList.get(position).getJobData());
-        holder.tvduring.setText(itemList.get(position).getJobDuring());
+        holder.tvduring.setText(itemList.get(position).getJobDuring()+"min");
         holder.position= holder.getAdapterPosition();
         holder.showTaskLayout.setOnLongClickListener(v -> {
             // 处理长按事件

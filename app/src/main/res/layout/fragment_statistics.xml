@@ -7,16 +7,31 @@
     tools:context=".fragment.StatisticsFragment">
 
 
-    <LinearLayout
-        android:id="@+id/fs_constraint"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fs_constraint_statistics"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/tips_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="统计页面"
+            android:textSize="40dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+        </TextView>
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/cwater_time"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/tips_statistics"
+            app:layout_constraintStart_toStartOf="parent">
             <Button
                 android:id="@+id/bt_pie_focus"
                 android:layout_width="wrap_content"
@@ -35,11 +50,13 @@
                 app:layout_constraintStart_toEndOf="@id/bt_pie_focus"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/statistics_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
+            android:layout_width="410dp"
+            android:layout_height="717dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cwater_time" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

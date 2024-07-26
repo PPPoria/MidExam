@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation("com.github.PhilJay:MPAndroidChart:v3.0.3")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation ("cn.hutool:hutool-all:5.8.28")
 
     implementation(libs.appcompat)

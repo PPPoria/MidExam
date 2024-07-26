@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +50,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     private static FragmentManager fragmentManager;
     private ItemAdapter itemAdapter;
     private ItemSelectedAdapter itemSelectedAdapter;
+    ConstraintLayout fraglayout;
 
     static int itemPosition = 0;//表示被选中的item（即将被操作的item）
     static Activity activity;
@@ -96,11 +98,15 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         userPresenter=UserPresenter.getInstance(this);
         activity = getActivity();
-        if(userPresenter.isLogged(getContext())){
-            initView(view);
+        initView(view);
+       if(userPresenter.isLogged(getContext())){
+            fraglayout.setVisibility(View.VISIBLE);
             initNewsListView();
-        }
-       
+
+        }else{
+           fraglayout.setVisibility(View.INVISIBLE);
+
+       }
     }
 
     private void initView(View v) {
@@ -110,6 +116,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         multipleSelect = v.findViewById(R.id.bt_mutipleSelect);
         multipleDelete = v.findViewById(R.id.bt_mutipleSelect_delete);
         multipleCancel = v.findViewById(R.id.bt_mutipleSelect_cancel);
+        fraglayout=v.findViewById(R.id.constraintLayout_jobfrag);
 
         activity = getActivity();
         fragmentManager = getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
@@ -191,6 +198,8 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
     public void addItem(ItemData itemData) {
         jobList.add(itemData);
+        userPresenter.userData.setJobs(UpDownSwitch.setJobUPType(jobList));
+        userPresenter.updateUserData(getContext());
         initNewsListView();
     }
 
@@ -235,9 +244,8 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         origin.setItemText(itemData.getItemText());
         origin.setJobData(itemData.getJobData());
         origin.setJobDuring(itemData.getJobDuring());
-        jobList.add(itemData);
-        userPresenter.updateUserData(getContext());
         userPresenter.userData.setJobs(UpDownSwitch.setJobUPType(jobList));
+        userPresenter.updateUserData(getContext());
         initJobLists();
         updataList();
     }
@@ -264,13 +272,17 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 "072517300145说的道理"，表示待办任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。*/
         UserData userData=userPresenter.userData;
         List<String> jobs=userData.getJobs();
+        if(jobList!=null||jobList.size()!=0){jobList.clear();}
+
         for (int i = 0; i < jobs.size(); i++) {
             String sbeginTime=jobs.get(i).substring(0,8);
             String beginTime= UpDownSwitch.getDateDownType(sbeginTime);
             String sduringTime=jobs.get(i).substring(8,12);
             String duringTime=UpDownSwitch.getDuringDownType(sduringTime);
             String jobName=jobs.get(i).substring(12);
-            jobList.add(new ItemData(beginTime,duringTime,jobName));
+
+            jobList.add(new ItemData(jobName,beginTime,duringTime));
+            Log.d("this",String.valueOf(jobList));
         }
     }
 
@@ -303,7 +315,9 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     @Override
     public void receiveUpdate() {
         UserDataShowInterface.super.receiveUpdate();
-        initJobLists();
         initNewsListView();
     }
+
+
+
 }
