@@ -1,5 +1,6 @@
 package com.example.midexam.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -55,6 +56,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     Button btDay;
     Button btMonth;
     Button btYear;
+    Button currentClickInSwitchTime=null;
     Description description;
     LinearLayout legendLinerLayout;
     UserPresenter userPresenter=UserPresenter.getInstance(this);
@@ -72,6 +74,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     List<String> mColorPie;
 
     List<PieEntry> currentPieEntry=null;//拿来点击图的时候用(MarkView)
+
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -113,12 +116,16 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
         mColorPie = getColorPie();
         initview(view);
-        if(userPresenter.isLogged(getContext())){
+
+        if (userPresenter.isLogged(getContext())){
             receiveUpdate();
         }
         else{
             showChart(pieEntriesDay);
+
+            currentClickInSwitchTime=btDay;
         }
+
     }
 
     private void initview(View view) {
@@ -403,24 +410,38 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        int open = btDay.getWidth();
+        int close = btMonth.getWidth();
         switch (v.getId()){
           case R.id.bt_day:
                 pieEntriesDay=dataManager.getInstance().getDayDataList();
                 showChart(pieEntriesDay);
                 currentPieEntry=pieEntriesDay;
+                btDay.setWidth(open);
+                btMonth.setWidth(close);
+                btYear.setWidth(close);
+
                 break;
 
             case R.id.bt_month:
-
                 pieEntriesMonth=dataManager.getInstance().getMonthDataList();
                 showChart(pieEntriesMonth);
                 currentPieEntry=pieEntriesMonth;
+                btDay.setWidth(close);
+                btMonth.setWidth(open);
+                btYear.setWidth(close);
+
                 break;
 
             case R.id.bt_year:
                 pieEntriesYear=dataManager.getInstance().getYearDataList();
                 showChart(pieEntriesYear);
                 currentPieEntry=pieEntriesYear;
+
+                btDay.setWidth(close);
+                btMonth.setWidth(close);
+                btYear.setWidth(open);
+
                 break;
 
             default:
@@ -448,6 +469,9 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         popupWindow.showAsDropDown(layout, 0, 0);
         // 如果需要，你还可以为popupView中的元素设置监听器等
     }
+    //动画
+
+
 
     @Override
     public void log(int STATUS) {
