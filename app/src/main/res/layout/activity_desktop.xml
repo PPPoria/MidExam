@@ -35,15 +35,27 @@
             android:id="@+id/water_page_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/job_page_button"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.example.midexam.overrideview.icon.WaterIcon1
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/water_icon_1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.midexam.overrideview.icon.WaterIcon2
+                android:id="@+id/water_icon_2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:alpha="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,8 +74,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.example.midexam.overrideview.icon.JobIcon1
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/job_icon_1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.midexam.overrideview.icon.JobIcon2
+                android:id="@+id/job_icon_2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:alpha="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -82,8 +105,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.example.midexam.overrideview.icon.StatisticsIcon1
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/statistics_icon_1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.midexam.overrideview.icon.StatisticsIcon2
+                android:id="@+id/statistics_icon_2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:alpha="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,6 +129,7 @@
             android:id="@+id/person_page_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="1"
@@ -102,8 +137,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.example.midexam.overrideview.icon.PersonIcon1
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/person_icon_1"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.midexam.overrideview.icon.PersonIcon2
+                android:id="@+id/person_icon_2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:alpha="0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

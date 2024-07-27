@@ -40,7 +40,7 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        getWindow().setNavigationBarColor(getColor(R.color.blue));
+        getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
         initListener();

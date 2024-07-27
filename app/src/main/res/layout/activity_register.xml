@@ -5,30 +5,52 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".activity.RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/register_tittle"
+        android:id="@+id/register_tittle_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintBottom_toTopOf="@id/register_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="1">
+        app:layout_constraintVertical_weight="2">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Focus Life\n注册用户"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:textSize="50dp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <ImageView
+            android:id="@+id/register_logo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/logo_body"
+            app:layout_constraintBottom_toTopOf="@id/register_tittle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/register_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Focus Life"
+            android:textColor="@color/shallow_blue"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@id/register_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_logo" />
+
+        <TextView
+            android:id="@+id/register_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注册"
+            android:textColor="@color/text_grey"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -36,16 +58,15 @@
         android:id="@+id/register_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="110dp"
-        android:background="@drawable/square_all_10"
+        android:layout_marginBottom="30dp"
         android:translationZ="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/register_tittle"
-        app:layout_constraintVertical_weight="2">
+        app:layout_constraintTop_toBottomOf="@id/register_tittle_layout"
+        app:layout_constraintVertical_weight="3">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/register_account_layout"
