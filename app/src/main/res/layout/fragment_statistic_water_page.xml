@@ -27,8 +27,9 @@
                 android:textSize="25dp"
                 android:textStyle="bold"
                 android:gravity="center"
+                android:layout_marginTop="20dp"
                 android:text="暂无数据"
-                android:visibility="gone"/>
+                android:visibility="invisible"/>
             <include
                 layout="@layout/barchart" android:id="@+id/bar_1"/>
 

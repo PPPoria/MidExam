@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.example.midexam.R;
 
 import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -51,12 +52,14 @@ import java.util.List;
 public class StatisticsFragment extends Fragment implements View.OnClickListener, UserDataShowInterface {
 
     Button btFocusChart;
+
     Button btWaterChart;
 
     ViewPager2 statisticsViewPager;
     ConstraintLayout layout;
     LinearLayout hidelayout;
-
+    UserObserver observer=registerObserver(this);
+    TextView textView;
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
 
@@ -104,17 +107,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
-        if(userPresenter.isLogged(getContext())) {
-
-            layout.setVisibility(View.VISIBLE);
-
-        }else{
-
-            layout.setVisibility(View.GONE);
-
-        }
-
-
     }
 
     private void initview(View view) {
@@ -123,7 +115,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         btWaterChart=view.findViewById(R.id.bt_bar_water);
         statisticsViewPager=view.findViewById(R.id.statistics_viewpager);
         layout=view.findViewById(R.id.fs_constraint_statistics);
-
+        textView=view.findViewById(R.id.nothing);
 
         statisticTimePageFragment=new StatisticTimePageFragment();
         statisticWaterPageFragment=new StatisticWaterPageFragment();
@@ -175,6 +167,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     }
 
+    @Override
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
+    }
+
+    @Override
+    public void receiveUpdate() {
+
+    }
+
     class statisticsAdapter extends FragmentStateAdapter {
 
         public statisticsAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -193,14 +195,4 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(userPresenter.isLogged(getContext())) {
-            layout.setVisibility(View.VISIBLE);
-
-        }else{
-            layout.setVisibility(View.GONE);
-        }
-    }
 }

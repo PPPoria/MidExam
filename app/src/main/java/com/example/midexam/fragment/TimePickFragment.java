@@ -76,7 +76,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     private void initTimePicker() {
         Calendar calendar = Calendar.getInstance();
         timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        timePicker.setMinute(calendar.get(Calendar.MINUTE));
+        timePicker.setMinute(calendar.get(Calendar.MINUTE)+1);//让他不要在此时此刻
     }
 
     private void initDatePicker() {
@@ -169,10 +169,12 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         if(time==null) {//此时时间必有值
             sHour=formatHour(calendar.get(Calendar.HOUR_OF_DAY));
             sMin=formatMin(calendar.get(Calendar.MINUTE));
-            time=sHour+":"+sMin;
-            dateAndTime=date+" "+time;
-            Log.e("时间",dateAndTime);
-            dismiss();
+            if(judgeLegalTime(calendar)) {
+                time=sHour+":"+sMin;
+                dateAndTime=date+" "+time;
+                Log.e("时间",dateAndTime);
+                dismiss();
+            }
         }else{
             //有时间在优化时间判定
             if(judgeLegalTime(calendar)) {
@@ -194,31 +196,36 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
         if (EditJobFragment.Type==EditJobFragment.MODIFY) {
             tempList.remove(jbf.itemPosition);
         }
+
         if(Integer.valueOf(sYear)== calendar.get(Calendar.YEAR)&& Integer.valueOf(sMonth)==(calendar.get(Calendar.MONTH)+1)&& Integer.valueOf(sDay)== calendar.get(Calendar.DAY_OF_MONTH)){
             if(Integer.valueOf(sHour)<calendar.get(Calendar.HOUR_OF_DAY)){
                 Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
                 legel=false;
             }else if(Integer.valueOf(sHour)==calendar.get(Calendar.HOUR_OF_DAY)){
+                int a=calendar.get(Calendar.MINUTE);
                 if (Integer.valueOf(sMin)<=calendar.get(Calendar.MINUTE)){
                     Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
                     legel=false;
-                }
-            } else {
-                for (int i = 0; i < tempList.size(); i++) {
-                    String begin= tempList.get(i).getJobData();//2024-01-01 12:12
-                    String currentTime=begin+":00";//2024-01-01 12:12:00
-                    long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
-                    long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
-                    long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
-                    if (lStart>=beginTime&&lStart<endTime ) {
-                        Toast.makeText(getContext(),"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
-                        legel=false;
-                        break;
-                    }
-                }
+                }else{legel = taskConflict(tempList, legel);}
+            }
+        }else {legel = taskConflict(tempList, legel);}
+        Log.d("this",String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)));
+        return legel;
+    }
+
+    private boolean taskConflict(List<ItemData> tempList, boolean legel) {
+        for (int i = 0; i < tempList.size(); i++) {
+            String begin= tempList.get(i).getJobData();//2024-01-01 12:12
+            String currentTime=begin+":00";//2024-01-01 12:12:00
+            long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
+            long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
+            long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
+            if (lStart>=beginTime&&lStart<endTime ) {
+                Toast.makeText(getContext(),"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
+                legel =false;
+                break;
             }
         }
-        Log.d("this",String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)));
         return legel;
     }
 
