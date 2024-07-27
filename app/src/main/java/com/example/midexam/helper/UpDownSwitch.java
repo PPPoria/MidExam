@@ -1,5 +1,7 @@
 package com.example.midexam.helper;
 
+import android.annotation.SuppressLint;
+
 import com.example.midexam.model.ItemData;
 
 import java.util.ArrayList;
@@ -33,10 +35,11 @@ public class UpDownSwitch {
         String Min=itemText.substring(14,16);
         return Month+Day+Hour+Min;
     }
+    @SuppressLint("DefaultLocale")
     public static String setDuringUpType(String itemText) {
-        int Hour=Integer.valueOf(itemText)/60;
-        int Min=Integer.valueOf(itemText)%60;
-        return String.valueOf(Hour)+String.valueOf(Min);
+        int Hour=Integer.parseInt(itemText)/60;
+        int Min=Integer.parseInt(itemText)%60;
+        return String.format("%02d%02d",Hour,Min);
     }
 
 

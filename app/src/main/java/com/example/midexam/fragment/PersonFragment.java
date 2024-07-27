@@ -61,6 +61,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     private void initListener() {
         userName.setOnClickListener(v -> {
             if (!isLogged) startActivity(new Intent(getActivity(), LogActivity.class));
+            else startActivity(new Intent(getActivity(), UserDataSettingActivity.class));
         });
 
         clearButton.setOnClickListener(v -> {
@@ -96,7 +97,8 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                     }
                 }).start();
             } else if (delayedLogOut) {
-                UserPresenter.getInstance(this).accordLoggedStatus(getContext(), false);
+                Log.d(TAG, "退出登录");
+                UserPresenter.getInstance(this).accordLoggedStatus(requireContext(), false);
                 UserPresenter.getInstance(this).resetHeadImage();
                 UserPresenter.getInstance(this).resetBackgroundImage();
                 observer.updateObservedViews();

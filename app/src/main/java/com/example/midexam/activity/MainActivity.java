@@ -39,28 +39,28 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
                 if (!userPresenter.isLogged(MainActivity.this)) {
                     userPresenter.resetHeadImage();
                     userPresenter.resetBackgroundImage();
+                    startActivity(new Intent(MainActivity.this, DesktopActivity.class));
                 } else {
                     String account = userPresenter.getAccount(MainActivity.this);
                     String password = userPresenter.getPassword(MainActivity.this);
                     userPresenter.requestLog(MainActivity.this, account, password);
                 }
-
-                try {
-                    Thread.sleep(800);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    startActivity(new Intent(MainActivity.this, DesktopActivity.class));
-                    finish();
-                }
-            }/////
+            }
         }).start();
     }
 
     @Override
     public void log(int STATUS) {
-        if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+        if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
             Toast.makeText(this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
+            UserPresenter.getInstance(this).accordLoggedStatus(this, false);
+        } else if (STATUS == UserPresenter.STATUS_SUCCESS)
+            Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+
+
+        startActivity(new Intent(MainActivity.this, DesktopActivity.class));
+        finish();
+
     }
 
     @Override

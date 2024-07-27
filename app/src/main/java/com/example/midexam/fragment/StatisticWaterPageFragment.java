@@ -4,216 +4,151 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
-import com.example.midexam.model.UserData;
 import com.example.midexam.observer.UserObserver;
-import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 
 public class StatisticWaterPageFragment extends Fragment implements UserDataShowInterface {
+    private static final String TAG = "StatisticWaterPageFragment";
+    private View view;
 
-    Button btDay;
-    Button btMonth;
-    Button btYear;
+    BarChart waterChart;
 
-    BarChart WaterChart;
-    TextView tvTitle;
-    TextView tipsNoData;
-    UserPresenter userPresenter=UserPresenter.getInstance(this);
-    UserObserver observer=registerObserver(this);
     List<BarEntry> dayData;
     List<BarEntry> monthData;
     List<BarEntry> yearData;
     List<String> dayDate;
     List<String> monthDate;
     List<String> yearDate;
+    int position = 0;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
-    public StatisticWaterPageFragment() {
-
-    }
-
-
-    public static StatisticWaterPageFragment newInstance(String param1, String param2) {
-        StatisticWaterPageFragment fragment = new StatisticWaterPageFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_statistic_water_page, container, false);
-    }
+        view = inflater.inflate(R.layout.fragment_statistic_water_page, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        initView();
 
-            //增添数据
-            dayData = dataManager.getInstance().getDayDataList();
-            monthData = dataManager.getInstance().getMonthDataList();
-            yearData = dataManager.getInstance().getYearDataList();
-            dayDate = new ArrayList<>();
-            monthDate = new ArrayList<>();
-            yearDate = new ArrayList<>();//这几个要在上面以避免空指针，否则就老老实实找用法加判断
-            initView(view);
-            if(userPresenter.isLogged(getContext())){
-                receiveUpdate();
-            }
-            else{
-                setDataInBar(WaterChart, new ArrayList<>(), new ArrayList<>(), "日饮水量");//显示一个空数据
-            }
-    }
+        requireData();
 
-    public void initView(View v) {
-
-        btDay = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_day);
-        btMonth = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_month);
-        btYear = v.findViewById(R.id.statistic_switchbutton_water).findViewById(R.id.bt_year);
-        WaterChart = v.findViewById(R.id.bar_1).findViewById(R.id.bar_chart);
-        tvTitle = v.findViewById(R.id.bar_1).findViewById(R.id.title);
-        tipsNoData = v.findViewById(R.id.tip_no_data);
-        initListener();
         initMonthDate();
         initYearDate();
+
         initMonthData();
         initYearData();
-    }
-    //有网络需求
-    private void initListener() {
-        btDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(userPresenter.isLogged(getContext())){setDataInBar(WaterChart, dayData, dayDate, "日饮水量");}
-                else{setDataInBar(WaterChart, new ArrayList<>(), new ArrayList<>(), "日饮水量");}
-            }
-        });
-        btMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(userPresenter.isLogged(getContext())){setDataInBar(WaterChart, monthData, monthDate, "月饮水量");}
-                else{setDataInBar(WaterChart, new ArrayList<>(), new ArrayList<>(), "月饮水量");}
-            }
-        });
-        btYear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(userPresenter.isLogged(getContext())){setDataInBar(WaterChart, yearData, yearDate, "年饮水量");}
-                else{setDataInBar(WaterChart, new ArrayList<>(), new ArrayList<>(), "年饮水量");}
 
-            }
-        });
-    }
-    //有网络需求
-    public void initBarData(){
+        initBarData();
 
-        UserData userData=userPresenter.userData;
-        List<String> day=userData.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
-        List<String> month=userData.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
-        List<String> year=userData.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
-       /* List<String> day=new ArrayList<>();
-        List<String> month=new ArrayList<>();
-        List<String> year=new ArrayList<>();
+        setDataInBar(dayData, dayDate);
+
+        return view;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    private void requireData() {
+        //增添数据
+        dayData = dataManager.getInstance().getDayDataList();
+        monthData = dataManager.getInstance().getMonthDataList();
+        yearData = dataManager.getInstance().getYearDataList();
+        dayDate = new ArrayList<>();
+        monthDate = new ArrayList<>();
+        yearDate = new ArrayList<>();//这几个要在上面以避免空指针，否则就老老实实找用法加判断
+    }
+
+    public void initView() {
+        waterChart = view.findViewById(R.id.bar_chart);
+    }
+
+    //有网络需求
+    public void initBarData() {
+
+        //UserPresenter userPresenter = UserPresenter.getInstance(this);
+        //List<String> day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+        //List<String> month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
+        //List<String> year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
+
+        List<String> day = new ArrayList<>();
+        List<String> month = new ArrayList<>();
+        List<String> year = new ArrayList<>();
         day.add("1540180");
         month.add("07255999");
-        year.add("0751000");*/
+        year.add("0751000");
+
         for (int i = 0; i < day.size(); i++) {
-            String hour=day.get(i).substring(0,2);
-            String min=day.get(i).substring(2,4);
-            String water=day.get(i).substring(4);
-            int volumn=Integer.valueOf(water);
-            dayData.add(new BarEntry(i,volumn));
-            dayDate.add(hour+":"+min);
+            String hour = day.get(i).substring(0, 2);
+            String min = day.get(i).substring(2, 4);
+            String water = day.get(i).substring(4);
+            int V = Integer.parseInt(water);
+            dayData.add(new BarEntry(i, V));
+            dayDate.add(hour + ":" + min);
         }
+
         for (int i = 0; i < month.size(); i++) {
-            String Month=month.get(i).substring(0,2);
-            String Day=month.get(i).substring(2,4);
-            String water=month.get(i).substring(4);
-            int volumn=Integer.valueOf(water);
-            monthData.get(Integer.valueOf(Day)).setY(volumn);
-
+            String Day = month.get(i).substring(2, 4);
+            String water = month.get(i).substring(4);
+            int V = Integer.parseInt(water);
+            monthData.get(Integer.parseInt(Day)).setY(V);
         }
+
         for (int i = 0; i < year.size(); i++) {
-            String Month=year.get(i).substring(0,2);
-            String water=year.get(i).substring(2);
-            int volumn=Integer.valueOf(water);
-            yearData.get(Integer.valueOf(Month)).setY(volumn);
+            String Month = year.get(i).substring(0, 2);
+            String water = year.get(i).substring(2);
+            int V = Integer.parseInt(water);
+            yearData.get(Integer.parseInt(Month)).setY(V);
         }
-
-
     }
 
-    public void setDataInBar(BarChart barChart, List<BarEntry> dataList, List<String> dateList, String title) {
+    public void setDataInBar(List<BarEntry> dataList, List<String> dateList) {
 
-        if (dataList == null || dataList.size() == 0) {
-            barChart.setVisibility(View.INVISIBLE);
-            tvTitle.setVisibility(View.INVISIBLE);
-            tipsNoData.setVisibility(View.VISIBLE);
+        if (dataList == null || dataList.isEmpty()) {
+            waterChart.setVisibility(View.INVISIBLE);
         } else {
 
-            BarDataSet dataSet = initDataSet(barChart, dataList);
+            BarDataSet dataSet = initDataSet(waterChart, dataList);
 
             //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
             BarData barData = new BarData(dataSet);
             barData.setBarWidth(0.8f);
 
-            initAxis(barChart, dateList);
+            initAxis(waterChart, dateList);
 
 
-            barChart.setData(barData);
-            barChart.setFitBars(true);
+            waterChart.setData(barData);
+            waterChart.setFitBars(true);
 
-            barChart.invalidate();//更新视图
+            waterChart.invalidate();//更新视图
 
-            barChart.setVisibility(View.VISIBLE);
-            tvTitle.setVisibility(View.VISIBLE);
-            tvTitle.setText(title);
-            tipsNoData.setVisibility(View.INVISIBLE);
+            waterChart.setVisibility(View.VISIBLE);
         }
 
 
@@ -247,8 +182,6 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dateList));
 
-
-
         //xAxis.setDrawGridLines(false);
     }
 
@@ -263,7 +196,8 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         barChart.getAxisRight().setEnabled(false);
         yAxis.setDrawGridLines(false);
     }
-//月坐标
+
+    //月坐标
     public void initMonthDate() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -277,28 +211,29 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         // 打印该月的每一天
         for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDayOfMonth); date = date.plusDays(1)) {
             int everyDay = date.getDayOfMonth();
-            monthDate.add( String.valueOf(everyDay) + "日");
+            monthDate.add(String.valueOf(everyDay) + "日");
             Log.d("this", String.valueOf(everyDay) + "日");
         }
-
-
     }
-//年坐标
+
+    //年坐标
     public void initYearDate() {
         for (int i = 1; i < 13; i++) {
             yearDate.add(String.valueOf(i) + "月");
         }
     }
-//让他都有数据，好看一点
-    public void initYearData(){
+
+    //让他都有数据，好看一点
+    public void initYearData() {
         for (int i = 0; i < 12; i++) {
-            yearData.add(new BarEntry(i,0));
+            yearData.add(new BarEntry(i, 0));
         }
     }
-//让他都有数据，好看一点
-    public void initMonthData(){
+
+    //让他都有数据，好看一点
+    public void initMonthData() {
         for (int i = 0; i < monthDate.size(); i++) {
-            monthData.add(new BarEntry(i,0));
+            monthData.add(new BarEntry(i, 0));
         }
     }
 
@@ -329,12 +264,18 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     @Override
     public void receiveUpdate() {
-        if(userPresenter.isLogged(getContext())) {
-            initBarData();
-            setDataInBar(WaterChart, dayData, dayDate, "日饮水量");
-        }else{
-            Toast.makeText(getContext(),"登陆状态未更新",Toast.LENGTH_SHORT).show();
-        }
+        requireData();
+
+        initMonthData();
+        initYearData();
+
+        initBarData();
+        if (position == 0)
+            setDataInBar(dayData, dayDate);
+        else if (position == 1)
+            setDataInBar(monthData,monthDate);
+        else
+            setDataInBar(yearData,yearDate);
     }
 
     static class dataManager {

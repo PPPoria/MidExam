@@ -2,6 +2,7 @@ package com.example.midexam.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,16 +47,20 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     String date;
     String time;
     String finalDate;
+    private Context context;
+    public void setContext(Context context){
+        this.context = context;
+    }
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // 使用自定义布局创建对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_time_pick, null);
         builder.setView(view);
         // 这里可以初始化对话框中的控件
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.square_all_4);
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.square_all_4);
         dialog.getWindow().setBackgroundDrawable(drawable);
         initView(view);
         datePicker.setVisibility(View.VISIBLE);
@@ -197,12 +202,12 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
 
         if(Integer.valueOf(sYear)== calendar.get(Calendar.YEAR)&& Integer.valueOf(sMonth)==(calendar.get(Calendar.MONTH)+1)&& Integer.valueOf(sDay)== calendar.get(Calendar.DAY_OF_MONTH)){
             if(Integer.valueOf(sHour)<calendar.get(Calendar.HOUR_OF_DAY)){
-                Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
                 legel=false;
             }else if(Integer.valueOf(sHour)==calendar.get(Calendar.HOUR_OF_DAY)){
                 int a=calendar.get(Calendar.MINUTE);
                 if (Integer.valueOf(sMin)<=calendar.get(Calendar.MINUTE)){
-                    Toast.makeText(getContext(),"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"您选择的时间已经过去，重新考虑一个更适合的时段吧！",Toast.LENGTH_SHORT).show();
                     legel=false;
                 }else{legel = taskConflict(tempList, legel);}
             }
@@ -219,7 +224,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
             long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
             long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
             if (lStart>=beginTime&&lStart<endTime ) {
-                Toast.makeText(getContext(),"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
                 legel =false;
                 break;
             }

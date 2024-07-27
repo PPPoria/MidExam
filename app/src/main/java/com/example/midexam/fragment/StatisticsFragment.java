@@ -1,149 +1,126 @@
 package com.example.midexam.fragment;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.example.midexam.R;
 
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.observer.UserObserver;
-import com.example.midexam.presenter.UserPresenter;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.utils.MPPointF;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StatisticsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class StatisticsFragment extends Fragment implements View.OnClickListener, UserDataShowInterface {
+    private static final String TAG = "StatisticsFragment";
+    private View view;
 
     Button btFocusChart;
-
     Button btWaterChart;
+    Button btDay;
+    Button btMonth;
+    Button btYear;
+
+
+    UserObserver observer = registerObserver(this);
 
     ViewPager2 statisticsViewPager;
-    ConstraintLayout layout;
-    LinearLayout hidelayout;
-    UserObserver observer=registerObserver(this);
-    TextView textView;
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
+    List<Fragment> pages = new ArrayList<>();
+    int pagePosition = 0;
 
-
-    List<Fragment> pages;
-    UserPresenter userPresenter=UserPresenter.getInstance(this);
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
-    public StatisticsFragment() {
-    }
-
-    public static StatisticsFragment newInstance(String param1, String param2) {
-        StatisticsFragment fragment = new StatisticsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_statistics, container, false);
+        initViewAndListener();
+        initRV();
+        return view;
+    }
 
-        return inflater.inflate(R.layout.fragment_statistics, container, false);
+    private void initRV() {
+        statisticTimePageFragment = new StatisticTimePageFragment();
+        statisticWaterPageFragment = new StatisticWaterPageFragment();
+
+        pages.add(statisticTimePageFragment);
+        pages.add(statisticWaterPageFragment);
+        statisticsViewPager.setAdapter(new statisticsAdapter(requireActivity()));
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initview(view);
     }
 
-    private void initview(View view) {
+    private void initViewAndListener() {
+        btFocusChart = view.findViewById(R.id.bt_pie_focus);
+        btWaterChart = view.findViewById(R.id.bt_bar_water);
+        btDay = view.findViewById(R.id.bt_day);
+        btMonth = view.findViewById(R.id.bt_month);
+        btYear = view.findViewById(R.id.bt_year);
 
-        btFocusChart =view.findViewById(R.id.bt_pie_focus);
-        btWaterChart=view.findViewById(R.id.bt_bar_water);
-        statisticsViewPager=view.findViewById(R.id.statistics_viewpager);
-        layout=view.findViewById(R.id.fs_constraint_statistics);
-        textView=view.findViewById(R.id.nothing);
-
-        statisticTimePageFragment=new StatisticTimePageFragment();
-        statisticWaterPageFragment=new StatisticWaterPageFragment();
-        pages=new ArrayList<>();
-        pages.add(statisticTimePageFragment);
-        pages.add(statisticWaterPageFragment);
-
-        statisticsAdapter statisticsAdapter=new statisticsAdapter(getActivity());
-        statisticsViewPager.setAdapter(statisticsAdapter);
+        statisticsViewPager = view.findViewById(R.id.statistics_viewpager);
 
         btFocusChart.setOnClickListener(this);
         btWaterChart.setOnClickListener(this);
-
+        btDay.setOnClickListener(this);
+        btMonth.setOnClickListener(this);
+        btYear.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.bt_pie_focus:
-                statisticsViewPager.setCurrentItem(0);
+        int id = v.getId();
 
-                break;
+        if (id == R.id.bt_pie_focus) {
+            pagePosition = 0;
+            statisticsViewPager.setCurrentItem(0);
+            return;
+        } else if (id == R.id.bt_bar_water) {
+            pagePosition = 1;
+            statisticsViewPager.setCurrentItem(1);
+            return;
+        }
 
-            case R.id.bt_bar_water:
-                statisticsViewPager.setCurrentItem(1);
-                break;
 
-            default:
-                break;
+        if (id == R.id.bt_day) {
+            if (pagePosition == 0) {
+                statisticTimePageFragment.setPosition(0);
+                statisticTimePageFragment.receiveUpdate();
+            } else {
+                statisticWaterPageFragment.setPosition(0);
+                statisticWaterPageFragment.receiveUpdate();
+            }
+        } else if (id == R.id.bt_month) {
+            if (pagePosition == 0) {
+                statisticTimePageFragment.setPosition(1);
+                statisticTimePageFragment.receiveUpdate();
+            } else {
+                statisticWaterPageFragment.setPosition(1);
+                statisticWaterPageFragment.receiveUpdate();
+            }
+        } else if (id == R.id.bt_year) {
+            if (pagePosition == 0) {
+                statisticTimePageFragment.setPosition(2);
+                statisticTimePageFragment.receiveUpdate();
+            } else {
+                statisticWaterPageFragment.setPosition(2);
+                statisticWaterPageFragment.receiveUpdate();
+            }
         }
     }
 
@@ -174,7 +151,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void receiveUpdate() {
-
+        statisticWaterPageFragment.receiveUpdate();
+        statisticTimePageFragment.receiveUpdate();
     }
 
     class statisticsAdapter extends FragmentStateAdapter {
@@ -194,5 +172,4 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             return pages.size();
         }
     }
-
 }

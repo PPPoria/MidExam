@@ -2,6 +2,7 @@ package com.example.midexam.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -43,6 +44,11 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
     public static final int EDIT=0;
     public static final int MODIFY=1;
 
+    private Context context;
+    public void setContext(Context context){
+        this.context = context;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // 使用自定义布局创建对话框
@@ -53,7 +59,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
         // 这里可以初始化对话框中的控件
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.square_all_4);
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.square_all_4);
         dialog.getWindow().setBackgroundDrawable(drawable);
         initView(view);
         return dialog;
@@ -126,7 +132,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
         String during=duringTime.getText().toString().trim();
 
         if(eventname==null||eventname.equals("")){
-            Toast.makeText(getContext(),"请输入事件名称",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"请输入事件名称",Toast.LENGTH_SHORT).show();
 
             return ready;
         }else{
@@ -135,7 +141,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
         }
 
         if(start==null||start.equals("")){
-            Toast.makeText(getContext(),"请输入起始时间",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"请输入起始时间",Toast.LENGTH_SHORT).show();
 
             return ready;
         }else{
@@ -145,7 +151,7 @@ public class EditJobFragment extends DialogFragment implements View.OnClickListe
 
         if(during==null||during.equals("")){
 
-            Toast.makeText(getContext(),"请输入持续时间",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"请输入持续时间",Toast.LENGTH_SHORT).show();
             return ready;
         }else{
             data.add(duringTime.getText().toString());

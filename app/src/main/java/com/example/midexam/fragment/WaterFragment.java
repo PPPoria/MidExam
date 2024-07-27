@@ -141,6 +141,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             int percentVale = 0;
 
             nameValue = userPresenter.getUserName();
+            System.out.println(nameValue);
             targetValue = userPresenter.getWaterTarget();
             drinkValue = userPresenter.getWaterDrink();
             percentVale = (int) (100f * drinkValue / targetValue);

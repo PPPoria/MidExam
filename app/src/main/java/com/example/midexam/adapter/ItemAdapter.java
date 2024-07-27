@@ -36,14 +36,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
 
     private static final String TAG = "ItemAdapter";
 
-    private Activity activity;
+    private JobFragment jobFragment;
     private Context context;
     private List<ItemData> itemList;
 
 
 
-    public ItemAdapter(Activity activity, Context context, List<ItemData> itemList) {
-        this.activity = activity;
+    public ItemAdapter(JobFragment activity, Context context, List<ItemData> itemList) {
+        this.jobFragment = activity;
         this.context = context;
         this.itemList = itemList;
     }
@@ -123,14 +123,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         public void onClick(View v) {
             int id = v.getId();
             if (id == R.id.btForEdit) {
-                JobFragment.setItemPosition(position);
-                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                jobFragment.setItemPosition(position);
+                jobFragment.switchDialog(JobFragment.MODIFY_JOB);
                 scroll.smoothScrollTo(0, 0);//点击后就返回原位，当然如果需要编辑后在返回原位则需要把他的scroll传给dialog
             } else if (id == R.id.btForDelete) {
-                JobFragment.deleteItem(position);
+                jobFragment.deleteItem(position);
             } else if (id == R.id.item_show_clayout) {
-                JobFragment.setItemPosition(position);
-                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                jobFragment.setItemPosition(position);
+                jobFragment.switchDialog(JobFragment.MODIFY_JOB);
             }
         }
     }
@@ -142,10 +142,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         popup.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.menu_delete) {
-                JobFragment.deleteItem(position);
+                jobFragment.deleteItem(position);
                 return true;
             } else if (itemId == R.id.menu_edit) {
-                JobFragment.switchDialog(JobFragment.MODIFY_JOB);
+                jobFragment.switchDialog(JobFragment.MODIFY_JOB);
                 return true;
             }
             return false;

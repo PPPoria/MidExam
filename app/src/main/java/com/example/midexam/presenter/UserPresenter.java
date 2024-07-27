@@ -17,6 +17,7 @@ import com.example.midexam.model.UserData;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -32,7 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserPresenter {
     private static final String TAG = "UserPresenter";
-    public String baseUrl = "http://192.168.3.183:8081/";
+    public String baseUrl = "http://47.113.224.195:31112/";
     public String backgroundImagePath;
     public String headImagePath;
     public UserData userData;
@@ -93,33 +94,58 @@ public class UserPresenter {
         return userData.getWaterDrink();
     }
 
-    public void setWaterDrink(int waterDrink){
+    public void setWaterDrink(int waterDrink) {
         userData.setWaterDrink(waterDrink);
     }
 
-    public List<String> getWaterToday(){
-        return userData.getWaterToday();
+    public List<String> getWaterToday() {
+        List<String> list = userData.getWaterToday();
+        if (list == null)
+            return new ArrayList<>();
+        else return list;
     }
 
-    public void drink(String date,int drinkValue) {
+    public List<String> getWaterPerDay(){
+        List<String> list = userData.getWaterPerDay();
+        if (list == null)
+            return new ArrayList<>();
+        else return list;
+    }
+
+    public List<String> getWaterPerMonth(){
+        List<String> list = userData.getWaterPerMonth();
+        if (list == null)
+            return new ArrayList<>();
+        else return list;
+    }
+
+    public void drink(String date, int drinkValue) {
         int waterDrink = getWaterDrink();
         waterDrink += drinkValue;
         setWaterDrink(waterDrink);
-        getWaterToday().add(date+waterDrink);
+        getWaterToday().add(date + waterDrink);
+    }
+
+    public List<String> getFinishJobs() {
+        List<String> list = userData.getFinishJobs();
+        if (list == null)
+            return new ArrayList<>();
+        else return list;
     }
 
     public String getUserName() {
         return userData.getName();
     }
-    public void setUserName(String userName){
+
+    public void setUserName(String userName) {
         userData.setName(userName);
     }
 
-    public String getIntervalStr(){
+    public String getIntervalStr() {
         return userData.getIntervalTime();
     }
 
-    public void setIntervalStr(String hhmm){
+    public void setIntervalStr(String hhmm) {
         userData.setIntervalTime(hhmm);
     }
 
@@ -195,8 +221,10 @@ public class UserPresenter {
             @Override
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
-                if (tempData == null) activity.log(STATUS_ACCOUNT_NOT_EXIST);
-                else if ("accountNotExist".equals(tempData.getMsg()))
+                if (tempData == null) {
+                    activity.log(STATUS_ACCOUNT_NOT_EXIST);
+                    accordLoggedStatus(context, false);
+                } else if ("accountNotExist".equals(tempData.getMsg()))
                     activity.log(STATUS_ACCOUNT_NOT_EXIST);
                 else if (tempData.getMsg().equals("passwordIncorrect"))
                     activity.log(STATUS_PASSWORD_INCORRECT);
@@ -205,6 +233,7 @@ public class UserPresenter {
                     accordPassword(context, password);
                     accordLoggedStatus(context, true);
                     userData = tempData;
+                    System.out.println(userData.getName() + "  request");
                     userData.setAccount(account);
                     activity.log(STATUS_SUCCESS);
                 }
@@ -212,6 +241,7 @@ public class UserPresenter {
 
             @Override
             public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
+                Log.d(TAG, throwable.toString());
                 activity.log(STATUS_NO_INTERNET);
             }
         });
