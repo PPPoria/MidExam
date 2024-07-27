@@ -76,7 +76,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     private void initTimePicker() {
         Calendar calendar = Calendar.getInstance();
         timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        timePicker.setMinute(calendar.get(Calendar.MINUTE));
+        timePicker.setMinute(calendar.get(Calendar.MINUTE)+1);//让他不要在此时此刻
     }
 
     private void initDatePicker() {

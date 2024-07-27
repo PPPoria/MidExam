@@ -58,7 +58,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     Description description;
     LinearLayout legendLinerLayout;
     UserPresenter userPresenter=UserPresenter.getInstance(this);
-    UserObserver observer;
+    UserObserver observer=registerObserver(this);
     PieChart mPieChart;
     ScrollView scrollView;
     TextView title;
@@ -112,12 +112,13 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         pieEntriesMonth=dataManager.getInstance().getMonthDataList();
         pieEntriesYear=dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
         mColorPie = getColorPie();
-        observer=registerObserver(this);
         initview(view);
-        init_Pie();
-        initPieData();
-        showChart(pieEntriesDay);
-        currentPieEntry=pieEntriesDay;
+        if(userPresenter.isLogged(getContext())){
+            receiveUpdate();
+        }
+        else{
+            showChart(pieEntriesDay);
+        }
     }
 
     private void initview(View view) {
@@ -147,7 +148,104 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
         if(currentPop!=null) currentPop.dismiss();
     }
-//增加数据
+    //初始化饼图数据显示
+    @NonNull
+    private static PieDataSet init_PieDataSet(List<PieEntry> pieEntries, List<String> colorPie) {
+        //图解
+        PieDataSet iPieDataSet = new PieDataSet(pieEntries, "我在专注");
+
+
+        int[] colors = new int[colorPie.size()];
+        for (int i = 0; i < colorPie.size(); i++) {
+            colors[i] = Color.parseColor(String.valueOf(colorPie.get(i)));
+        }
+        //设定图的细节
+        iPieDataSet.setColors(colors);//图颜色
+        iPieDataSet.setValueTextColors(Collections.singletonList(Color.BLACK));//图中文字的颜色,黑色给了个转换为集合才能接受
+        iPieDataSet.setSliceSpace(3);   // 每块之间的距离
+        iPieDataSet.setValueLinePart1OffsetPercentage(80.f);
+
+        //设置线的长度
+        iPieDataSet.setValueLinePart1Length(0.3f);
+        iPieDataSet.setValueLinePart2Length(0.2f);
+        //设置文字和数据图外显示
+        iPieDataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
+        iPieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+
+        iPieDataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return value+"%";
+            }
+        });
+
+        iPieDataSet.setValueTextSize(15);
+        return iPieDataSet;
+    }
+
+    //有网络需求
+    private void initPieData(){
+        /*"finishJobs": ["x","y"]
+"072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
+  */
+        UserData userData=userPresenter.userData;
+        List<String> finishJobs=userData.getFinishJobs();
+       /* List<String> finishJobs=new ArrayList<>();
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072617300145说的道理");
+        finishJobs.add("072617300145说的道理");
+        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072517300145说的道理");*/
+
+        List<PieEntry> year=new ArrayList<>();//这里可以优化内存改进
+        List<PieEntry> month=new ArrayList<>();
+        List<PieEntry> day=new ArrayList<>();
+
+
+        for (int i = 0; i < finishJobs.size(); i++) {
+            String Month=finishJobs.get(i).substring(0,2);
+            String Day=finishJobs.get(i).substring(2,4);
+            String duringHour=finishJobs.get(i).substring(8,10);
+            String duringmin=finishJobs.get(i).substring(10,12);
+            String eventName=finishJobs.get(i).substring(12);
+            int duringTime=Integer.valueOf(duringHour)*60+Integer.valueOf(duringmin);
+            if(Integer.valueOf(Month)==Calendar.getInstance().get(Calendar.MONTH)+1){
+                PieEntry MonthPie=new PieEntry(duringTime,Day+"日");
+                month.add(MonthPie);
+                if(Integer.valueOf(Day)== Calendar.getInstance().get(Calendar.DAY_OF_MONTH)){
+                    PieEntry DayPie=new PieEntry(duringTime,eventName);
+                    day.add(DayPie);
+                }//日
+            }//月
+
+
+            PieEntry YearPie=new PieEntry(duringTime,Month+"月");
+            year.add(YearPie);//all进入年，后面函数自动判定合并，可优化逻辑
+        }
+        addData(day,pieEntriesDay);
+        addData(month,pieEntriesMonth);
+        addData(year,pieEntriesYear);
+    }
+
+    //展示饼图
+    private void showChart(List<PieEntry> dataList){
+        if(dataList.size()==0||dataList==null){
+            tipsNoData.setVisibility(View.VISIBLE);
+            mPieChart.setVisibility(View.INVISIBLE);
+            title.setVisibility(View.INVISIBLE);
+            legendLinerLayout.setVisibility(View.INVISIBLE);
+
+        }else{
+            updataPie(dataList);
+            tipsNoData.setVisibility(View.GONE);
+            mPieChart.setVisibility(View.VISIBLE);
+            title.setVisibility(View.VISIBLE);
+            legendLinerLayout.setVisibility(View.VISIBLE);
+        }
+        if(currentPop!=null) currentPop.dismiss();
+    }
+    //增加数据
     private void addData(List<PieEntry> mlist, List<PieEntry> root) {
         if (mlist!=null) {
             boolean noConflict=true;
@@ -170,24 +268,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             }
         }
     }
-//展示饼图
-    private void showChart(List<PieEntry> dataList){
-        if(dataList.size()==0||dataList==null){
-            tipsNoData.setVisibility(View.VISIBLE);
-            mPieChart.setVisibility(View.INVISIBLE);
-            title.setVisibility(View.INVISIBLE);
-            legendLinerLayout.setVisibility(View.INVISIBLE);
 
-        }else{
-            updataPie(dataList);
-            tipsNoData.setVisibility(View.GONE);
-            mPieChart.setVisibility(View.VISIBLE);
-            title.setVisibility(View.VISIBLE);
-            legendLinerLayout.setVisibility(View.VISIBLE);
-        }
-        if(currentPop!=null) currentPop.dismiss();
-    }
-//单个图例
+    //单个图例
     private LinearLayout getLineLegend(Integer color, String label, int data,List<PieEntry> pieEntries) {
         LinearLayout.LayoutParams lp=new LinearLayout.
                 LayoutParams(legendLinerLayout.getWidth()/2, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -243,7 +325,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         layout.addView(dataTV);
         return layout;
     }
-//饼图颜色
+    //饼图颜色
     @NonNull
     private static List<String> getColorPie() {
         //设置圆弧颜色
@@ -260,42 +342,8 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         mColorPie.add("#FFC0CB");
         return mColorPie;
     }
-//初始化饼图数据
-    @NonNull
-    private static PieDataSet init_PieDataSet(List<PieEntry> pieEntries, List<String> colorPie) {
-        //图解
-        PieDataSet iPieDataSet = new PieDataSet(pieEntries, "我在专注");
 
-
-        int[] colors = new int[colorPie.size()];
-        for (int i = 0; i < colorPie.size(); i++) {
-            colors[i] = Color.parseColor(String.valueOf(colorPie.get(i)));
-        }
-        //设定图的细节
-        iPieDataSet.setColors(colors);//图颜色
-        iPieDataSet.setValueTextColors(Collections.singletonList(Color.BLACK));//图中文字的颜色,黑色给了个转换为集合才能接受
-        iPieDataSet.setSliceSpace(3);   // 每块之间的距离
-        iPieDataSet.setValueLinePart1OffsetPercentage(80.f);
-
-        //设置线的长度
-        iPieDataSet.setValueLinePart1Length(0.3f);
-        iPieDataSet.setValueLinePart2Length(0.2f);
-        //设置文字和数据图外显示
-        iPieDataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
-        iPieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-
-        iPieDataSet.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return value+"%";
-            }
-        });
-
-        iPieDataSet.setValueTextSize(15);
-        return iPieDataSet;
-    }
-
-//饼图图例更新
+    //饼图图例更新
     private void updataPieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
         //隐藏原有图例
         Legend legendOrigin=mPieChart.getLegend();
@@ -337,7 +385,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
             }
         });
     }
-//饼图数据更新
+    //饼图数据更新
     private void updataPie(List<PieEntry> dataResourse) {
         PieDataSet iPieDataSet = init_PieDataSet(dataResourse, mColorPie);
         PieData pieData = new PieData(iPieDataSet);
@@ -379,7 +427,7 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
                 break;
         }
     }
-//展示图例具体信息
+    //展示图例具体信息
     private void showDetailedInfo(LinearLayout layout) {
         if (currentPop!=null) {
             currentPop.dismiss();
@@ -399,50 +447,6 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
         // 设置PopupWindow的显示位置
         popupWindow.showAsDropDown(layout, 0, 0);
         // 如果需要，你还可以为popupView中的元素设置监听器等
-    }
-
-    private void initPieData(){
-        /*"finishJobs": ["x","y"]
-"072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
-  */
-       /* UserData userData=userPresenter.userData;
-        List<String> finishJobs=userData.getFinishJobs();*/
-        List<String> finishJobs=new ArrayList<>();
-        finishJobs.add("072517300145说的道理");
-        finishJobs.add("072517300145说的道理");
-        finishJobs.add("072617300145说的道理");
-        finishJobs.add("072617300145说的道理");
-        finishJobs.add("072517300145说的道理");
-        finishJobs.add("072517300145说的道理");
-
-        List<PieEntry> year=new ArrayList<>();//这里可以优化内存改进
-        List<PieEntry> month=new ArrayList<>();
-        List<PieEntry> day=new ArrayList<>();
-
-
-        for (int i = 0; i < finishJobs.size(); i++) {
-            String Month=finishJobs.get(i).substring(0,2);
-            String Day=finishJobs.get(i).substring(2,4);
-            String duringHour=finishJobs.get(i).substring(8,10);
-            String duringmin=finishJobs.get(i).substring(10,12);
-            String eventName=finishJobs.get(i).substring(12);
-            int duringTime=Integer.valueOf(duringHour)*60+Integer.valueOf(duringmin);
-            if(Integer.valueOf(Month)==Calendar.getInstance().get(Calendar.MONTH)+1){
-                PieEntry MonthPie=new PieEntry(duringTime,Day+"日");
-                month.add(MonthPie);
-                if(Integer.valueOf(Day)== Calendar.getInstance().get(Calendar.DAY_OF_MONTH)){
-                    PieEntry DayPie=new PieEntry(duringTime,eventName);
-                    day.add(DayPie);
-                }//日
-            }//月
-
-
-            PieEntry YearPie=new PieEntry(duringTime,Month+"月");
-            year.add(YearPie);//all进入年，后面函数自动判定合并，可优化逻辑
-        }
-        addData(day,pieEntriesDay);
-        addData(month,pieEntriesMonth);
-        addData(year,pieEntriesYear);
     }
 
     @Override
@@ -473,10 +477,14 @@ public class StatisticTimePageFragment extends Fragment implements View.OnClickL
     @Override
     public void receiveUpdate() {
         UserDataShowInterface.super.receiveUpdate();
-        init_Pie();
-        initPieData();
-        showChart(pieEntriesDay);
-        currentPieEntry=pieEntriesDay;
+        if (userPresenter.isLogged(getContext())) {
+            init_Pie();
+            initPieData();
+            showChart(pieEntriesDay);
+            currentPieEntry=pieEntriesDay;
+        }else{
+            Toast.makeText(getContext(),"登陆状态未更新",Toast.LENGTH_SHORT).show();
+        }
     }
 
 

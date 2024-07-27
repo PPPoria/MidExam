@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.example.midexam.R;
 
 import com.example.midexam.activity.UserDataShowInterface;
+import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -51,11 +52,13 @@ import java.util.List;
 public class StatisticsFragment extends Fragment implements View.OnClickListener, UserDataShowInterface {
 
     Button btFocusChart;
+
     Button btWaterChart;
 
     ViewPager2 statisticsViewPager;
     ConstraintLayout layout;
     LinearLayout hidelayout;
+    UserObserver observer=registerObserver(this);
     TextView textView;
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
@@ -104,15 +107,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initview(view);
-
-      /* if(userPresenter.isLogged(getContext())) {
-
-
-        }else{
-
-
-        }*/
-
     }
 
     private void initview(View view) {
@@ -170,6 +164,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void updateUserImage(int STATUS) {
+
+    }
+
+    @Override
+    public UserObserver registerObserver(UserDataShowInterface observedView) {
+        return UserDataShowInterface.super.registerObserver(observedView);
+    }
+
+    @Override
+    public void receiveUpdate() {
 
     }
 
