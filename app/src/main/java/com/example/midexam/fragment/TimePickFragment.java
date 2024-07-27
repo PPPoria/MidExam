@@ -133,25 +133,23 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     //关于日期选择的控件不在这里，去init对应的方法找。
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.bt_time_back:
-                if(datePicker.getVisibility()==View.VISIBLE){
-                    dismiss();
-                }else{
-                    datePicker.setVisibility(View.VISIBLE);
-                    timePicker.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.bt_dateSelectOK:
-                if(datePicker.getVisibility()==View.VISIBLE){
-                    timePicker.setVisibility(View.VISIBLE);
-                    datePicker.setVisibility(View.GONE);
-                }else {
-                    finalDate=timeSet();
-                    EditJobFragment editJobFragment=JobFragment.getEditJobFragment();
-                    editJobFragment.getStartTime().setText(finalDate);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.bt_time_back) {
+            if (datePicker.getVisibility() == View.VISIBLE) {
+                dismiss();
+            } else {
+                datePicker.setVisibility(View.VISIBLE);
+                timePicker.setVisibility(View.GONE);
+            }
+        } else if (id == R.id.bt_dateSelectOK) {
+            if (datePicker.getVisibility() == View.VISIBLE) {
+                timePicker.setVisibility(View.VISIBLE);
+                datePicker.setVisibility(View.GONE);
+            } else {
+                finalDate = timeSet();
+                EditJobFragment editJobFragment = JobFragment.getEditJobFragment();
+                editJobFragment.getStartTime().setText(finalDate);
+            }
         }
     }
 
@@ -208,7 +206,7 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
                     String begin= tempList.get(i).getJobData();//2024-01-01 12:12
                     String currentTime=begin+":00";//2024-01-01 12:12:00
                     long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
-                    long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
+                    long endTime= DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
                     long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
                     if (lStart>=beginTime&&lStart<endTime ) {
                         Toast.makeText(getContext(),"与其他任务时间冲突",Toast.LENGTH_SHORT).show();

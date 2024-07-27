@@ -33,6 +33,7 @@ import java.util.List;
 
 public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
+    private UserObserver observer;
 
     private static ViewPager2 pagesContainer;
     private static List<Fragment> pages = new ArrayList<>();
@@ -67,6 +68,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             return insets;
         });
         getWindow().setNavigationBarColor(getColor(R.color.grey));
+        observer = registerObserver(this);
 
         initView();
         initPages();
@@ -175,6 +177,10 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         return UserDataShowInterface.super.registerObserver(observedView);
     }
 
+    @Override
+    public void receiveUpdate() {
+
+    }
 
     class DesktopAdapter extends FragmentStateAdapter {
 
