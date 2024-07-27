@@ -1,6 +1,7 @@
 package com.example.midexam.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.midexam.R;
+import com.example.midexam.activity.LogActivity;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.adapter.WaterHistoryAdapter;
 import com.example.midexam.observer.UserObserver;
@@ -90,8 +92,9 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
                 Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
             } else drink();
         });
-        targetLayout.setOnClickListener(v -> {
-
+        waterName.setOnClickListener(v -> {
+            if (!UserPresenter.getInstance(this).isLogged(requireContext()))
+                startActivity(new Intent(getActivity(), LogActivity.class));
         });
     }
 

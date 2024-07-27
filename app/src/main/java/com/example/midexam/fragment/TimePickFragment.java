@@ -133,25 +133,23 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     //关于日期选择的控件不在这里，去init对应的方法找。
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.bt_time_back:
-                if(datePicker.getVisibility()==View.VISIBLE){
-                    dismiss();
-                }else{
-                    datePicker.setVisibility(View.VISIBLE);
-                    timePicker.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.bt_dateSelectOK:
-                if(datePicker.getVisibility()==View.VISIBLE){
-                    timePicker.setVisibility(View.VISIBLE);
-                    datePicker.setVisibility(View.GONE);
-                }else {
-                    finalDate=timeSet();
-                    EditJobFragment editJobFragment=JobFragment.getEditJobFragment();
-                    editJobFragment.getStartTime().setText(finalDate);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.bt_time_back) {
+            if (datePicker.getVisibility() == View.VISIBLE) {
+                dismiss();
+            } else {
+                datePicker.setVisibility(View.VISIBLE);
+                timePicker.setVisibility(View.GONE);
+            }
+        } else if (id == R.id.bt_dateSelectOK) {
+            if (datePicker.getVisibility() == View.VISIBLE) {
+                timePicker.setVisibility(View.VISIBLE);
+                datePicker.setVisibility(View.GONE);
+            } else {
+                finalDate = timeSet();
+                EditJobFragment editJobFragment = JobFragment.getEditJobFragment();
+                editJobFragment.getStartTime().setText(finalDate);
+            }
         }
     }
 

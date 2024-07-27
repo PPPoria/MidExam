@@ -2,6 +2,7 @@ package com.example.midexam.activity;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.View;
 
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
+    private UserObserver observer;
 
     private static ViewPager2 pagesContainer;
     private static List<Fragment> pages = new ArrayList<>();
@@ -48,6 +50,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     private ConstraintLayout statisticsButton;
     private ConstraintLayout personButton;
 
+    private View waterIcon;
+    private View jobIcon;
+    private View statisticsIcon;
+    private View personIcon;
+    private List<View> icons = new ArrayList<>();
+
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             return insets;
         });
         getWindow().setNavigationBarColor(getColor(R.color.grey));
+        observer = registerObserver(this);
 
         initView();
         initPages();
@@ -71,6 +80,14 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         waterButton.setOnClickListener(this);
         statisticsButton.setOnClickListener(this);
         personButton.setOnClickListener(this);
+
+        pagesContainer.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                pagePosition = position;
+                changeIcon();
+            }
+        });
     }
 
 
@@ -85,17 +102,28 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         pages.add(jobPage);
         pages.add(statisticsPage);
         pages.add(personPage);
-        adapter=new DesktopAdapter(this);
+        adapter = new DesktopAdapter(this);
         pagesContainer.setAdapter(adapter);
     }
 
     private void initView() {
         pagesContainer = findViewById(R.id.pages_container);
+
         navigationBar = findViewById(R.id.navigation_bar);
+
         jobButton = findViewById(R.id.job_page_button);
         waterButton = findViewById(R.id.water_page_button);
         statisticsButton = findViewById(R.id.statistics_page_button);
         personButton = findViewById(R.id.person_page_button);
+
+        waterIcon = findViewById(R.id.water_icon_2);
+        icons.add(waterIcon);
+        jobIcon = findViewById(R.id.job_icon_2);
+        icons.add(jobIcon);
+        statisticsIcon = findViewById(R.id.statistics_icon_2);
+        icons.add(statisticsIcon);
+        personIcon = findViewById(R.id.person_icon_2);
+        icons.add(personIcon);
     }
 
     @Override
@@ -111,6 +139,17 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             pagePosition = 3;
         }
         pagesContainer.setCurrentItem(pagePosition);
+        changeIcon();
+    }
+
+    private void changeIcon() {
+        for (int i = 0; i < 4; i++) {
+            if (i == pagePosition) {
+                icons.get(i).animate().alpha(1f).setDuration(150).start();
+                continue;
+            }
+            icons.get(i).animate().alpha(0f).setDuration(150).start();
+        }
     }
 
     @Override
@@ -138,7 +177,10 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         return UserDataShowInterface.super.registerObserver(observedView);
     }
 
+    @Override
+    public void receiveUpdate() {
 
+    }
 
     class DesktopAdapter extends FragmentStateAdapter {
 
