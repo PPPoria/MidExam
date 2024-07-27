@@ -37,12 +37,12 @@ public class JobIcon1 extends View {
 
         path.reset();
         path.moveTo(x/6.2f,y/2f);
-        path.cubicTo(x/6.2f,y/3f,x/3.5f,y/2f,x-x/2.8f,y/5f);
+        path.cubicTo(x/6.2f,y/3f,x/3.5f,y/2f,x-x/2.6f,y/5f);
         canvas.drawPath(path,paint);
 
         path.reset();
         path.moveTo(x-x/2f,y-y/6.2f);
-        path.cubicTo(x-x/3f,y-y/6.2f,x-x/2f,y-y/3.5f,x-x/5f,y/2.8f);
+        path.cubicTo(x-x/3f,y-y/6.2f,x-x/2f,y-y/3.5f,x-x/5f,y/2.6f);
         canvas.drawPath(path,paint);
 
         path.reset();
