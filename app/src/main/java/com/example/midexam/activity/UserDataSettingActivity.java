@@ -87,7 +87,9 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
             UserPresenter userPresenter = UserPresenter.getInstance(this);
             userPresenter.setUserName(newNameView.getText().toString());
             userPresenter.setWaterTarget(Integer.parseInt(newTargetView.getText().toString()));
+            Log.d(TAG, "waterTarget = " + newTargetView.getText().toString());
             userPresenter.setIntervalStr(String.format("%02d%02d", h, m));
+
             userPresenter.updateUserImage(this);
             userPresenter.updateUserData(this);
         });

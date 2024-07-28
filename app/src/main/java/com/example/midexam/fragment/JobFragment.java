@@ -47,8 +47,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     static RecyclerView jobContent;
     TextView jobGreeting;
     static TextView tvhide;
-    UserObserver userObserver1 = registerObserver(this);
-    ;
     static EditJobFragment editJobFragment;
     static TimePickFragment timePickFragment;
 

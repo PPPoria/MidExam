@@ -87,7 +87,7 @@ public class UserPresenter {
     }
 
     public void setWaterTarget(int waterTarget) {
-        userData.setWaterDrink(waterTarget);
+        userData.setWaterTarget(waterTarget);
     }
 
     public int getWaterDrink() {

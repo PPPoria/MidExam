@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
 import com.example.midexam.adapter.ItemAdapter;
+import com.example.midexam.fragment.BlankFragment;
 import com.example.midexam.fragment.EditJobFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
@@ -33,16 +34,15 @@ import java.util.List;
 
 public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
-    private UserObserver observer;
 
     private static ViewPager2 pagesContainer;
     private static List<Fragment> pages = new ArrayList<>();
     private static DesktopAdapter adapter;
     private int pagePosition = 0;
-    private static Fragment jobPage;
-    private Fragment waterPage;
-    private Fragment statisticsPage;
-    private Fragment personPage;
+    private JobFragment jobPage;
+    private WaterFragment waterPage;
+    private StatisticsFragment statisticsPage;
+    private PersonFragment personPage;
 
     private ConstraintLayout navigationBar;
     private ConstraintLayout jobButton;
@@ -68,7 +68,6 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             return insets;
         });
         getWindow().setNavigationBarColor(getColor(R.color.grey));
-        observer = registerObserver(this);
 
         initView();
         initPages();
@@ -87,6 +86,22 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
                 pagePosition = position;
                 changeIcon();
             }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(position == 0) {
+                    waterPage.receiveUpdate();
+                }
+                else if (position == 1) {
+                    jobPage.receiveUpdate();
+                }
+                else if (position == 2) {
+                    statisticsPage.receiveUpdate();
+                }
+                else if (position == 3) {
+                    personPage.receiveUpdate();
+                }
+            }
         });
     }
 
@@ -98,10 +113,13 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         statisticsPage = new StatisticsFragment();
         personPage = new PersonFragment();
         /*editJobFragment=new EditJobFragment();*/
+
         pages.add(waterPage);
         pages.add(jobPage);
+        //pages.add(new BlankFragment());
         pages.add(statisticsPage);
         pages.add(personPage);
+
         adapter = new DesktopAdapter(this);
         pagesContainer.setAdapter(adapter);
     }
@@ -169,16 +187,6 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void updateUserImage(int STATUS) {
-
-    }
-
-    @Override
-    public UserObserver registerObserver(UserDataShowInterface observedView) {
-        return UserDataShowInterface.super.registerObserver(observedView);
-    }
-
-    @Override
-    public void receiveUpdate() {
 
     }
 

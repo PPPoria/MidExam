@@ -32,9 +32,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     Button btMonth;
     Button btYear;
 
-
-    UserObserver observer = registerObserver(this);
-
     ViewPager2 statisticsViewPager;
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;

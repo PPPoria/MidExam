@@ -34,7 +34,6 @@ import java.util.Objects;
 public class WaterFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "WaterFragment";
     private View view;
-    private UserObserver observer;
 
     private TextView greet;
     private TextView waterName;
@@ -43,7 +42,6 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     private ShallowBlueWaveView shallowBlueWave;
     private ConstraintLayout addButton;
     private TextView waterPercent;
-    private ConstraintLayout targetLayout;
     private TextView waterTarget;
     private TextView waterDrink;
 
@@ -59,7 +57,6 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_water, container, false);
-        observer = UserObserver.registerObserver(this);
 
         initView();
 
@@ -82,7 +79,6 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         int d = LocalDateTime.now().getDayOfMonth();
         @SuppressLint("DefaultLocale") String date = String.format("%02d%02d", m, d);
         UserPresenter.getInstance(this).drink(date, 200);
-        observer.updateObservedViews();
     }
 
     @SuppressLint("DefaultLocale")
@@ -106,7 +102,6 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         shallowBlueWave = view.findViewById(R.id.shallowBlueWaveView);
         addButton = view.findViewById(R.id.drink);
         waterPercent = view.findViewById(R.id.water_percent);
-        targetLayout = view.findViewById(R.id.water_target_layout);
         waterTarget = view.findViewById(R.id.water_target);
         waterDrink = view.findViewById(R.id.water_drink);
         waterHistory = view.findViewById(R.id.water_history);
@@ -135,15 +130,10 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         if (UserPresenter.getInstance(this).isLogged(requireContext())) {
             UserPresenter userPresenter = UserPresenter.getInstance(this);
 
-            String nameValue = "游客";
-            int targetValue = 0;
-            int drinkValue = 0;
-            int percentVale = 0;
-
-            nameValue = userPresenter.getUserName();
-            targetValue = userPresenter.getWaterTarget();
-            drinkValue = userPresenter.getWaterDrink();
-            percentVale = (int) (100f * drinkValue / targetValue);
+            String nameValue = userPresenter.getUserName();
+            int targetValue = userPresenter.getWaterTarget();
+            int drinkValue = userPresenter.getWaterDrink();
+            int percentVale = (int) (100f * drinkValue / targetValue);
             if (percentVale > 100) percentVale = 100;
 
             waterName.setText(nameValue);

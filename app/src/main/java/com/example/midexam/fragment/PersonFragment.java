@@ -26,9 +26,10 @@ import com.example.midexam.helper.ScaleHelper;
 import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 
+import java.util.Objects;
+
 public class PersonFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "PersonFragment";
-    private UserObserver observer;
     private View view;
     private boolean isLogged = false;
 
@@ -54,7 +55,6 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         initView();
         initListener();
         initUserDataInformation();
-        observer = registerObserver(this);
         return view;
     }
 
@@ -101,7 +101,6 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                 UserPresenter.getInstance(this).accordLoggedStatus(requireContext(), false);
                 UserPresenter.getInstance(this).resetHeadImage();
                 UserPresenter.getInstance(this).resetBackgroundImage();
-                observer.updateObservedViews();
             }
         });
     }
@@ -122,10 +121,10 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
 
         String name = "登录/注册";
         String account = "account";
-        isLogged = userPresenter.isLogged(view.getContext());
+        isLogged = userPresenter.isLogged(requireContext());
         if (isLogged) {
             name = userPresenter.getUserName();
-            account = userPresenter.getAccount(getContext());
+            account = userPresenter.getAccount(requireContext());
         }
         userName.setText(name);
         userAccount.setText(account);
@@ -162,7 +161,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                 }
             }
         }).start();
-        getActivity().runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Glide.get(view.getContext()).clearMemory();
