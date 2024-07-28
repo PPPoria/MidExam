@@ -169,11 +169,9 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     private void initJobLists() {
         /*### "jobs": ["x","y"]
 "072517300145说的道理"，表示待办任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。*/
-        UserData userData = UserPresenter.getInstance(this).userData;
-        List<String> jobs = null;
-        if (userData!=null) {
-            jobs = userData.getJobs();
-        }
+
+        List<String> jobs = UserPresenter.getInstance(this).getJobs();
+
         if(jobList!=null||jobList.size()!=0){jobList.clear();}
         if (jobs!=null&&!jobs.isEmpty()) {
             for (int i = 0; i < jobs.size(); i++) {
