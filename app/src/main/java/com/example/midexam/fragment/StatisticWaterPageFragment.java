@@ -109,12 +109,14 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         day.add("1540180");
         month.add("07255999");
         year.add("0751000");*/
-
+        if(!dayData.isEmpty()){dayData.clear();}
+        if(!dayDate.isEmpty()){dayDate.clear();}//清空旧数据，避免重复添加
         for (int i = 0; i < day.size(); i++) {
             String hour = day.get(i).substring(0, 2);
             String min = day.get(i).substring(2, 4);
             String water = day.get(i).substring(4);
             int V = Integer.parseInt(water);
+
             dayData.add(new BarEntry(i, V));
             dayDate.add(hour + ":" + min);
         }
