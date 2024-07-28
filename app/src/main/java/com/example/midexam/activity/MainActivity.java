@@ -39,8 +39,19 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
                 if (!userPresenter.isLogged(MainActivity.this)) {
                     userPresenter.resetHeadImage();
                     userPresenter.resetBackgroundImage();
-                    startActivity(new Intent(MainActivity.this, DesktopActivity.class));
-                    finish();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            } finally {
+                                startActivity(new Intent(MainActivity.this, DesktopActivity.class));
+                                finish();
+                            }
+                        }
+                    }).start();
                 } else {
                     String account = userPresenter.getAccount(MainActivity.this);
                     String password = userPresenter.getPassword(MainActivity.this);

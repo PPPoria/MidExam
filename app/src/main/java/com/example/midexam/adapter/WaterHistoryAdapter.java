@@ -18,9 +18,12 @@ public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapte
     private Context context;
     private List<String> drinkList;
 
-    public WaterHistoryAdapter(Context context, List<String> drinkList) {
-        this.context = context;
+    public void setDrinkList(List<String> drinkList) {
         this.drinkList = drinkList;
+    }
+
+    public WaterHistoryAdapter(Context context) {
+        this.context = context;
     }
 
     @NonNull
@@ -40,6 +43,7 @@ public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapte
 
     @Override
     public int getItemCount() {
+        if (drinkList == null) return 0;
         return drinkList.size();
     }
 

@@ -6,12 +6,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -59,10 +62,29 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
+        
         initWaterData();
         initImageData();
+
         initListener();
+
+        overrideBackMethod();
         observer = registerObserver(this);
+    }
+
+    private void overrideBackMethod(){
+        //重写回退方法
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                DesktopActivity.personPage.initUserData();
+                DesktopActivity.personPage.clearImageMemoryAndDisk();
+                DesktopActivity.personPage.initUserImage();
+                finish();
+            }
+        };
+        dispatcher.addCallback(callback);
     }
 
 
@@ -123,7 +145,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         }
     }
 
-    private void initImageData(){
+    private void initImageData() {
         UserPresenter userPresenter = UserPresenter.getInstance(this);
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
@@ -157,7 +179,32 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
             Crop.of(data.getData(), destinationUri).withAspect(measureXY.getWidth(), measureXY.getHeight()).start(this);
             Log.d(TAG, "x = " + measureXY.getWidth());
             Log.d(TAG, "y = " + measureXY.getHandler());
-        } else initImageData();
+        }
+        clearImageMemoryAndDisk();
+        initImageData();
+    }
+
+    //清除图片缓存，不然图片更改不成功
+    private void clearImageMemoryAndDisk() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(UserDataSettingActivity.this).clearDiskCache();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    initView();
+                }
+            }
+        }).start();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(UserDataSettingActivity.this).clearMemory();
+            }
+        });
     }
 
     @Override
@@ -183,12 +230,6 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
 
     @Override
     public void updateUserImage(int STATUS) {
-        if (STATUS == UserPresenter.STATUS_SUCCESS)
-            Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
-        else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
-            Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
-        else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
-            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -39,10 +39,10 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     private static List<Fragment> pages = new ArrayList<>();
     private static DesktopAdapter adapter;
     private int pagePosition = 0;
-    private JobFragment jobPage;
-    private WaterFragment waterPage;
-    private StatisticsFragment statisticsPage;
-    private PersonFragment personPage;
+    public static JobFragment jobPage;
+    public static WaterFragment waterPage;
+    public static StatisticsFragment statisticsPage;
+    public static PersonFragment personPage;
 
     private ConstraintLayout navigationBar;
     private ConstraintLayout jobButton;
@@ -85,22 +85,22 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             public void onPageSelected(int position) {
                 pagePosition = position;
                 changeIcon();
+                try {
+                    if (position == 0) {
+                        waterPage.receiveUpdate();
+                    } else if (position == 1) {
+                        jobPage.receiveUpdate();
+                    } else if (position == 2) {
+                        statisticsPage.receiveUpdate();
+                    } else if (position == 3) {
+                        personPage.receiveUpdate();
+                    }
+                }catch (Exception e){}
             }
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(position == 0) {
-                    waterPage.receiveUpdate();
-                }
-                else if (position == 1) {
-                    jobPage.receiveUpdate();
-                }
-                else if (position == 2) {
-                    statisticsPage.receiveUpdate();
-                }
-                else if (position == 3) {
-                    personPage.receiveUpdate();
-                }
+
             }
         });
     }

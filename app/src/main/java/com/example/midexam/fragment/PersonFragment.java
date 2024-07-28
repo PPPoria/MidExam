@@ -26,12 +26,9 @@ import com.example.midexam.helper.ScaleHelper;
 import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 
-import java.util.Objects;
-
 public class PersonFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "PersonFragment";
     private View view;
-    private boolean isLogged = false;
 
     private ImageView userBackgroundImage;
     private ImageView userHeadImage;
@@ -54,13 +51,15 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
 
         initView();
         initListener();
-        initUserDataInformation();
+        initUserData();
+        initUserImage();
         return view;
     }
 
     private void initListener() {
         userName.setOnClickListener(v -> {
-            if (!isLogged) startActivity(new Intent(getActivity(), LogActivity.class));
+            if (!UserPresenter.getInstance(this).isLogged(requireContext()))
+                startActivity(new Intent(getActivity(), LogActivity.class));
             else startActivity(new Intent(getActivity(), UserDataSettingActivity.class));
         });
 
@@ -70,7 +69,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         });
 
         toUserDataButton.setOnClickListener(v -> {
-            if (!isLogged) {
+            if (!UserPresenter.getInstance(this).isLogged(requireContext())) {
                 Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -78,7 +77,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
         });
 
         logOut.setOnClickListener(v -> {
-            if (!isLogged) {
+            if (!UserPresenter.getInstance(this).isLogged(requireContext())) {
                 Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
                 return;
             } else if (!delayedLogOut) {
@@ -101,6 +100,8 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
                 UserPresenter.getInstance(this).accordLoggedStatus(requireContext(), false);
                 UserPresenter.getInstance(this).resetHeadImage();
                 UserPresenter.getInstance(this).resetBackgroundImage();
+                initUserData();
+                initUserImage();
             }
         });
     }
@@ -116,18 +117,22 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     }
 
     //设置图片
-    private void initUserDataInformation() {
+    public void initUserData() {
         UserPresenter userPresenter = UserPresenter.getInstance(this);
 
         String name = "登录/注册";
         String account = "account";
-        isLogged = userPresenter.isLogged(requireContext());
-        if (isLogged) {
+
+        if (userPresenter.isLogged(requireContext())) {
             name = userPresenter.getUserName();
             account = userPresenter.getAccount(requireContext());
         }
         userName.setText(name);
         userAccount.setText(account);
+    }
+
+    public void initUserImage(){
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
 
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
@@ -147,7 +152,7 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
     }
 
     //清除图片缓存，不然图片更改不成功
-    private void clearImageMemoryAndDisk() {
+    public void clearImageMemoryAndDisk() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -196,6 +201,6 @@ public class PersonFragment extends Fragment implements UserDataShowInterface {
 
     @Override
     public void receiveUpdate() {
-        initUserDataInformation();
+        initUserData();
     }
 }

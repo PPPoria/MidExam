@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -77,6 +79,17 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
             Toast.makeText(this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+
+            try {
+                DesktopActivity.personPage.initUserData();
+                DesktopActivity.personPage.clearImageMemoryAndDisk();
+                DesktopActivity.personPage.initUserImage();
+            }catch (Exception e){}
+
+            try{
+                DesktopActivity.waterPage.receiveUpdate();
+            }catch (Exception e){}
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -85,7 +98,6 @@ public class LogActivity extends AppCompatActivity implements UserDataShowInterf
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     } finally {
-                        observer.updateObservedViews();
                         finish();
                     }
                 }

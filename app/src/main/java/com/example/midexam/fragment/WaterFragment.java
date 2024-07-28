@@ -40,12 +40,13 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     private TextClock waterDate;
     private BlueWaveView blueWave;
     private ShallowBlueWaveView shallowBlueWave;
-    private ConstraintLayout addButton;
+    private ConstraintLayout drinkButton;
     private TextView waterPercent;
     private TextView waterTarget;
     private TextView waterDrink;
 
     private RecyclerView waterHistory;
+    private WaterHistoryAdapter adapter;
     private final List<String> drinkList = new ArrayList<>();
 
     @Override
@@ -57,11 +58,12 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_water, container, false);
+        adapter = new WaterHistoryAdapter(requireContext());
 
         initView();
 
-        initWaterData();
         initHistory();
+        initWaterData();
 
         initListener();
         return view;
@@ -70,20 +72,22 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     private void initHistory() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         waterHistory.setLayoutManager(layoutManager);
-        waterHistory.setAdapter(new WaterHistoryAdapter(getContext(), drinkList));
+        waterHistory.setAdapter(adapter);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void drink() {
-        int m = LocalDateTime.now().getMonth().getValue();
-        int d = LocalDateTime.now().getDayOfMonth();
-        @SuppressLint("DefaultLocale") String date = String.format("%02d%02d", m, d);
+        int h = LocalDateTime.now().getHour();
+        int m = LocalDateTime.now().getMinute();
+        Log.d(TAG, "drink: h = " + h + ", m = " + m);
+        @SuppressLint("DefaultLocale") String date = String.format("%02d%02d", h, m);
         UserPresenter.getInstance(this).drink(date, 200);
+        UserPresenter.getInstance(this).updateUserData(requireContext());
     }
 
     @SuppressLint("DefaultLocale")
     private void initListener() {
-        addButton.setOnClickListener(v -> {
+        drinkButton.setOnClickListener(v -> {
             if (!UserPresenter.getInstance(this).isLogged(requireContext())) {
                 Toast.makeText(getContext(), "请先登录", Toast.LENGTH_SHORT).show();
             } else drink();
@@ -100,16 +104,18 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         waterDate = view.findViewById(R.id.water_date);
         blueWave = view.findViewById(R.id.blueWaveView);
         shallowBlueWave = view.findViewById(R.id.shallowBlueWaveView);
-        addButton = view.findViewById(R.id.drink);
+        drinkButton = view.findViewById(R.id.drink);
         waterPercent = view.findViewById(R.id.water_percent);
         waterTarget = view.findViewById(R.id.water_target);
         waterDrink = view.findViewById(R.id.water_drink);
         waterHistory = view.findViewById(R.id.water_history);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void initWaterData() {
-        waterDate.setFormat24Hour("M/dd H:mm");
+        try {
+            waterDate.setFormat24Hour("M/dd H:mm");
+        }catch(Exception e){}
 
         int hour = LocalDateTime.now().getHour();
         Log.d(TAG, "hour = " + hour);
@@ -141,6 +147,9 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             waterDrink.setText(drinkValue + "ml");
             waterPercent.setText(percentVale + "%");
 
+            adapter.setDrinkList(userPresenter.getWaterToday());
+            Objects.requireNonNull(adapter).notifyDataSetChanged();
+
             blueWave.y = blueWave.d * (1 - percentVale / 100f);
             shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale / 100f);
         } else {
@@ -163,7 +172,11 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
     @Override
     public void updateUserData(int STATUS) {
-
+        if (STATUS == UserPresenter.STATUS_SUCCESS) {
+            receiveUpdate();
+        } else {
+            Toast.makeText(requireContext(), "网络错误", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -176,10 +189,8 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         return UserDataShowInterface.super.registerObserver(observedView);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void receiveUpdate() {
         initWaterData();
-        Objects.requireNonNull(waterHistory.getAdapter()).notifyDataSetChanged();
     }
 }
