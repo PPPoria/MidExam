@@ -77,32 +77,37 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         initView();
         initFragment();
         initListener();
-        initHeart();
-    }
 
+    }
 
 
     private void initHeart() {
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                UserPresenter.getInstance(DesktopActivity.this).heart(DesktopActivity.this,DesktopActivity.this);
-            }
-        };
-        if(timer == null) timer  = new Timer();
-        timer.schedule(timerTask, 1000,2000);
+        if (UserPresenter.getInstance(this).isLogged(this)) {
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        UserPresenter.getInstance(DesktopActivity.this).heart(DesktopActivity.this, DesktopActivity.this);
+                    } catch (Exception e) {
+
+                    }
+                }
+            };
+            if (timer == null) timer = new Timer();
+            timer.schedule(timerTask, 1000, 2000);
+        }
     }
 
-    public void heartCallback(int STATUS){
-        if(STATUS == UserPresenter.STATUS_HEART_START){
+    public void heartCallback(int STATUS) {
+        if (STATUS == UserPresenter.STATUS_HEART_START) {
             Log.d(TAG, "heartCallback: start");
             focusFragmentContainer.setVisibility(View.VISIBLE);
-        }else if (STATUS == UserPresenter.STATUS_HEART_WAIT){
+        } else if (STATUS == UserPresenter.STATUS_HEART_WAIT) {
             Log.d(TAG, "heartCallback: wait");
-        }else if (STATUS == UserPresenter.STATUS_HEART_FINISH){
+        } else if (STATUS == UserPresenter.STATUS_HEART_FINISH) {
             Log.d(TAG, "heartCallback: finish");
             focusFragmentContainer.setVisibility(View.INVISIBLE);
-        }else if (STATUS  == UserPresenter.STATUS_NO_INTERNET){
+        } else if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
             Log.d(TAG, "heartCallback: no internet");
             focusFragmentContainer.setVisibility(View.INVISIBLE);
         }
@@ -129,7 +134,8 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
                     } else if (position == 3) {
                         personPage.receiveUpdate();
                     }
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
             }
 
             @Override

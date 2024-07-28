@@ -178,7 +178,10 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         "finishJobs": ["x","y"]
         "072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
         */
-        List<String> finishJobs = UserPresenter.getInstance(this).getFinishJobs();
+        List<String> finishJobs;
+        if (UserPresenter.getInstance(this).isLogged(requireContext())) {
+            finishJobs = UserPresenter.getInstance(this).getFinishJobs();
+        }else finishJobs = new ArrayList<>();
        /* List<String> finishJobs = new ArrayList<>();
         if(pieEntriesYear==null||pieEntriesYear.isEmpty()) {
             finishJobs.add("072817300145说的道理");

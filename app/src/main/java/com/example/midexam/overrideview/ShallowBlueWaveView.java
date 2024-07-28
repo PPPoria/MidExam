@@ -62,8 +62,8 @@ public class ShallowBlueWaveView extends View {
                 if (step >= lambdaH * 2 - 2) step = 0;
                 else step += 8;
 
-                if (targetY - 1 > tempY) tempY += 1;
-                else if (targetY + 1 < tempY) tempY -= 1;
+                if (targetY - 2 > tempY) tempY += 2;
+                else if (targetY + 2 < tempY) tempY -= 2;
 
                 path.reset();
 

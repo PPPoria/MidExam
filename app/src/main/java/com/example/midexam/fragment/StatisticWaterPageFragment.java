@@ -98,10 +98,19 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     //有网络需求
     public void initBarData() {
 
-        UserPresenter userPresenter = UserPresenter.getInstance(this);
-        List<String> day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
-        List<String> month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
-        List<String> year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
+        List<String> day;
+        List<String> month;
+        List<String> year;
+        if (UserPresenter.getInstance(this).isLogged(requireContext())) {
+            UserPresenter userPresenter = UserPresenter.getInstance(this);
+            day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+            month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
+            year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
+        }else{
+            day = new ArrayList<>();
+            month = new ArrayList<>();
+            year = new ArrayList<>();
+        }
 
   /*      List<String> day = new ArrayList<>();
         List<String> month = new ArrayList<>();

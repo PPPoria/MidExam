@@ -2,6 +2,8 @@ package com.example.midexam.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -164,6 +166,8 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             waterName.setText(nameValue);
             waterTarget.setText(targetValue + "ml");
             waterDrink.setText(drinkValue + "ml");
+            if (percentVale < 20f) waterDrink.setTextColor(Color.BLACK);
+            else waterDrink.setTextColor(Color.WHITE);
             waterPercent.setText(percentVale + "%");
 
             adapter.setDrinkList(userPresenter.getWaterToday());
