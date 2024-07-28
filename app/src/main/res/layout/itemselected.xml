@@ -2,114 +2,101 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="90dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/slide_itemSelect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="1dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="400dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSelect_show_clayout"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/square_all_20"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardCornerRadius="15dp">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/itemSelect_show_clayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/itemSelect_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+                android:maxLines="1"
+                android:text=""
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/itemSelect_tipsDate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/itemSelect_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:maxLines="1"
-                    android:text=""
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.05"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.275" />
+            <TextView
+                android:id="@+id/itemSelect_tipsDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="日期："
+                android:textColor="@color/light_gray"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSelect_text" />
 
-                <TextView
-                    android:id="@+id/itemSelect_tipsDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="日期："
-                    android:textColor="@color/light_gray"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.039"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/itemSelect_text"
-                    app:layout_constraintVertical_bias="0.5" />
-
-                <TextView
-                    android:id="@+id/itemSelect_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="time"
-                    android:textColor="@color/light_gray"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.198"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/itemSelect_text"
-                    app:layout_constraintVertical_bias="0.545" />
+            <TextView
+                android:id="@+id/itemSelect_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="time"
+                android:textColor="@color/light_gray"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@id/itemSelect_tipsDate"
+                app:layout_constraintStart_toEndOf="@id/itemSelect_tipsDate" />
 
 
-                <TextView
-                    android:id="@+id/itemSelect_tipsDuring"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="时长："
-                    android:textColor="@color/light_gray"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.298"
-                    app:layout_constraintStart_toEndOf="@id/itemSelect_date"
-                    app:layout_constraintTop_toBottomOf="@+id/itemSelect_text" />
+            <TextView
+                android:id="@+id/itemSelect_tipsDuring"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="时长："
+                android:textColor="@color/light_gray"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@id/itemSelect_tipsDate"
+                app:layout_constraintEnd_toStartOf="@id/itemSelect_during" />
 
-                <TextView
-                    android:id="@+id/itemSelect_during"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="during"
-                    android:textColor="@color/light_gray"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.52"
-                    app:layout_constraintStart_toEndOf="@id/itemSelect_date"
-                    app:layout_constraintTop_toBottomOf="@+id/itemSelect_text"
-                    app:layout_constraintVertical_bias="0.5" />
+            <TextView
+                android:id="@+id/itemSelect_during"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="during"
+                android:textColor="@color/light_gray"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@id/itemSelect_tipsDate"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <CheckBox
-                    android:id="@+id/cb_selected"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.953"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:visibility="gone"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+            <CheckBox
+                android:id="@+id/cb_selected"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_marginEnd="10dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/itemSelect_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/itemSelect_text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--<androidx.constraintlayout.widget.ConstraintLayout

@@ -83,8 +83,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder>{
         public ConstraintLayout showTaskLayout;
         public HorizontalScrollMenu scroll;
 
-        private Button btEdit;
-        private Button btDelete;
+        private TextView btEdit;
+        private TextView btDelete;
         private TextView tipsdate;
         private TextView tipsduring;
         private TextView tvdate;

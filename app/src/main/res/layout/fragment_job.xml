@@ -4,117 +4,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".fragment.JobFragment">
-   <!-- <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/job_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>-->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout_jobfrag"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/job_nevigator"
-            android:layout_width="match_parent"
+        <!---->
+
+        <TextView
+            android:id="@+id/greeting"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:text="待办"
+            android:textSize="40dp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/greeting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="待办"
-                android:textSize="45dp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.05"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+        <Button
+            android:id="@+id/add_job"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="@color/shallow_blue"
+            android:text="新增"
+            app:layout_constraintBottom_toBottomOf="@id/greeting"
+            app:layout_constraintEnd_toStartOf="@id/bt_mutipleSelect" />
 
-            <Button
-                android:id="@+id/add_job"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="新增"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.575"
-                app:layout_constraintStart_toStartOf="@+id/greeting"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+        <Button
+            android:id="@+id/bt_mutipleSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/shallow_blue"
+            android:text="多选"
+            app:layout_constraintBottom_toBottomOf="@id/greeting"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-            <Button
-                android:id="@+id/bt_mutipleSelect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="多选"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.95"
-                app:layout_constraintStart_toStartOf="@+id/greeting"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+        <Button
+            android:id="@+id/bt_mutipleSelect_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="删除"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/greeting"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-            <Button
-                android:id="@+id/bt_mutipleSelect_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="删除"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.95"
-                android:visibility="invisible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-
-            <Button
-                android:id="@+id/bt_mutipleSelect_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="取消"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.575"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/bt_mutipleSelect_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="取消"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/greeting"
+            app:layout_constraintEnd_toStartOf="@id/bt_mutipleSelect" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rv_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintVertical_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/job_nevigator"
-            app:layout_constraintVertical_bias="0.1">
-
-            <TextView
-                android:id="@+id/nothing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="无数据"
-                android:textSize="40dp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.477" />
+            app:layout_constraintTop_toBottomOf="@id/greeting">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/job_content"
                 android:layout_width="match_parent"
                 android:layout_height="700dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -125,6 +88,19 @@
             </androidx.recyclerview.widget.RecyclerView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/nothing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="无数据"
+            android:textColor="@color/text_grey"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -1,5 +1,6 @@
 package com.example.midexam.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -82,9 +83,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         statisticsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(position==0){
+                if (position == 0) {
                     statisticTimePageFragment.receiveUpdate();
-                }else if(position==1){
+                } else if (position == 1) {
                     statisticWaterPageFragment.receiveUpdate();
                 }
             }
@@ -98,10 +99,22 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         if (id == R.id.bt_pie_focus) {
             pagePosition = 0;
             statisticsViewPager.setCurrentItem(0);
+
+            btFocusChart.setTextColor(Color.WHITE);
+            btFocusChart.setBackgroundColor(Color.parseColor("#6bbef2"));
+
+            btWaterChart.setTextColor(Color.parseColor("#969696"));
+            btWaterChart.setBackgroundColor(Color.WHITE);
             return;
         } else if (id == R.id.bt_bar_water) {
             pagePosition = 1;
             statisticsViewPager.setCurrentItem(1);
+
+            btWaterChart.setTextColor(Color.WHITE);
+            btWaterChart.setBackgroundColor(Color.parseColor("#6bbef2"));
+
+            btFocusChart.setTextColor(Color.parseColor("#969696"));
+            btFocusChart.setBackgroundColor(Color.WHITE);
             //我移动到statisticWaterPageFrag
             return;
         }
@@ -115,6 +128,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 statisticWaterPageFragment.setPosition(0);
                 statisticWaterPageFragment.receiveUpdate();
             }
+
+            btDay.setTextColor(Color.WHITE);
+            btDay.setBackgroundColor(Color.parseColor("#6bbef2"));
+
+            btMonth.setTextColor(Color.parseColor("#969696"));
+            btMonth.setBackgroundColor(Color.WHITE);
+
+            btYear.setTextColor(Color.parseColor("#969696"));
+            btYear.setBackgroundColor(Color.WHITE);
+
         } else if (id == R.id.bt_month) {
             if (pagePosition == 0) {
                 statisticTimePageFragment.setPosition(1);
@@ -123,6 +146,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 statisticWaterPageFragment.setPosition(1);
                 statisticWaterPageFragment.receiveUpdate();
             }
+
+            btMonth.setTextColor(Color.WHITE);
+            btMonth.setBackgroundColor(Color.parseColor("#6bbef2"));
+
+            btDay.setTextColor(Color.parseColor("#969696"));
+            btDay.setBackgroundColor(Color.WHITE);
+
+            btYear.setTextColor(Color.parseColor("#969696"));
+            btYear.setBackgroundColor(Color.WHITE);
+
         } else if (id == R.id.bt_year) {
             if (pagePosition == 0) {
                 statisticTimePageFragment.setPosition(2);
@@ -131,6 +164,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 statisticWaterPageFragment.setPosition(2);
                 statisticWaterPageFragment.receiveUpdate();
             }
+
+            btYear.setTextColor(Color.WHITE);
+            btYear.setBackgroundColor(Color.parseColor("#6bbef2"));
+
+            btDay.setTextColor(Color.parseColor("#969696"));
+            btDay.setBackgroundColor(Color.WHITE);
+
+            btMonth.setTextColor(Color.parseColor("#969696"));
+            btMonth.setBackgroundColor(Color.WHITE);
+
         }
     }
 
@@ -161,9 +204,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void receiveUpdate() {
-        if(pagePosition == 0){
+        if (pagePosition == 0) {
             statisticTimePageFragment.receiveUpdate();
-        }else if (pagePosition == 1){
+        } else if (pagePosition == 1) {
             statisticWaterPageFragment.receiveUpdate();
         }
     }

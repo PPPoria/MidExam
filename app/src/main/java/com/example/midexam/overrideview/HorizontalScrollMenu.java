@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
-import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
@@ -30,7 +29,7 @@ public class HorizontalScrollMenu extends HorizontalScrollView {
 
     private boolean operateMenu = false;
 
-    LinearLayout linearLayout;
+    ConstraintLayout constraintLayout;
     ConstraintLayout centre;
     ConstraintLayout menu;
 
@@ -54,9 +53,9 @@ public class HorizontalScrollMenu extends HorizontalScrollView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
         //获取Layout，将用于获取宽度
-        linearLayout = (LinearLayout) getChildAt(0);
-        centre = (ConstraintLayout) linearLayout.getChildAt(0);
-        menu = (ConstraintLayout) linearLayout.getChildAt(1);
+        constraintLayout = (ConstraintLayout) getChildAt(0);
+        centre = (ConstraintLayout) constraintLayout.getChildAt(0);
+        menu = (ConstraintLayout) constraintLayout.getChildAt(1);
 
         //获取屏幕宽度和menu宽度
         screenWidth = getResources().getDisplayMetrics().widthPixels;

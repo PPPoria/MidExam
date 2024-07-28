@@ -4,17 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".fragment.StatisticsFragment">
 
     <TextView
         android:id="@+id/tips_statistics"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="30dp"
         android:text="统计页面"
-        android:textSize="40dp"
+        android:textSize="17dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,9 +21,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/water_time"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tips_statistics">
@@ -33,7 +32,10 @@
             android:id="@+id/bt_pie_focus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/shallow_blue"
             android:text="专注"
+            android:textSize="17sp"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toStartOf="@+id/bt_bar_water"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +44,10 @@
             android:id="@+id/bt_bar_water"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
             android:text="饮水"
+            android:textSize="17sp"
+            android:textColor="@color/text_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/bt_pie_focus"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,9 +56,6 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bt_layout"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,9 +97,9 @@
         android:id="@+id/statistics_viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/bt_layout"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bt_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
