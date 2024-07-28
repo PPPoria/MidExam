@@ -170,7 +170,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
             initAxis(waterChart, dateList);
 
             waterChart.setData(barData);
-            waterChart.setFitBars(true);
+
 
             waterChart.invalidate();//更新视图
         }
