@@ -99,24 +99,24 @@ public class UserPresenter {
     }
 
     public List<String> getWaterToday() {
-        List<String> list = userData.getWaterToday();
-        if (list == null)
-            return new ArrayList<>();
-        else return list;
+        if (userData.getWaterToday() == null) {
+            userData.setWaterToday(new ArrayList<>());
+        }
+        return userData.getWaterToday();
     }
 
     public List<String> getWaterPerDay() {
-        List<String> list = userData.getWaterPerDay();
-        if (list == null)
-            return new ArrayList<>();
-        else return list;
+        if (userData.getWaterPerDay() == null) {
+            userData.setWaterPerDay(new ArrayList<>());
+        }
+        return userData.getWaterPerDay();
     }
 
     public List<String> getWaterPerMonth() {
-        List<String> list = userData.getWaterPerMonth();
-        if (list == null)
-            return new ArrayList<>();
-        else return list;
+        if (userData.getWaterPerMonth()== null) {
+            userData.setWaterPerMonth(new ArrayList<>());
+        }
+        return userData.getWaterPerMonth();
     }
 
     public void drink(String date, int drinkValue) {
@@ -128,10 +128,17 @@ public class UserPresenter {
     }
 
     public List<String> getFinishJobs() {
-        List<String> list = userData.getFinishJobs();
-        if (list == null)
-            return new ArrayList<>();
-        else return list;
+        if (userData.getFinishJobs() == null) {
+            userData.setFinishJobs(new ArrayList<>());
+        }
+        return userData.getFinishJobs();
+    }
+
+    public List<String> getJobs(){
+        if (userData.getJobs() == null) {
+            userData.setJobs(new ArrayList<>());
+        }
+        return userData.getJobs();
     }
 
     public String getUserName() {
