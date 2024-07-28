@@ -23,6 +23,7 @@ import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.adapter.WaterHistoryAdapter;
 import com.example.midexam.observer.UserObserver;
 import com.example.midexam.overrideview.BlueWaveView;
+import com.example.midexam.overrideview.MeasureXYView;
 import com.example.midexam.overrideview.ShallowBlueWaveView;
 import com.example.midexam.presenter.UserPresenter;
 
@@ -34,6 +35,8 @@ import java.util.Objects;
 public class WaterFragment extends Fragment implements UserDataShowInterface {
     private static final String TAG = "WaterFragment";
     private View view;
+
+    private MeasureXYView measureXYView;
 
     private TextView greet;
     private TextView waterName;
@@ -66,6 +69,20 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         initWaterData();
 
         initListener();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }finally {
+                    receiveUpdate();
+                }
+            }
+        }).start();
+
         return view;
     }
 
@@ -109,13 +126,15 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         waterTarget = view.findViewById(R.id.water_target);
         waterDrink = view.findViewById(R.id.water_drink);
         waterHistory = view.findViewById(R.id.water_history);
+        measureXYView = view.findViewById(R.id.measure_water_xy);
     }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void initWaterData() {
         try {
             waterDate.setFormat24Hour("M/dd H:mm");
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
 
         int hour = LocalDateTime.now().getHour();
         Log.d(TAG, "hour = " + hour);
@@ -150,8 +169,10 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             adapter.setDrinkList(userPresenter.getWaterToday());
             Objects.requireNonNull(adapter).notifyDataSetChanged();
 
-            blueWave.y = blueWave.d * (1 - percentVale / 100f);
-            shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale / 100f);
+            float d = Math.min(measureXYView.getMeasureX() / 2f, measureXYView.getMeasureY()) - 100f;
+            Log.d(TAG, "d = " + d);
+            blueWave.targetY = d * (1 - percentVale / 100f);
+            shallowBlueWave.targetY = (d - 50f) * (1 - percentVale / 100f);
         } else {
             adapter.setDrinkList(null);
             Objects.requireNonNull(adapter).notifyDataSetChanged();

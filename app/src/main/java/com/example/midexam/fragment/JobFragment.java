@@ -1,23 +1,17 @@
 package com.example.midexam.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +21,6 @@ import com.example.midexam.adapter.ItemAdapter;
 import com.example.midexam.adapter.ItemSelectedAdapter;
 import com.example.midexam.helper.UpDownSwitch;
 import com.example.midexam.model.ItemData;
-import com.example.midexam.model.UserData;
-import com.example.midexam.observer.UserObserver;
 import com.example.midexam.presenter.UserPresenter;
 
 import java.time.LocalDateTime;
@@ -58,7 +50,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
 
     static int itemPosition = 0;//表示被选中的item（即将被操作的item）
-    static Activity activity;
     static List<Integer> deleteList;
 
     //static List<String> jobs=new ArrayList<>();//////////////////////////////////////////////////////////////////////////////////////
@@ -67,26 +58,10 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     public static final String ADD_JOB = "AddJob";
     public static final String MODIFY_JOB = "ModifyJob";
     public static final String SET_START_TIME = "SetStartTime";
-    private String mParam1;
-    private String mParam2;
-
-    public JobFragment() {
-
-    }
-
-    public static JobFragment newInstance(String param1, String param2) {
-        JobFragment fragment = new JobFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -94,16 +69,12 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
                              Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.fragment_job, container, false);
 
-        activity = getActivity();
-
         initView();
 
         showUI();
         initNewsListView();
         return view;
     }
-
-
 
     //有网络需求
     private void showUI() {
@@ -135,7 +106,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
         tvhide = view.findViewById(R.id.nothing);
 
-        activity = getActivity();
         fragmentManager = getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
         editJobFragment = new EditJobFragment();
         editJobFragment.setContext(requireContext());
@@ -162,7 +132,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         itemSelectedAdapter = new ItemSelectedAdapter(getActivity(), getActivity(), jobList);
         jobContent.setLayoutManager(new LinearLayoutManager(getActivity()));
         jobContent.setAdapter(itemAdapter);
-        updataList();
+        updateList();
     }
 
     //这里有网络判断
@@ -192,13 +162,13 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         }
     }
 
-    private static void updataList() {
+    private void updateList() {
         if (jobList == null || jobList.size() == 0) {
             tvhide.setVisibility(View.VISIBLE);
         } else {
             tvhide.setVisibility(View.GONE);
         }
-        activity.runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 jobContent.getAdapter().notifyDataSetChanged();
@@ -208,38 +178,31 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.add_job:
-                switchDialog(JobFragment.ADD_JOB);
-                break;
-            case R.id.bt_mutipleSelect:
-                addJob.setVisibility(View.GONE);
-                multipleDelete.setVisibility(View.VISIBLE);
-                multipleCancel.setVisibility(View.VISIBLE);
-                jobContent.setAdapter(itemSelectedAdapter);
-                updataList();
-                break;
-            case R.id.bt_mutipleSelect_delete:
-                List<Integer> temp = itemSelectedAdapter.getSelectedItems();
-                if (temp.size() == 0 || temp == null) {
-                    Toast.makeText(getContext(), "未选中任何项目", Toast.LENGTH_SHORT).show();
-                } else {
-                    deleteByList(temp);
-                    addJob.setVisibility(View.VISIBLE);
-                    multipleDelete.setVisibility(View.GONE);
-                    multipleCancel.setVisibility(View.GONE);
-                    jobContent.setAdapter(itemAdapter);
-                }
-
-                break;
-            case R.id.bt_mutipleSelect_cancel:
+        int id = v.getId();
+        if (id == R.id.add_job) {
+            switchDialog(JobFragment.ADD_JOB);
+        } else if (id == R.id.bt_mutipleSelect) {
+            addJob.setVisibility(View.GONE);
+            multipleDelete.setVisibility(View.VISIBLE);
+            multipleCancel.setVisibility(View.VISIBLE);
+            jobContent.setAdapter(itemSelectedAdapter);
+            updateList();
+        } else if (id == R.id.bt_mutipleSelect_delete) {
+            List<Integer> temp = itemSelectedAdapter.getSelectedItems();
+            if (temp == null || temp.isEmpty()) {
+                Toast.makeText(getContext(), "未选中任何项目", Toast.LENGTH_SHORT).show();
+            } else {
+                deleteByList(temp);
                 addJob.setVisibility(View.VISIBLE);
-                multipleDelete.setVisibility(View.INVISIBLE);
-                multipleCancel.setVisibility(View.INVISIBLE);
+                multipleDelete.setVisibility(View.GONE);
+                multipleCancel.setVisibility(View.GONE);
                 jobContent.setAdapter(itemAdapter);
-                break;
-            default:
-                break;
+            }
+        } else if (id == R.id.bt_mutipleSelect_cancel) {
+            addJob.setVisibility(View.VISIBLE);
+            multipleDelete.setVisibility(View.INVISIBLE);
+            multipleCancel.setVisibility(View.INVISIBLE);
+            jobContent.setAdapter(itemAdapter);
         }
     }
 
@@ -274,7 +237,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         origin.setJobDuring(itemData.getJobDuring());
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
         UserPresenter.getInstance(this).updateUserData(getContext());
-        updataList();
+        updateList();
     }
 
     //有网络需求
@@ -292,7 +255,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         jobList.remove(position);
         //传
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
-        UserPresenter.getInstance(this).updateUserData(activity);/////////////////////////////////////////////////////////////////////////
+        UserPresenter.getInstance(this).updateUserData(requireContext());/////////////////////////////////////////////////////////////////////////
         //更本地(initNewListView=initJob+updatalist)
         initNewsListView();
     }
@@ -307,7 +270,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         }
         //传
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
-        UserPresenter.getInstance(this).updateUserData(activity);/////////////////////////////////////////////////////////////////////////
+        UserPresenter.getInstance(this).updateUserData(requireContext());/////////////////////////////////////////////////////////////////////////
         //更本地(initNewListView=initJob+updatalist)
         initNewsListView();
         deleteList.clear();

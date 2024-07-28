@@ -26,8 +26,8 @@ public class ShallowBlueWaveView extends View {
     private float lambdaH = 140f;
     private float lambdaQ = lambdaH / 2;
 
-    public float d;
-    public float y = 50f;
+    public float targetY = 0f;
+    public float tempY = 0f;
 
     public ShallowBlueWaveView(Context context) {
         super(context);
@@ -35,8 +35,6 @@ public class ShallowBlueWaveView extends View {
     }
 
     public void init() {
-        d = Math.min(getWidth(), getHeight()) - 100;
-
         Log.d(TAG, "init: 波浪初始化");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -64,15 +62,18 @@ public class ShallowBlueWaveView extends View {
                 if (step >= lambdaH * 2 - 2) step = 0;
                 else step += 8;
 
+                if (targetY - 1 > tempY) tempY += 1;
+                else if (targetY + 1 < tempY) tempY -= 1;
+
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a +50+ y);
+                path.moveTo(-(4 * lambdaH) + step, a +50+ tempY);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
                 }
                 path.rLineTo(0, 600);
-                path.lineTo(-(4 * lambdaH) + step, 600 + a + y);
+                path.lineTo(-(4 * lambdaH) + step, 600 + a + tempY);
                 path.close();
 
                 invalidate();

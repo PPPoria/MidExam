@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -26,8 +25,8 @@ public class BlueWaveView extends View {
     private float lambdaH = 165f;
     private float lambdaQ = lambdaH / 2;
 
-    public float d;
-    public float y = 50f;
+    public float targetY = 0f;
+    public float tempY = 0f;
 
     public BlueWaveView(Context context) {
         super(context);
@@ -35,9 +34,6 @@ public class BlueWaveView extends View {
     }
 
     public void init() {
-        d = Math.min(getWidth(), getHeight()) - 100;
-
-        Log.d(TAG, "init: 波浪初始化");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         clearPaint = new Paint();
@@ -63,15 +59,18 @@ public class BlueWaveView extends View {
                 if (step >= lambdaH * 2 - 2) step = 0;
                 else step += 5;
 
+                if (targetY - 1 > tempY) tempY += 1;
+                else if (targetY + 1 < tempY) tempY -= 1;
+
                 path.reset();
 
-                path.moveTo(-(4 * lambdaH) + step, a + 50+y);
+                path.moveTo(-(4 * lambdaH) + step, a + 50 + tempY);
                 for (int i = 0; i < 6; i++) {
                     path.rQuadTo(lambdaQ, -a, lambdaH, 0);
                     path.rQuadTo(lambdaQ, a, lambdaH, 0);
                 }
                 path.rLineTo(0, 1200);
-                path.lineTo(-(4 * lambdaH) + step, 1200 + a + y);
+                path.lineTo(-(4 * lambdaH) + step, 1200 + a + tempY);
                 path.close();
 
                 invalidate();

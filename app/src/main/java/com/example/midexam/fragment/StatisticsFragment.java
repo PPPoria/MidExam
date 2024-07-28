@@ -71,6 +71,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         btYear = view.findViewById(R.id.bt_year);
 
         statisticsViewPager = view.findViewById(R.id.statistics_viewpager);
+        statisticsViewPager.setSaveEnabled(false);
 
         btFocusChart.setOnClickListener(this);
         btWaterChart.setOnClickListener(this);
