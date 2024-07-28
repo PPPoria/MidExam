@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.observer.UserObserver;
+import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -94,17 +95,17 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     //有网络需求
     public void initBarData() {
 
-        //UserPresenter userPresenter = UserPresenter.getInstance(this);
-        //List<String> day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
-        //List<String> month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
-        //List<String> year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
+        List<String> day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
+        List<String> month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
+        List<String> year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
 
-        List<String> day = new ArrayList<>();
+  /*      List<String> day = new ArrayList<>();
         List<String> month = new ArrayList<>();
         List<String> year = new ArrayList<>();
         day.add("1540180");
         month.add("07255999");
-        year.add("0751000");
+        year.add("0751000");*/
 
         for (int i = 0; i < day.size(); i++) {
             String hour = day.get(i).substring(0, 2);
@@ -257,11 +258,6 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     @Override
     public void updateUserImage(int STATUS) {
 
-    }
-
-    @Override
-    public UserObserver registerObserver(UserDataShowInterface observedView) {
-        return UserDataShowInterface.super.registerObserver(observedView);
     }
 
     @Override

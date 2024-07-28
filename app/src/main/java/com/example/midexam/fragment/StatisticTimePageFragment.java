@@ -442,10 +442,6 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
 
     }
 
-    @Override
-    public UserObserver registerObserver(UserDataShowInterface observedView) {
-        return UserDataShowInterface.super.registerObserver(observedView);
-    }
 
     @Override
     public void receiveUpdate() {

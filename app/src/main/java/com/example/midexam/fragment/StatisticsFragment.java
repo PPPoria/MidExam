@@ -80,6 +80,17 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         btDay.setOnClickListener(this);
         btMonth.setOnClickListener(this);
         btYear.setOnClickListener(this);
+
+        statisticsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(position==0){
+                    statisticTimePageFragment.receiveUpdate();
+                }else if(position==1){
+                    statisticWaterPageFragment.receiveUpdate();
+                }
+            }
+        });
     }
 
     @Override
@@ -93,6 +104,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         } else if (id == R.id.bt_bar_water) {
             pagePosition = 1;
             statisticsViewPager.setCurrentItem(1);
+            //我移动到statisticWaterPageFrag
             return;
         }
 
@@ -151,8 +163,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void receiveUpdate() {
-        statisticWaterPageFragment.receiveUpdate();
-        statisticTimePageFragment.receiveUpdate();
+
     }
 
     class statisticsAdapter extends FragmentStateAdapter {
