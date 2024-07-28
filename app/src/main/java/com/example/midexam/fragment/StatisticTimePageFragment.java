@@ -125,8 +125,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         mPieChart.setUsePercentValues(true);//百分比显示，百分比重写形式在dataset
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
-        MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
-        mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
+        //MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
+        //mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
         mPieChart.setEntryLabelColor(Color.BLACK);
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
         if (currentPop != null) currentPop.dismiss();
@@ -175,16 +175,15 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         "072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
         */
         //List<String> finishJobs = UserPresenter.getInstance(this).getFinishJobs();
-
-
         List<String> finishJobs = new ArrayList<>();
-        finishJobs.add("072817300145说的道理");
-        finishJobs.add("072517300145说的道理");
-        finishJobs.add("072617300145说的道理");
-        finishJobs.add("072617300145说的道理");
-        finishJobs.add("072517300145说的道理");
-        finishJobs.add("072817300145说的道理");
-
+        if(pieEntriesYear==null||pieEntriesYear.isEmpty()) {
+            finishJobs.add("072817300145说的道理");
+            finishJobs.add("072517300145说的道理");
+            finishJobs.add("072617300145说的道理");
+            finishJobs.add("072617300145说的道理");
+            finishJobs.add("072517300145说的道理");
+            finishJobs.add("072817300145说的道理");
+        }
 
         List<PieEntry> year = new ArrayList<>();//这里可以优化内存改进
         List<PieEntry> month = new ArrayList<>();
@@ -231,8 +230,10 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         } else if (dataResource == pieEntriesYear) {
             mPieChart.setCenterText("年专注图");
         }
-
-        mPieChart.setData(pieData);
+      /*  MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker,dataResource); // 设置点击事件
+        mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中*/
+        mPieChart.setData(pieData);//要在 mPieChart.invalidate();前更新mv的数据
+        currentPieEntry=dataResource;
         mPieChart.invalidate();//更新图表
     }
 
@@ -246,7 +247,6 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             mPieChart.setVisibility(View.VISIBLE);
             legendLinerLayout.setVisibility(View.VISIBLE);
         }
-        currentPieEntry=dataList;
         if (currentPop != null) currentPop.dismiss();
     }
 
@@ -383,10 +383,11 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
                             linelayout.setOrientation(LinearLayout.HORIZONTAL);//水平排列
                             linelayout.setLayoutParams(lp);
                         }
-//luojicuowu
+
                         //行视图添加
                         linelayout.addView(legend);//加到行
                         if (i % 2 == 0) legendLinerLayout.addView(linelayout);//加到整个
+
                     }
                 }
             });
@@ -446,13 +447,20 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
 
     @Override
     public void receiveUpdate() {
+
         initPieData();
-        if (position == 0)
+        if (position == 0) {
+            currentPieEntry = pieEntriesDay;
             showChart(pieEntriesDay);
-        else if (position == 1)
+        }
+        else if (position == 1) {
+            currentPieEntry = pieEntriesMonth;
             showChart(pieEntriesMonth);
-        else if (position == 2)
+        }
+        else if (position == 2) {
+            currentPieEntry = pieEntriesYear;
             showChart(pieEntriesYear);
+        }
     }
 
 
@@ -460,13 +468,14 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     class MyMarkerView extends MarkerView {//设置点击显示
 
         private TextView tvContent;
+        private List<PieEntry> dataResourse;
 
 
-        public MyMarkerView(Context context, int layoutResource) {
+        public MyMarkerView(Context context, int layoutResource,List<PieEntry> dataResourse) {
             super(context, layoutResource);
 
             tvContent = findViewById(R.id.maker_tv);
-
+            this.dataResourse=dataResourse;
         }
 
         // 每次MarkerView被调用时，都会回调此方法，可以更新UI
@@ -486,8 +495,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         // 自定义方法来获取所有Entry的Y值之和，这取决于你如何管理你的数据集
         private float getTotal() {
             float sum = 0;
-            for (int i = 0; i < currentPieEntry.size(); i++) {
-                sum += currentPieEntry.get(i).getValue();
+            for (int i = 0; i < dataResourse.size(); i++) {
+                sum += dataResourse.get(i).getValue();
             }
             return sum; // 示例值，应该替换为你的实际计算值
         }
