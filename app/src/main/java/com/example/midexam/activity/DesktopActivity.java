@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,17 +15,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
+import com.example.midexam.fragment.FocusFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
 import com.example.midexam.fragment.WaterFragment;
 import com.example.midexam.presenter.UserPresenter;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -45,7 +48,8 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     public static StatisticsFragment statisticsPage;
     public static PersonFragment personPage;
 
-    private ConstraintLayout navigationBar;
+    private FrameLayout focusFragmentContainer;
+
     private ConstraintLayout jobButton;
     private ConstraintLayout waterButton;
     private ConstraintLayout statisticsButton;
@@ -71,10 +75,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
-        initPages();
+        initFragment();
         initListener();
         initHeart();
     }
+
+
 
     private void initHeart() {
         TimerTask timerTask = new TimerTask() {
@@ -132,12 +138,18 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
 
 
     //初始化fragment并添加
-    private void initPages() {
+    private void initFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FocusFragment focusFragment = new FocusFragment();
+        transaction.add(R.id.focus_fragment_container, focusFragment);
+        transaction.commit();
+
+
         waterPage = new WaterFragment();
         jobPage = new JobFragment();
         statisticsPage = new StatisticsFragment();
         personPage = new PersonFragment();
-        /*editJobFragment=new EditJobFragment();*/
 
         pages.add(waterPage);
         pages.add(jobPage);
@@ -152,12 +164,12 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     private void initView() {
         pagesContainer = findViewById(R.id.pages_container);
 
-        navigationBar = findViewById(R.id.navigation_bar);
-
         jobButton = findViewById(R.id.job_page_button);
         waterButton = findViewById(R.id.water_page_button);
         statisticsButton = findViewById(R.id.statistics_page_button);
         personButton = findViewById(R.id.person_page_button);
+
+        focusFragmentContainer = findViewById(R.id.focus_fragment_container);
 
         waterIcon = findViewById(R.id.water_icon_2);
         icons.add(waterIcon);
