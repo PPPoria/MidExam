@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
     tools:context=".fragment.StatisticTimePageFragment">
 
 
@@ -18,6 +19,19 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/noDataTips_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="暂无数据"
+                android:gravity="center"
+                android:textSize="40dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.5"/>
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pie_chart"

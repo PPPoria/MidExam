@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
@@ -35,6 +36,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
     private View view;
 
     BarChart waterChart;
+    TextView tipsNoData;
 
     List<BarEntry> dayData;
     List<BarEntry> monthData;
@@ -90,6 +92,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     public void initView() {
         waterChart = view.findViewById(R.id.bar_chart);
+        tipsNoData=view.findViewById(R.id.noDataTips_water);
     }
 
     //有网络需求
@@ -133,10 +136,31 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     public void setDataInBar(List<BarEntry> dataList, List<String> dateList) {
 
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList == null || dataList.isEmpty()) {//判断是否数据源为空
             waterChart.setVisibility(View.INVISIBLE);
-        } else {
-
+            tipsNoData.setVisibility(View.VISIBLE);
+        }else {//数据源不为空根据传入的数据源类型进行显示
+            if(dataList!=dayData){//如果是月和年
+                boolean noData=true;
+                for (int i = 0; i < dataList.size(); i++) {
+                    if(dataList.get(i).getY()!=0){//如果喝水值为零
+                        noData=false;
+                        break;
+                    }
+                }//判断是不是都为零（因为前面为了初始化数据把它们都设成了零）
+                if(noData==false){
+                    waterChart.setVisibility(View.VISIBLE);
+                    tipsNoData.setVisibility(View.INVISIBLE);
+                }//不是全为零，则显示
+                else{
+                    waterChart.setVisibility(View.INVISIBLE);
+                    tipsNoData.setVisibility(View.VISIBLE);
+                }//全为零，显示无数据
+            } else {//入伙数据源是日，由于日的数据源没有初始化过，那么就按照原策略进行
+                waterChart.setVisibility(View.VISIBLE);
+                tipsNoData.setVisibility(View.INVISIBLE);
+            }
+//设置数据
             BarDataSet dataSet = initDataSet(waterChart, dataList);
 
             //定义柱子上的数据显示    可以实现加单位    以及显示整数（默认是显示小数）
@@ -145,16 +169,11 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
             initAxis(waterChart, dateList);
 
-
             waterChart.setData(barData);
             waterChart.setFitBars(true);
 
             waterChart.invalidate();//更新视图
-
-            waterChart.setVisibility(View.VISIBLE);
         }
-
-
     }
 
     @NonNull

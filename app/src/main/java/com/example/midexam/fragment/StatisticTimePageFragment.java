@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.observer.UserObserver;
+import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -49,6 +50,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     LinearLayout legendLinerLayout;
 
     PieChart mPieChart;
+    TextView tipsNoData;
     PopupWindow currentPop = null;
     List<PieEntry> pieEntriesDay;
     List<PieEntry> pieEntriesMonth;
@@ -114,6 +116,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     private void initView() {
         legendLinerLayout = view.findViewById(R.id.pie_linear_layout);
         mPieChart = view.findViewById(R.id.pie_chart);
+        tipsNoData=view.findViewById(R.id.noDataTips_time);
         mColorPie = getColor();//获取颜色列表，底层就是new一个list然后后将颜色加入再返回，
                                     // 这个要保证再使用initPieStyle和getLineLengent（updataLegent中使用）前完成
     }
@@ -175,8 +178,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         "finishJobs": ["x","y"]
         "072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
         */
-        //List<String> finishJobs = UserPresenter.getInstance(this).getFinishJobs();
-        List<String> finishJobs = new ArrayList<>();
+        List<String> finishJobs = UserPresenter.getInstance(this).getFinishJobs();
+       /* List<String> finishJobs = new ArrayList<>();
         if(pieEntriesYear==null||pieEntriesYear.isEmpty()) {
             finishJobs.add("072817300145说的道理");
             finishJobs.add("072517300145说的道理");
@@ -184,7 +187,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             finishJobs.add("072617300145说的道理");
             finishJobs.add("072517300145说的道理");
             finishJobs.add("072817300145说的道理");
-        }
+        }*/
 
         List<PieEntry> year = new ArrayList<>();//这里可以优化内存改进
         List<PieEntry> month = new ArrayList<>();
@@ -244,9 +247,11 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         if (dataList.size() == 0 || dataList == null) {
             mPieChart.setVisibility(View.INVISIBLE);
             legendLinerLayout.setVisibility(View.INVISIBLE);
+            tipsNoData.setVisibility(View.VISIBLE);
         } else {
             mPieChart.setVisibility(View.VISIBLE);
             legendLinerLayout.setVisibility(View.VISIBLE);
+            tipsNoData.setVisibility(View.INVISIBLE);
         }
         if (currentPop != null) currentPop.dismiss();
     }
