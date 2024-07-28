@@ -153,6 +153,9 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             blueWave.y = blueWave.d * (1 - percentVale / 100f);
             shallowBlueWave.y = shallowBlueWave.d * (1 - percentVale / 100f);
         } else {
+            adapter.setDrinkList(null);
+            Objects.requireNonNull(adapter).notifyDataSetChanged();
+
             waterName.setText("请先登录/注册");
             waterTarget.setText("0ml");
             waterDrink.setText("0ml");

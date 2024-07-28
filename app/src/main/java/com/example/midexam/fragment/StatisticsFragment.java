@@ -160,7 +160,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void receiveUpdate() {
-
+        if(pagePosition == 0){
+            statisticTimePageFragment.receiveUpdate();
+        }else if (pagePosition == 1){
+            statisticWaterPageFragment.receiveUpdate();
+        }
     }
 
     class statisticsAdapter extends FragmentStateAdapter {

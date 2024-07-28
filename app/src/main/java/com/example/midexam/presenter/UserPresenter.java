@@ -36,7 +36,7 @@ public class UserPresenter {
     public String baseUrl = "http://47.113.224.195:31112/";
     public String backgroundImagePath;
     public String headImagePath;
-    public static UserData userData;
+    public UserData userData;
     public UserDataShowInterface activity;
     public static UserPresenter presenter = new UserPresenter();
 
