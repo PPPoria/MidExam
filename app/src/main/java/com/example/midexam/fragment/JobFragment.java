@@ -375,13 +375,13 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
     @Override
     public void updateUserData(int STATUS) {
-        if (STATUS == UserPresenter.STATUS_UPDATE_ERROR) {
+     /*   if (STATUS == UserPresenter.STATUS_UPDATE_ERROR) {
             Toast.makeText(getContext(), "数据更新失败", Toast.LENGTH_SHORT).show();
         } else if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
             Toast.makeText(getContext(), "网络差，数据更新失败", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "数据更新成功", Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     @Override
