@@ -125,7 +125,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         mPieChart.setUsePercentValues(true);//百分比显示，百分比重写形式在dataset
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
-        //MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
+       // MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
         //mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
         mPieChart.setEntryLabelColor(Color.BLACK);
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
@@ -138,7 +138,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
 
         //图解
         PieDataSet iPieDataSet = new PieDataSet(pieEntries, "我在专注");
-
+      /*  MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
+        mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中*/
 
         int[] colors = new int[mColorPie.size()];
         for (int i = 0; i < mColorPie.size(); i++) {
@@ -308,7 +309,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         //添加data
         TextView dataTV = new TextView(getActivity());
 
-        if (pieEntries == pieEntriesMonth) {
+       /* if (pieEntries == pieEntriesMonth) {
 
             int remainingMinutes = data % (24 * 60);
             int hours = remainingMinutes / 60;
@@ -324,7 +325,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             int hours = data / 60;
             int mins = data % 60;
             dataTV.setText(hours + "时" + mins + "分");
-        }
+        }*/
+        dataTV.setText(data+ "分钟");
         dataTV.setTextSize(15);
         layout.addView(dataTV);
         return layout;
@@ -468,14 +470,14 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     class MyMarkerView extends MarkerView {//设置点击显示
 
         private TextView tvContent;
-        private List<PieEntry> dataResourse;
 
 
-        public MyMarkerView(Context context, int layoutResource,List<PieEntry> dataResourse) {
+
+        public MyMarkerView(Context context, int layoutResource) {
             super(context, layoutResource);
 
             tvContent = findViewById(R.id.maker_tv);
-            this.dataResourse=dataResourse;
+
         }
 
         // 每次MarkerView被调用时，都会回调此方法，可以更新UI
@@ -495,10 +497,10 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         // 自定义方法来获取所有Entry的Y值之和，这取决于你如何管理你的数据集
         private float getTotal() {
             float sum = 0;
-            for (int i = 0; i < dataResourse.size(); i++) {
+           /* for (int i = 0; i < dataResourse.size(); i++) {
                 sum += dataResourse.get(i).getValue();
-            }
-            return sum; // 示例值，应该替换为你的实际计算值
+            }*/
+            return 1.0f; // 示例值，应该替换为你的实际计算值
         }
 
         @Override
