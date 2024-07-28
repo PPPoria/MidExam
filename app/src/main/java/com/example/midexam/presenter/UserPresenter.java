@@ -113,7 +113,7 @@ public class UserPresenter {
     }
 
     public List<String> getWaterPerMonth() {
-        if (userData.getWaterPerMonth()== null) {
+        if (userData.getWaterPerMonth() == null) {
             userData.setWaterPerMonth(new ArrayList<>());
         }
         return userData.getWaterPerMonth();
@@ -134,7 +134,7 @@ public class UserPresenter {
         return userData.getFinishJobs();
     }
 
-    public List<String> getJobs(){
+    public List<String> getJobs() {
         if (userData.getJobs() == null) {
             userData.setJobs(new ArrayList<>());
         }
@@ -236,7 +236,7 @@ public class UserPresenter {
                     accordLoggedStatus(context, false);
                 } else if ("accountNotExist".equals(tempData.getMsg()))
                     activity.log(STATUS_ACCOUNT_NOT_EXIST);
-                else if (tempData.getMsg().equals("passwordIncorrect"))
+                else if ("passwordIncorrect".equals(tempData.getMsg()))
                     activity.log(STATUS_PASSWORD_INCORRECT);
                 else {
                     accordAccount(context, account);
@@ -287,7 +287,7 @@ public class UserPresenter {
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.register(STATUS_NO_INTERNET);
-                else if (tempData.getMsg().equals("accountAlreadyExist"))
+                else if ("accountAlreadyExist".equals(tempData.getMsg()))
                     activity.register(STATUS_ACCOUNT_ALREADY_EXIST);
                 else {
                     accordAccount(context, account);
@@ -337,7 +337,7 @@ public class UserPresenter {
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.updateUserImage(STATUS_UPDATE_ERROR);
-                else if ("updateError".equals(userData.getMsg()))
+                else if ("updateError".equals(tempData.getMsg()))
                     activity.updateUserImage(STATUS_UPDATE_ERROR);
                 else {
                     activity.updateUserImage(STATUS_SUCCESS);
@@ -373,7 +373,7 @@ public class UserPresenter {
             public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
                 UserData tempData = response.body();
                 if (tempData == null) activity.updateUserData(STATUS_UPDATE_ERROR);
-                else if ("updateError".equals(userData.getMsg()))
+                else if ("updateError".equals(tempData.getMsg()))
                     activity.updateUserData(STATUS_UPDATE_ERROR);
                 else {
                     activity.updateUserData(STATUS_SUCCESS);
@@ -382,7 +382,6 @@ public class UserPresenter {
 
             @Override
             public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
-                System.out.println(throwable.toString());
                 activity.updateUserData(STATUS_NO_INTERNET);
             }
         });

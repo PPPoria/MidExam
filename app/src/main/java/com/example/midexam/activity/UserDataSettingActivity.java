@@ -62,7 +62,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
-        
+
         initWaterData();
         initImageData();
 
@@ -72,7 +72,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         observer = registerObserver(this);
     }
 
-    private void overrideBackMethod(){
+    private void overrideBackMethod() {
         //重写回退方法
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -107,13 +107,16 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
                 return;
             }
             UserPresenter userPresenter = UserPresenter.getInstance(this);
+            //更新userData中的name
             userPresenter.setUserName(newNameView.getText().toString());
+            //更新target
             userPresenter.setWaterTarget(Integer.parseInt(newTargetView.getText().toString()));
             Log.d(TAG, "waterTarget = " + newTargetView.getText().toString());
+            //更新间隔时间
             userPresenter.setIntervalStr(String.format("%02d%02d", h, m));
 
-            userPresenter.updateUserImage(this);
             userPresenter.updateUserData(this);
+            userPresenter.updateUserImage(this);
         });
     }
 

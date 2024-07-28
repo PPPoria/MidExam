@@ -35,8 +35,11 @@ public class WaterHistoryAdapter extends RecyclerView.Adapter<WaterHistoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull WaterHistoryHolder holder, int position) {
-        String date = drinkList.get(position).substring(0, 2) + ":" + drinkList.get(position).substring(2, 4);
-        String value = drinkList.get(position).substring(4);
+        if (drinkList == null) return;
+        int size = drinkList.size();
+        if (size == 0) return;
+        String date = drinkList.get(size - 1 - position).substring(0, 2) + ":" + drinkList.get(size - 1 - position).substring(2, 4);
+        String value = drinkList.get(size - 1 - position).substring(4);
         holder.drinkTime.setText(date);
         holder.drinkValue.setText(value);
     }
