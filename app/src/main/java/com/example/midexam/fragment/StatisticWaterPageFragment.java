@@ -64,6 +64,8 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         initMonthData();
         initYearData();
 
+        ///initBarData()、setDataInBar(dayData, dayDate);来更新，前面的初始化一下就好了
+
         initBarData();
 
         setDataInBar(dayData, dayDate);
@@ -264,11 +266,6 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     @Override
     public void receiveUpdate() {
-        requireData();
-
-        initMonthData();
-        initYearData();
-
         initBarData();
         if (position == 0)
             setDataInBar(dayData, dayDate);

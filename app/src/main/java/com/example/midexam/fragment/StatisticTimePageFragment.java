@@ -21,7 +21,6 @@ import android.widget.TextView;
 import com.example.midexam.R;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.observer.UserObserver;
-import com.example.midexam.presenter.UserPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -55,9 +54,9 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     List<PieEntry> pieEntriesMonth;
     List<PieEntry> pieEntriesYear;
     List<String> mColorPie;
-    List<PieEntry> currentPieEntry = null;//拿来点击图的时候用(MarkView)
-    List<PieEntry> showPieEntries;
-    int position = 0;
+    List<PieEntry> currentPieEntry = null;//拿来点击图的时候用(MarkView)需要
+
+    int position = 0;//静态的原因是因为我发现
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,26 +69,53 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         view = inflater.inflate(R.layout.fragment_statistic_time_page, container, false);
         initView();
         initPie();
+        //initPieStyle(pieEntriesDay);//表示一创建就是day的界面
 
         initDataContainer();
 
+        //原则上显示图表只需要 initPieData(); showChart(resourseList);
+
         initPieData();
+
+
+
 
         showChart(pieEntriesDay);
 
         return view;
     }
 
+    //这里逻辑有问题，我改了，原来的我标成注释了
+    public void setPosition(int position) {
+
+      /*  if (position == 0) {
+            pieEntriesDay = dataManager.getInstance().getDayDataList();
+            showChart(pieEntriesDay);
+            currentPieEntry = pieEntriesDay;
+        } else if (position == 1) {
+            pieEntriesMonth = dataManager.getInstance().getMonthDataList();
+            showChart(pieEntriesMonth);
+            currentPieEntry = pieEntriesMonth;
+        } else if (position == 2) {
+            pieEntriesYear = dataManager.getInstance().getYearDataList();
+            showChart(pieEntriesYear);
+            currentPieEntry = pieEntriesYear;
+        }*/
+        this.position=position;
+    }
+
     private void initDataContainer() {
         pieEntriesDay = dataManager.getInstance().getDayDataList();
         pieEntriesMonth = dataManager.getInstance().getMonthDataList();
         pieEntriesYear = dataManager.getInstance().getYearDataList();//必须在前面，否则后面初始化数据空指针错误
-        mColorPie = getColorPie();
+
     }
 
     private void initView() {
-        legendLinerLayout = view.findViewById(R.id.pie_linerayout);
+        legendLinerLayout = view.findViewById(R.id.pie_linear_layout);
         mPieChart = view.findViewById(R.id.pie_chart);
+        mColorPie = getColor();//获取颜色列表，底层就是new一个list然后后将颜色加入再返回，
+                                    // 这个要保证再使用initPieStyle和getLineLengent（updataLegent中使用）前完成
     }
 
     //饼图初始化图像
@@ -106,16 +132,17 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         if (currentPop != null) currentPop.dismiss();
     }
 
-    //初始化饼图数据显示
+    //初始化饼图数据显示,/风格+数据注入set，色图要加入到data让后加到pie里，图是要这么做的
     @NonNull
-    private static PieDataSet initPieStyle(List<PieEntry> pieEntries, List<String> colorPie) {
+    private PieDataSet initPieStyle(List<PieEntry> pieEntries) {
+
         //图解
         PieDataSet iPieDataSet = new PieDataSet(pieEntries, "我在专注");
 
 
-        int[] colors = new int[colorPie.size()];
-        for (int i = 0; i < colorPie.size(); i++) {
-            colors[i] = Color.parseColor(String.valueOf(colorPie.get(i)));
+        int[] colors = new int[mColorPie.size()];
+        for (int i = 0; i < mColorPie.size(); i++) {
+            colors[i] = Color.parseColor(String.valueOf(mColorPie.get(i)));
         }
         //设定图的细节
         iPieDataSet.setColors(colors);//图颜色
@@ -151,12 +178,12 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
 
 
         List<String> finishJobs = new ArrayList<>();
-        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072817300145说的道理");
         finishJobs.add("072517300145说的道理");
         finishJobs.add("072617300145说的道理");
         finishJobs.add("072617300145说的道理");
         finishJobs.add("072517300145说的道理");
-        finishJobs.add("072517300145说的道理");
+        finishJobs.add("072817300145说的道理");
 
 
         List<PieEntry> year = new ArrayList<>();//这里可以优化内存改进
@@ -190,18 +217,36 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             addData(year, pieEntriesYear);
         }
     }
+    private void setDataInPie(List<PieEntry> dataResource) {
+        PieDataSet iPieDataSet = initPieStyle(dataResource);
+        PieData pieData = new PieData(iPieDataSet);
+        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
+        // PieDataSet
+        iPieDataSet.setValueFormatter(new PercentFormatter());
+        updatePieLegend(dataResource);
+        if (dataResource == pieEntriesDay) {
+            mPieChart.setCenterText("日专注图");
+        } else if (dataResource == pieEntriesMonth) {
+            mPieChart.setCenterText("月专注图");
+        } else if (dataResource == pieEntriesYear) {
+            mPieChart.setCenterText("年专注图");
+        }
+
+        mPieChart.setData(pieData);
+        mPieChart.invalidate();//更新图表
+    }
 
     //展示饼图
     private void showChart(List<PieEntry> dataList) {
+        setDataInPie(dataList);
         if (dataList.size() == 0 || dataList == null) {
-            updatePie(dataList);
             mPieChart.setVisibility(View.INVISIBLE);
             legendLinerLayout.setVisibility(View.INVISIBLE);
         } else {
-            updatePie(dataList);
             mPieChart.setVisibility(View.VISIBLE);
             legendLinerLayout.setVisibility(View.VISIBLE);
         }
+        currentPieEntry=dataList;
         if (currentPop != null) currentPop.dismiss();
     }
 
@@ -230,7 +275,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     }
 
     //单个图例
-    private LinearLayout getLineLegend(Integer color, String label, int data, List<PieEntry> pieEntries) {
+    private LinearLayout getLegend(Integer color, String label, int data, List<PieEntry> pieEntries) {
         LinearLayout.LayoutParams lp = new LinearLayout.
                 LayoutParams(legendLinerLayout.getWidth() / 2, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 0, 50);
@@ -287,7 +332,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
 
     //饼图颜色
     @NonNull
-    private static List<String> getColorPie() {
+    private static List<String> getColor() {
         //设置圆弧颜色
         List<String> mColorPie = new ArrayList<>();
         mColorPie.add("#007BFF");
@@ -303,8 +348,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         return mColorPie;
     }
 
-    //饼图图例更新
-    private void updatePieLegend(List<PieEntry> pieEntries, List<String> mColor1) {
+    //饼图图例更新,setDataInPie的过渡方法
+    private void updatePieLegend(List<PieEntry> pieEntries) {
         //隐藏原有图例
         Legend legendOrigin = mPieChart.getLegend();
         legendOrigin.setEnabled(false);
@@ -319,8 +364,8 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
                     //装数据入单个布局
                     for (int i = 0; i < pieEntries.size(); i++) {
                         //获取图例
-                        LinearLayout legend = getLineLegend//第一个参数是获得到字符串转为数字传入的意思
-                                (Color.parseColor(mColor1.get(i % mColor1.size())), pieEntries.get(i).getLabel(),
+                        LinearLayout legend = getLegend//第一个参数是获得到字符串转为数字传入的意思
+                                (Color.parseColor(mColorPie.get(i % mColorPie.size())), pieEntries.get(i).getLabel(),
                                         (int) pieEntries.get(i).getValue(), pieEntries);
 
                         legend.setOnClickListener(new View.OnClickListener() {
@@ -338,7 +383,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
                             linelayout.setOrientation(LinearLayout.HORIZONTAL);//水平排列
                             linelayout.setLayoutParams(lp);
                         }
-
+//luojicuowu
                         //行视图添加
                         linelayout.addView(legend);//加到行
                         if (i % 2 == 0) legendLinerLayout.addView(linelayout);//加到整个
@@ -348,42 +393,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         }
     }
 
-    //饼图数据更新
-    private void updatePie(List<PieEntry> dataResource) {
-        PieDataSet iPieDataSet = initPieStyle(dataResource, mColorPie);
-        PieData pieData = new PieData(iPieDataSet);
-        pieData.setValueFormatter(new PercentFormatter());//使其有百分号
-        // PieDataSet
-        iPieDataSet.setValueFormatter(new PercentFormatter());
-        updatePieLegend(dataResource, mColorPie);
-        if (dataResource == pieEntriesDay) {
-            mPieChart.setCenterText("日专注图");
-        } else if (dataResource == pieEntriesMonth) {
-            mPieChart.setCenterText("月专注图");
-        } else if (dataResource == pieEntriesYear) {
-            mPieChart.setCenterText("年专注图");
-        }
 
-        mPieChart.setData(pieData);
-        mPieChart.invalidate();//更新图表
-    }
-
-
-    public void setPosition(int position) {
-        if (position == 0) {
-            pieEntriesDay = dataManager.getInstance().getDayDataList();
-            showChart(pieEntriesDay);
-            currentPieEntry = pieEntriesDay;
-        } else if (position == 1) {
-            pieEntriesMonth = dataManager.getInstance().getMonthDataList();
-            showChart(pieEntriesMonth);
-            currentPieEntry = pieEntriesMonth;
-        } else if (position == 2) {
-            pieEntriesYear = dataManager.getInstance().getYearDataList();
-            showChart(pieEntriesYear);
-            currentPieEntry = pieEntriesYear;
-        }
-    }
 
     //展示图例具体信息
     private void showDetailedInfo(LinearLayout layout) {
