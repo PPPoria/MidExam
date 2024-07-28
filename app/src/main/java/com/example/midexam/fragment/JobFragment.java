@@ -109,8 +109,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         return view;
     }
 
-
-
     //有网络需求
     private void showUI() {
         if (UserPresenter.getInstance(this).isLogged(requireContext())) {
@@ -213,7 +211,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
                 }
             }
-            jobList = arrangeJob(jobList);//排好序，时间从小到大（按开始时间）
+            jobList = arrangeJob(jobList);//排好序，时间从小到大（按开始时间）,updatalist也有
             try{
                 UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));//将新的joblist转换形式去更改后台数据
                 UserPresenter.getInstance(this).updateUserData(getContext());//更新
@@ -224,6 +222,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     }
 
     private static void updataList() {
+        jobList = arrangeJob(jobList);//排好序，时间从小到大（按开始时间）
         if (jobList == null || jobList.size() == 0) {
             tvhide.setVisibility(View.VISIBLE);
         } else {
@@ -260,6 +259,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
                     multipleDelete.setVisibility(View.GONE);
                     multipleCancel.setVisibility(View.GONE);
                     jobContent.setAdapter(itemAdapter);
+                    updataList();
                 }
 
                 break;
@@ -268,6 +268,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
                 multipleDelete.setVisibility(View.INVISIBLE);
                 multipleCancel.setVisibility(View.INVISIBLE);
                 jobContent.setAdapter(itemAdapter);
+                updataList();
                 break;
             default:
                 break;
