@@ -123,7 +123,8 @@ public class UserPresenter {
         int waterDrink = getWaterDrink();
         waterDrink += drinkValue;
         setWaterDrink(waterDrink);
-        getWaterToday().add(date + waterDrink);
+
+        getWaterToday().add(date + drinkValue);
     }
 
     public List<String> getFinishJobs() {
@@ -235,7 +236,6 @@ public class UserPresenter {
                     accordPassword(context, password);
                     accordLoggedStatus(context, true);
                     userData = tempData;
-                    System.out.println(userData.getName() + "  request");
                     userData.setAccount(account);
                     activity.log(STATUS_SUCCESS);
                 }
