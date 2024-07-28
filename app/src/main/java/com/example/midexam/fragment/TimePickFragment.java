@@ -217,12 +217,12 @@ public class TimePickFragment extends DialogFragment implements View.OnClickList
     }
 
     private boolean taskConflict(List<ItemData> tempList, boolean legel) {
+        long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
         for (int i = 0; i < tempList.size(); i++) {
             String begin= tempList.get(i).getJobData();//2024-01-01 12:12
             String currentTime=begin+":00";//2024-01-01 12:12:00
             long beginTime= DateUtil.parse(currentTime).getTime();//item的开始时间戳
             long endTime=DateUtil.parse(currentTime).getTime()+Integer.valueOf(tempList.get(i).getJobDuring())*60*1000;//item的结束时间戳
-            long lStart= DateUtil.parse(sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":" +"00").getTime();//增添的任务开始时间戳
             if (lStart>=beginTime&&lStart<endTime ) {
                 Toast.makeText(context,"与其他任务时间冲突",Toast.LENGTH_SHORT).show();
                 legel =false;
