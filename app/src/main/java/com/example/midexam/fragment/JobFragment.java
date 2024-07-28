@@ -46,6 +46,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     Button multipleCancel;
     static RecyclerView jobContent;
     TextView jobGreeting;
+    View view;
     static TextView tvhide;
     static EditJobFragment editJobFragment;
     static TimePickFragment timePickFragment;
@@ -85,25 +86,23 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_job, container, false);
-    }
+        view=inflater.inflate(R.layout.fragment_job, container, false);
 
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         activity = getActivity();
-        initView(view);
+
+        initView();
+
         showUI();
+        initNewsListView();
+        return view;
     }
+
 
 
     //有网络需求
@@ -126,15 +125,15 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
     }
 
     //一些关键参数在创建时就赋值了
-    private void initView(View v) {
-        jobContent = v.findViewById(R.id.job_content);
-        addJob = v.findViewById(R.id.add_job);
-        jobGreeting = v.findViewById(R.id.greeting);
-        multipleSelect = v.findViewById(R.id.bt_mutipleSelect);
-        multipleDelete = v.findViewById(R.id.bt_mutipleSelect_delete);
-        multipleCancel = v.findViewById(R.id.bt_mutipleSelect_cancel);
+    private void initView() {
+        jobContent = view.findViewById(R.id.job_content);
+        addJob = view.findViewById(R.id.add_job);
+        jobGreeting = view.findViewById(R.id.greeting);
+        multipleSelect = view.findViewById(R.id.bt_mutipleSelect);
+        multipleDelete = view.findViewById(R.id.bt_mutipleSelect_delete);
+        multipleCancel = view.findViewById(R.id.bt_mutipleSelect_cancel);
 
-        tvhide = v.findViewById(R.id.nothing);
+        tvhide = view.findViewById(R.id.nothing);
 
         activity = getActivity();
         fragmentManager = getActivity().getSupportFragmentManager(); //获取为了给编辑代办时代码运用
@@ -171,30 +170,28 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         /*### "jobs": ["x","y"]
 "072517300145说的道理"，表示待办任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。*/
         UserData userData = UserPresenter.getInstance(this).userData;
-        List<String> jobs = userData.getJobs();//哟啊放出来//////////////////////////////////////////////////////////////////////////////////*/
-        /*jobs.add("072517300145A");
-        jobs.add("072617300145B");
-        jobs.add("082517310145C");
-        jobs.add("092517300145D");
-        jobs.add("072517310167E");
-        jobs.add("072517220148F");
-        jobs.add("072517180195G");///测试显示三遍，但是网络时每次更新，不重复*/
-        //   if(jobList!=null||jobList.size()!=0){jobList.clear();}
-        for (int i = 0; i < jobs.size(); i++) {
-            try {
-                String sbeginTime = jobs.get(i).substring(0, 8);
-                String beginTime = UpDownSwitch.getDateDownType(sbeginTime);
-                String sduringTime = jobs.get(i).substring(8, 12);
-                String duringTime = UpDownSwitch.getDuringDownType(sduringTime);
-                String jobName = jobs.get(i).substring(12);
-
-                jobList.add(new ItemData(jobName, beginTime, duringTime));
-                Log.d("this", String.valueOf(jobList));
-            } catch (Exception e) {
-
-            }
+        List<String> jobs = null;
+        if (userData!=null) {
+            jobs = userData.getJobs();
         }
-        jobList = arrangeJob(jobList);
+        if(jobList!=null||jobList.size()!=0){jobList.clear();}
+        if (jobs!=null&&!jobs.isEmpty()) {
+            for (int i = 0; i < jobs.size(); i++) {
+                try {
+                    String sbeginTime = jobs.get(i).substring(0, 8);
+                    String beginTime = UpDownSwitch.getDateDownType(sbeginTime);
+                    String sduringTime = jobs.get(i).substring(8, 12);
+                    String duringTime = UpDownSwitch.getDuringDownType(sduringTime);
+                    String jobName = jobs.get(i).substring(12);
+
+                    jobList.add(new ItemData(jobName, beginTime, duringTime));
+                    Log.d("this", String.valueOf(jobList));
+                } catch (Exception e) {
+
+                }
+            }
+            jobList = arrangeJob(jobList);
+        }
     }
 
     private static void updataList() {
@@ -279,7 +276,6 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         origin.setJobDuring(itemData.getJobDuring());
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
         UserPresenter.getInstance(this).updateUserData(getContext());
-        initJobLists();
         updataList();
     }
 
@@ -300,8 +296,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
         UserPresenter.getInstance(this).updateUserData(activity);/////////////////////////////////////////////////////////////////////////
         //更本地(initNewListView=initJob+updatalist)
-        initJobLists();
-        updataList();
+        initNewsListView();
     }
 
     //多选删除用，有网络请求
@@ -309,7 +304,8 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
         Collections.sort(deleteList, Collections.reverseOrder());
         Log.i("this", String.valueOf(deleteList));
         for (int i = 0; i < deleteList.size(); i++) {
-            jobList.remove(deleteList.get(i));
+            int k=deleteList.get(i);
+            jobList.remove(k);
         }
         //传
         UserPresenter.getInstance(this).userData.setJobs(UpDownSwitch.setJobUPType(jobList));
@@ -395,6 +391,7 @@ public class JobFragment extends Fragment implements View.OnClickListener, UserD
 
     @Override
     public void receiveUpdate() {
+        initView();
         showUI();
         initNewsListView();
     }
