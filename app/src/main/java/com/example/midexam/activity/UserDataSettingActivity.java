@@ -59,7 +59,8 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         getWindow().setNavigationBarColor(getColor(R.color.grey));
 
         initView();
-        initUserDataInformation();
+        initWaterData();
+        initImageData();
         initListener();
         observer = registerObserver(this);
     }
@@ -87,8 +88,8 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
             userPresenter.setUserName(newNameView.getText().toString());
             userPresenter.setWaterTarget(Integer.parseInt(newTargetView.getText().toString()));
             userPresenter.setIntervalStr(String.format("%02d%02d", h, m));
-            userPresenter.updateUserData(this);
             userPresenter.updateUserImage(this);
+            userPresenter.updateUserData(this);
         });
     }
 
@@ -105,17 +106,23 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
     }
 
 
-    private void initUserDataInformation() {
+    private void initWaterData() {
         UserPresenter userPresenter = UserPresenter.getInstance(this);
 
         newNameView.setText(userPresenter.getUserName());
 
         newTargetView.setText(String.valueOf(userPresenter.getWaterTarget()));
 
-        int h = Integer.parseInt(userPresenter.getIntervalStr().substring(0, 2));
-        int m = Integer.parseInt(userPresenter.getIntervalStr().substring(2, 4));
-        newIntervalView.setText(String.valueOf(h * 60 + m));
+        if (userPresenter.getIntervalStr() == null) newIntervalView.setText("0");
+        else {
+            int h = Integer.parseInt(userPresenter.getIntervalStr().substring(0, 2));
+            int m = Integer.parseInt(userPresenter.getIntervalStr().substring(2, 4));
+            newIntervalView.setText(String.valueOf(h * 60 + m));
+        }
+    }
 
+    private void initImageData(){
+        UserPresenter userPresenter = UserPresenter.getInstance(this);
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
         Glide.with(this)
@@ -148,7 +155,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
             Crop.of(data.getData(), destinationUri).withAspect(measureXY.getWidth(), measureXY.getHeight()).start(this);
             Log.d(TAG, "x = " + measureXY.getWidth());
             Log.d(TAG, "y = " + measureXY.getHandler());
-        } else if (requestCode == Crop.REQUEST_CROP) initUserDataInformation();
+        } else initImageData();
     }
 
     @Override

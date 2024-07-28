@@ -36,7 +36,7 @@ public class UserPresenter {
     public String baseUrl = "http://47.113.224.195:31112/";
     public String backgroundImagePath;
     public String headImagePath;
-    public UserData userData;
+    public static UserData userData;
     public UserDataShowInterface activity;
     public static UserPresenter presenter = new UserPresenter();
 
@@ -105,14 +105,14 @@ public class UserPresenter {
         else return list;
     }
 
-    public List<String> getWaterPerDay(){
+    public List<String> getWaterPerDay() {
         List<String> list = userData.getWaterPerDay();
         if (list == null)
             return new ArrayList<>();
         else return list;
     }
 
-    public List<String> getWaterPerMonth(){
+    public List<String> getWaterPerMonth() {
         List<String> list = userData.getWaterPerMonth();
         if (list == null)
             return new ArrayList<>();
@@ -134,7 +134,9 @@ public class UserPresenter {
     }
 
     public String getUserName() {
-        return userData.getName();
+        String name = userData.getName();
+        if (name == null) return "新用户";
+        else return userData.getName();
     }
 
     public void setUserName(String userName) {
