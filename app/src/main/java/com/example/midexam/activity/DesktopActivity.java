@@ -1,9 +1,8 @@
 package com.example.midexam.activity;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -15,25 +14,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.midexam.R;
-import com.example.midexam.adapter.ItemAdapter;
-import com.example.midexam.fragment.BlankFragment;
-import com.example.midexam.fragment.EditJobFragment;
 import com.example.midexam.fragment.JobFragment;
 import com.example.midexam.fragment.PersonFragment;
 import com.example.midexam.fragment.StatisticsFragment;
 import com.example.midexam.fragment.WaterFragment;
-import com.example.midexam.observer.UserObserver;
+import com.example.midexam.presenter.UserPresenter;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DesktopActivity extends AppCompatActivity implements View.OnClickListener, UserDataShowInterface {
     private static final String TAG = "DesktopActivity";
+
+    private boolean hearting = false;
+    private Timer timer;
 
     private static ViewPager2 pagesContainer;
     private static List<Fragment> pages = new ArrayList<>();
@@ -72,6 +73,30 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         initView();
         initPages();
         initListener();
+        initHeart();
+    }
+
+    private void initHeart() {
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                UserPresenter.getInstance(DesktopActivity.this).heart(DesktopActivity.this,DesktopActivity.this);
+            }
+        };
+        if(timer == null) timer  = new Timer();
+        timer.schedule(timerTask, 1000,2000);
+    }
+
+    public void heartCallback(int STATUS){
+        if(STATUS == UserPresenter.STATUS_HEART_START){
+            Log.d(TAG, "heartCallback: start");
+        }else if (STATUS == UserPresenter.STATUS_HEART_WAIT){
+            Log.d(TAG, "heartCallback: wait");
+        }else if (STATUS == UserPresenter.STATUS_HEART_FINISH){
+            Log.d(TAG, "heartCallback: finish");
+        }else if (STATUS  == UserPresenter.STATUS_NO_INTERNET){
+            Log.d(TAG, "heartCallback: no internet");
+        }
     }
 
     private void initListener() {

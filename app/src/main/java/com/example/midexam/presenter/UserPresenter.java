@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.midexam.R;
+import com.example.midexam.activity.DesktopActivity;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
@@ -50,6 +51,9 @@ public class UserPresenter {
     public static final int STATUS_PASSWORD_INCORRECT = 4;
     public static final int STATUS_ACCOUNT_OR_PASSWORD_NOT_SATISFIABLE = 5;
     public static final int STATUS_UPDATE_ERROR = 6;
+    public static final int STATUS_HEART_START = 7;
+    public static final int STATUS_HEART_WAIT = 8;
+    public static final int STATUS_HEART_FINISH = 9;
 
 
     public static UserPresenter getInstance(UserDataShowInterface activity) {
@@ -383,6 +387,36 @@ public class UserPresenter {
             @Override
             public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
                 activity.updateUserData(STATUS_NO_INTERNET);
+            }
+        });
+    }
+
+    public void heart(Context context, DesktopActivity desktopActivity){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Api api = retrofit.create(Api.class);
+
+        Call<UserData> dataCall = api.heart(userData.getMsg(),userData.getAccount());
+
+        dataCall.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
+                UserData tempData = response.body();
+                if (tempData == null) desktopActivity.updateUserData(STATUS_NO_INTERNET);
+                else if ("start".equals(tempData.getMsg()))
+                    desktopActivity.heartCallback(STATUS_HEART_START);
+                else if("wait".equals(tempData.getMsg())){
+                    desktopActivity.heartCallback(STATUS_HEART_WAIT);
+                }else if ("finish".equals(tempData.getMsg())){
+                    desktopActivity.heartCallback(STATUS_HEART_FINISH);
+                }else desktopActivity.heartCallback(STATUS_NO_INTERNET);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable throwable) {
+                desktopActivity.updateUserData(STATUS_NO_INTERNET);
             }
         });
     }

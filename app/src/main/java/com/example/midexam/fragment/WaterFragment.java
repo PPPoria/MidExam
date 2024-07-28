@@ -77,7 +77,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
-                }finally {
+                } finally {
                     receiveUpdate();
                 }
             }
@@ -215,6 +215,14 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
     @Override
     public void receiveUpdate() {
-        initWaterData();
+        try {
+            requireActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    initWaterData();
+                }
+            });
+        } catch (Exception e) {
+        }
     }
 }
