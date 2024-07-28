@@ -96,12 +96,15 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
     public void heartCallback(int STATUS){
         if(STATUS == UserPresenter.STATUS_HEART_START){
             Log.d(TAG, "heartCallback: start");
+            focusFragmentContainer.setVisibility(View.VISIBLE);
         }else if (STATUS == UserPresenter.STATUS_HEART_WAIT){
             Log.d(TAG, "heartCallback: wait");
         }else if (STATUS == UserPresenter.STATUS_HEART_FINISH){
             Log.d(TAG, "heartCallback: finish");
+            focusFragmentContainer.setVisibility(View.INVISIBLE);
         }else if (STATUS  == UserPresenter.STATUS_NO_INTERNET){
             Log.d(TAG, "heartCallback: no internet");
+            focusFragmentContainer.setVisibility(View.INVISIBLE);
         }
     }
 

@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/slide_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginLeft="2dp">
+    android:layout_height="100dp">
 
     <com.example.midexam.overrideview.HorizontalScrollMenu
         android:id="@+id/scroll_item"
@@ -22,18 +20,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/slide_item"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="1dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="400dp"
-                    android:layout_height="match_parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:cardCornerRadius="15dp">
+                android:background="@drawable/square_all_20"
+                android:layout_height="match_parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/item_show_clayout"
@@ -49,12 +37,9 @@
                             android:text=""
                             android:textSize="30sp"
                             android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.05"
+                            app:layout_constraintBottom_toTopOf="@id/item_tipsDate"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.275" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/item_tipsDate"
@@ -62,13 +47,10 @@
                             android:layout_height="wrap_content"
                             android:text="日期："
                             android:textColor="@color/light_gray"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.039"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/item_text"
-                            app:layout_constraintVertical_bias="0.5" />
+                            app:layout_constraintTop_toBottomOf="@+id/item_text" />
 
                         <TextView
                             android:id="@+id/item_date"
@@ -76,13 +58,9 @@
                             android:layout_height="wrap_content"
                             android:text="time"
                             android:textColor="@color/light_gray"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.198"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/item_text"
-                            app:layout_constraintVertical_bias="0.545" />
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@id/item_tipsDate"
+                            app:layout_constraintBottom_toBottomOf="@id/item_tipsDate"/>
 
 
                         <TextView
@@ -112,7 +90,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/item_text"
                             app:layout_constraintVertical_bias="0.5" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
