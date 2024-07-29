@@ -80,8 +80,6 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         initPieData();
 
 
-
-
         showChart(pieEntriesDay);
 
         return view;
@@ -103,7 +101,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             showChart(pieEntriesYear);
             currentPieEntry = pieEntriesYear;
         }*/
-        this.position=position;
+        this.position = position;
     }
 
     private void initDataContainer() {
@@ -116,9 +114,9 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     private void initView() {
         legendLinerLayout = view.findViewById(R.id.pie_linear_layout);
         mPieChart = view.findViewById(R.id.pie_chart);
-        tipsNoData=view.findViewById(R.id.noDataTips_time);
+        tipsNoData = view.findViewById(R.id.noDataTips_time);
         mColorPie = getColor();//获取颜色列表，底层就是new一个list然后后将颜色加入再返回，
-                                    // 这个要保证再使用initPieStyle和getLineLengent（updataLegent中使用）前完成
+        // 这个要保证再使用initPieStyle和getLineLengent（updataLegent中使用）前完成
     }
 
     //饼图初始化图像
@@ -128,7 +126,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         mPieChart.setUsePercentValues(true);//百分比显示，百分比重写形式在dataset
         mPieChart.setCenterText("专注时间");//圆环中心文字
         mPieChart.setCenterTextSize(20);//设置中心文字大小
-       // MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
+        // MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker); // 设置点击事件
         //mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中
         mPieChart.setEntryLabelColor(Color.BLACK);
         mPieChart.setEntryLabelTypeface(Typeface.DEFAULT);
@@ -178,10 +176,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         "finishJobs": ["x","y"]
         "072517300145说的道理"，表示已完成任务的开启时间为07月25日17点30分，持续时间01小时45分钟，任务名为“说的道理”。
         */
-        List<String> finishJobs;
-        if (UserPresenter.getInstance(this).isLogged(requireContext())) {
-            finishJobs = UserPresenter.getInstance(this).getFinishJobs();
-        }else finishJobs = new ArrayList<>();
+        List<String> finishJobs = UserPresenter.getInstance(this).getFinishJobs();
        /* List<String> finishJobs = new ArrayList<>();
         if(pieEntriesYear==null||pieEntriesYear.isEmpty()) {
             finishJobs.add("072817300145说的道理");
@@ -223,6 +218,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             addData(year, pieEntriesYear);
         }
     }
+
     private void setDataInPie(List<PieEntry> dataResource) {
         PieDataSet iPieDataSet = initPieStyle(dataResource);
         PieData pieData = new PieData(iPieDataSet);
@@ -240,7 +236,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
       /*  MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.graph_marker,dataResource); // 设置点击事件
         mPieChart.setMarker(mv); // 将自定义的MarkerView设置到饼状图中*/
         mPieChart.setData(pieData);//要在 mPieChart.invalidate();前更新mv的数据
-        currentPieEntry=dataResource;
+        currentPieEntry = dataResource;
         mPieChart.invalidate();//更新图表
     }
 
@@ -334,7 +330,7 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
             int mins = data % 60;
             dataTV.setText(hours + "时" + mins + "分");
         }*/
-        dataTV.setText(data+ "分钟");
+        dataTV.setText(data + "分钟");
         dataTV.setTextSize(15);
         layout.addView(dataTV);
         return layout;
@@ -405,7 +401,6 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     }
 
 
-
     //展示图例具体信息
     private void showDetailedInfo(LinearLayout layout) {
         if (currentPop != null) {
@@ -458,12 +453,10 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
         if (position == 0) {
             currentPieEntry = pieEntriesDay;
             showChart(pieEntriesDay);
-        }
-        else if (position == 1) {
+        } else if (position == 1) {
             currentPieEntry = pieEntriesMonth;
             showChart(pieEntriesMonth);
-        }
-        else if (position == 2) {
+        } else if (position == 2) {
             currentPieEntry = pieEntriesYear;
             showChart(pieEntriesYear);
         }
@@ -474,7 +467,6 @@ public class StatisticTimePageFragment extends Fragment implements UserDataShowI
     class MyMarkerView extends MarkerView {//设置点击显示
 
         private TextView tvContent;
-
 
 
         public MyMarkerView(Context context, int layoutResource) {

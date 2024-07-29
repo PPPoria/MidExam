@@ -105,6 +105,7 @@ public class UserPresenter {
     }
 
     public List<String> getWaterToday() {
+        if (userData == null) return new ArrayList<>();
         if (userData.getWaterToday() == null) {
             userData.setWaterToday(new ArrayList<>());
         }
@@ -112,6 +113,7 @@ public class UserPresenter {
     }
 
     public List<String> getWaterPerDay() {
+        if (userData == null) return new ArrayList<>();
         if (userData.getWaterPerDay() == null) {
             userData.setWaterPerDay(new ArrayList<>());
         }
@@ -119,6 +121,7 @@ public class UserPresenter {
     }
 
     public List<String> getWaterPerMonth() {
+        if (userData == null) return new ArrayList<>();
         if (userData.getWaterPerMonth() == null) {
             userData.setWaterPerMonth(new ArrayList<>());
         }
@@ -134,6 +137,7 @@ public class UserPresenter {
     }
 
     public List<String> getFinishJobs() {
+        if (userData == null) return new ArrayList<>();
         if (userData.getFinishJobs() == null) {
             userData.setFinishJobs(new ArrayList<>());
         }
@@ -141,6 +145,7 @@ public class UserPresenter {
     }
 
     public List<String> getJobs() {
+        if (userData == null) return new ArrayList<>();
         if (userData.getJobs() == null) {
             userData.setJobs(new ArrayList<>());
         }
@@ -148,6 +153,7 @@ public class UserPresenter {
     }
 
     public String getUserName() {
+        if (userData == null) return "";
         String name = userData.getName();
         if (name == null) return "新用户";
         else return userData.getName();
@@ -393,14 +399,14 @@ public class UserPresenter {
         });
     }
 
-    public void heart(Context context, DesktopActivity desktopActivity){
+    public void heart(Context context, DesktopActivity desktopActivity) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.heart(userData.getMsg(),userData.getAccount());
+        Call<UserData> dataCall = api.heart(userData.getMsg(), userData.getAccount());
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
@@ -409,11 +415,11 @@ public class UserPresenter {
                 if (tempData == null) desktopActivity.updateUserData(STATUS_NO_INTERNET);
                 else if ("start".equals(tempData.getMsg()))
                     desktopActivity.heartCallback(STATUS_HEART_START);
-                else if("wait".equals(tempData.getMsg())){
+                else if ("wait".equals(tempData.getMsg())) {
                     desktopActivity.heartCallback(STATUS_HEART_WAIT);
-                }else if ("finish".equals(tempData.getMsg())){
+                } else if ("finish".equals(tempData.getMsg())) {
                     desktopActivity.heartCallback(STATUS_HEART_FINISH);
-                }else desktopActivity.heartCallback(STATUS_NO_INTERNET);
+                } else desktopActivity.heartCallback(STATUS_NO_INTERNET);
             }
 
             @Override
@@ -495,30 +501,30 @@ public class UserPresenter {
         }
     }
 
-    public String getCity(){
-        if(weatherData == null) return "未知";
+    public String getCity() {
+        if (weatherData == null) return "未知";
         return weatherData.getCity();
     }
 
-    public String getWeather(){
-        if(weatherData == null) return null;
+    public String getWeather() {
+        if (weatherData == null) return null;
         return weatherData.getWea_img();
     }
 
-    public void requestWeather(){
+    public void requestWeather() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://v1.yiketianqi.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<WeatherData> dataCall = api.getWeather(1,"v61",56126631,"Mpl05lHH");
+        Call<WeatherData> dataCall = api.getWeather(1, "v61", 56126631, "Mpl05lHH");
 
         dataCall.enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
                 WeatherData tempData = response.body();
-                if(tempData  == null) return;
+                if (tempData == null) return;
                 weatherData = tempData;
             }
 
@@ -529,24 +535,26 @@ public class UserPresenter {
         });
     }
 
-    public void postWeather(int weatherId){
+    public void postWeather(int weatherId) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Api api = retrofit.create(Api.class);
 
-        Call<UserData> dataCall = api.postWeather(weatherId);
+        String token = "null";
+        if (userData != null) token = userData.getMsg();
+        Call<UserData> dataCall = api.postWeather(token, weatherId);
 
         dataCall.enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(Call<UserData> call, Response<UserData> response) {
-
+                Log.d("weather", "post weather success!");
             }
 
             @Override
             public void onFailure(Call<UserData> call, Throwable throwable) {
-
+                Log.d("weather", "post weather fail!");
             }
         });
     }

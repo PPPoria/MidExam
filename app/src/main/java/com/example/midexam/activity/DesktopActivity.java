@@ -87,7 +87,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
                 @Override
                 public void run() {
                     try {
-                        UserPresenter.getInstance(DesktopActivity.this).heart(DesktopActivity.this, DesktopActivity.this);
+                        UserPresenter.presenter.heart(DesktopActivity.this, DesktopActivity.this);
                     } catch (Exception e) {
 
                     }

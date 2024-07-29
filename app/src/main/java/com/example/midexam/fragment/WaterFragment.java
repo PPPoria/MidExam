@@ -160,15 +160,19 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
         if ("yu".equals(weather) || "lei".equals(weather) || "bingbao".equals(weather)) {
             weather = "雨天";
             UserPresenter.getInstance(this).postWeather(3);
+            Log.d(weather, "天气已发送");
         } else if ("yun".equals(weather)) {
             weather = "多云";
             UserPresenter.getInstance(this).postWeather(1);
+            Log.d(weather, "天气已发送");
         } else if ("qing".equals(weather)) {
             weather = "晴天";
             UserPresenter.getInstance(this).postWeather(0);
+            Log.d(weather, "天气已发送");
         } else if (weather != null) {
             weather = "阴天";
             UserPresenter.getInstance(this).postWeather(2);
+            Log.d(weather, "天气已发送");
         } else weather = "正在获取";
         weatherView.setText(city + " " + weather);
 
@@ -220,7 +224,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     @Override
     public void updateUserData(int STATUS) {
         if (STATUS == UserPresenter.STATUS_SUCCESS) {
-            receiveUpdate();
+            initWaterData();
         } else {
             Toast.makeText(requireContext(), "网络错误", Toast.LENGTH_SHORT).show();
         }
@@ -238,14 +242,12 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
     @Override
     public void receiveUpdate() {
-        try {
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initWaterData();
-                }
-            });
-        } catch (Exception e) {
-        }
+        requireActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initWaterData();
+            }
+        });
+
     }
 }

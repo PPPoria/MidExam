@@ -45,7 +45,7 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("user/weather")
-    Call<UserData> postWeather(@Field("weather") int weather);
+    Call<UserData> postWeather(@Header("token") String token, @Field("weather") int weather);
 
     @GET("api")
     Call<WeatherData> getWeather(@Query("unescape") int unescape, @Query("version") String version, @Query("appid") int appid, @Query("appsecret") String appsecret);
