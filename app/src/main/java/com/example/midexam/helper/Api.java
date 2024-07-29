@@ -1,6 +1,7 @@
 package com.example.midexam.helper;
 
 import com.example.midexam.model.UserData;
+import com.example.midexam.model.WeatherData;
 
 import java.util.List;
 
@@ -10,10 +11,12 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface Api {
 
@@ -42,5 +45,8 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("user/weather")
-    Call<UserData> weather(@Field("weather") int weather);
+    Call<UserData> postWeather(@Field("weather") int weather);
+
+    @GET("api")
+    Call<WeatherData> getWeather(@Query("unescape") int unescape, @Query("version") String version, @Query("appid") int appid, @Query("appsecret") String appsecret);
 }

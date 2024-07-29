@@ -77,7 +77,7 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
         initView();
         initFragment();
         initListener();
-
+        initHeart();
     }
 
 

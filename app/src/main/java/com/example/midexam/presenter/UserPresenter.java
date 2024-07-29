@@ -14,6 +14,7 @@ import com.example.midexam.activity.DesktopActivity;
 import com.example.midexam.activity.UserDataShowInterface;
 import com.example.midexam.helper.Api;
 import com.example.midexam.model.UserData;
+import com.example.midexam.model.WeatherData;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,6 +39,7 @@ public class UserPresenter {
     public String backgroundImagePath;
     public String headImagePath;
     public UserData userData;
+    public WeatherData weatherData;
     public UserDataShowInterface activity;
     public static UserPresenter presenter = new UserPresenter();
 
@@ -491,5 +493,61 @@ public class UserPresenter {
                     e.printStackTrace();
                 }
         }
+    }
+
+    public String getCity(){
+        if(weatherData == null) return "未知";
+        return weatherData.getCity();
+    }
+
+    public String getWeather(){
+        if(weatherData == null) return null;
+        return weatherData.getWea_img();
+    }
+
+    public void requestWeather(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://v1.yiketianqi.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Api api = retrofit.create(Api.class);
+
+        Call<WeatherData> dataCall = api.getWeather(1,"v61",56126631,"Mpl05lHH");
+
+        dataCall.enqueue(new Callback<WeatherData>() {
+            @Override
+            public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
+                WeatherData tempData = response.body();
+                if(tempData  == null) return;
+                weatherData = tempData;
+            }
+
+            @Override
+            public void onFailure(Call<WeatherData> call, Throwable throwable) {
+
+            }
+        });
+    }
+
+    public void postWeather(int weatherId){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Api api = retrofit.create(Api.class);
+
+        Call<UserData> dataCall = api.postWeather(weatherId);
+
+        dataCall.enqueue(new Callback<UserData>() {
+            @Override
+            public void onResponse(Call<UserData> call, Response<UserData> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<UserData> call, Throwable throwable) {
+
+            }
+        });
     }
 }

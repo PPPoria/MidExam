@@ -42,6 +42,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
     private TextView greet;
     private TextView waterName;
+    private TextView weatherView;
     private TextClock waterDate;
     private BlueWaveView blueWave;
     private ShallowBlueWaveView shallowBlueWave;
@@ -120,6 +121,7 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
     private void initView() {
         greet = view.findViewById(R.id.greet);
         waterName = view.findViewById(R.id.water_name);
+        weatherView = view.findViewById(R.id.weather_text);
         waterDate = view.findViewById(R.id.water_date);
         blueWave = view.findViewById(R.id.blueWaveView);
         shallowBlueWave = view.findViewById(R.id.shallowBlueWaveView);
@@ -152,6 +154,23 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
             greet.setText("晚上好");
         else if (hour < 24)
             greet.setText("夜深了");
+
+        String city = UserPresenter.getInstance(this).getCity();
+        String weather = UserPresenter.getInstance(this).getWeather();
+        if ("yu".equals(weather) || "lei".equals(weather) || "bingbao".equals(weather)) {
+            weather = "雨天";
+            UserPresenter.getInstance(this).postWeather(3);
+        } else if ("yun".equals(weather)) {
+            weather = "多云";
+            UserPresenter.getInstance(this).postWeather(1);
+        } else if ("qing".equals(weather)) {
+            weather = "晴天";
+            UserPresenter.getInstance(this).postWeather(0);
+        } else if (weather != null) {
+            weather = "阴天";
+            UserPresenter.getInstance(this).postWeather(2);
+        } else weather = "正在获取";
+        weatherView.setText(city + " " + weather);
 
 
         if (UserPresenter.getInstance(this).isLogged(requireContext())) {

@@ -1,5 +1,6 @@
 package com.example.midexam.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
 
         UserPresenter userPresenter = UserPresenter.getInstance(this);
         userPresenter.initImagesPath(this);
+        userPresenter.requestWeather();
 
 
         new Thread(new Runnable() {
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
         }).start();
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void log(int STATUS) {
         if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
@@ -68,7 +71,10 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
             UserPresenter.getInstance(this).accordLoggedStatus(this, false);
         } else if (STATUS == UserPresenter.STATUS_SUCCESS)
             Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-
+            if(UserPresenter.getInstance(this).isNextDay(this)) {
+                UserPresenter.getInstance(this).getWaterToday().clear();
+                UserPresenter.getInstance(this).setWaterDrink(0);
+            }
 
         startActivity(new Intent(MainActivity.this, DesktopActivity.class));
         finish();
