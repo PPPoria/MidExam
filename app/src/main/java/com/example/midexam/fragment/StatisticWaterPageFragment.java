@@ -150,7 +150,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
                 String Month = year.get(i).substring(0, 2);
                 String water = year.get(i).substring(2);
                 int V = Integer.parseInt(water);
-                yearData.get(Integer.parseInt(Month)).setY(V);
+                yearData.get(Integer.parseInt(Month)-1).setY(V);
             }
 
     }
