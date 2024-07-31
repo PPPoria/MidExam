@@ -36,6 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UserPresenter {
     private static final String TAG = "UserPresenter";
     public String baseUrl = "http://47.113.224.195:31112/";
+    public String token;
     public String backgroundImagePath;
     public String headImagePath;
     public UserData userData;
@@ -89,6 +90,7 @@ public class UserPresenter {
     }
 
     public int getWaterTarget() {
+        if(userData == null) return 0;
         return userData.getWaterTarget();
     }
 
@@ -97,6 +99,7 @@ public class UserPresenter {
     }
 
     public int getWaterDrink() {
+        if(userData == null) return 0;
         return userData.getWaterDrink();
     }
 
@@ -197,8 +200,13 @@ public class UserPresenter {
 
     //获取登录状态，已登录则返回true
     public boolean isLogged(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
-        return sp.getBoolean("isLogged", false);
+        try {
+            SharedPreferences sp = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+            return sp.getBoolean("isLogged", false);
+        } catch (Exception e) {
+
+        }
+        return false;
     }
 
     //登陆状态记录
@@ -256,6 +264,7 @@ public class UserPresenter {
                     accordLoggedStatus(context, true);
                     userData = tempData;
                     userData.setAccount(account);
+                    token = userData.getMsg();
                     activity.log(STATUS_SUCCESS);
                 }
             }
@@ -389,6 +398,7 @@ public class UserPresenter {
                     activity.updateUserData(STATUS_UPDATE_ERROR);
                 else {
                     activity.updateUserData(STATUS_SUCCESS);
+                    Log.d(TAG, "update success");
                 }
             }
 
@@ -417,9 +427,9 @@ public class UserPresenter {
                     desktopActivity.heartCallback(STATUS_HEART_START);
                 else if ("wait".equals(tempData.getMsg())) {
                     desktopActivity.heartCallback(STATUS_HEART_WAIT);
-                } else if ("finish".equals(tempData.getMsg())) {
+                } else {
                     desktopActivity.heartCallback(STATUS_HEART_FINISH);
-                } else desktopActivity.heartCallback(STATUS_NO_INTERNET);
+                }
             }
 
             @Override
@@ -549,12 +559,12 @@ public class UserPresenter {
         dataCall.enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(Call<UserData> call, Response<UserData> response) {
-                Log.d("weather", "post weather success!");
+                Log.d("天气", "post weather success!");
             }
 
             @Override
             public void onFailure(Call<UserData> call, Throwable throwable) {
-                Log.d("weather", "post weather fail!");
+                Log.d("天气", "post weather fail!");
             }
         });
     }

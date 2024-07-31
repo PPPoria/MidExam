@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -104,11 +105,13 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             focusFragmentContainer.setVisibility(View.VISIBLE);
         } else if (STATUS == UserPresenter.STATUS_HEART_WAIT) {
             Log.d(TAG, "heartCallback: wait");
+            focusFragmentContainer.setVisibility(View.VISIBLE);
         } else if (STATUS == UserPresenter.STATUS_HEART_FINISH) {
             Log.d(TAG, "heartCallback: finish");
             focusFragmentContainer.setVisibility(View.INVISIBLE);
         } else if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
             Log.d(TAG, "heartCallback: no internet");
+            Toast.makeText(this, "啊欧，断线了", Toast.LENGTH_SHORT).show();
             focusFragmentContainer.setVisibility(View.INVISIBLE);
         }
     }
@@ -162,7 +165,6 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
 
         pages.add(waterPage);
         pages.add(jobPage);
-        //pages.add(new BlankFragment());
         pages.add(statisticsPage);
         pages.add(personPage);
 
@@ -197,6 +199,11 @@ public class DesktopActivity extends AppCompatActivity implements View.OnClickLi
             pagePosition = 1;
         } else if (id == R.id.water_page_button) {
             pagePosition = 0;
+            UserPresenter.getInstance(waterPage).requestLog(
+                    this,
+                    UserPresenter.presenter.getAccount(this),
+                    UserPresenter.presenter.getPassword(this)
+            );
         } else if (id == R.id.statistics_page_button) {
             pagePosition = 2;
         } else if (id == R.id.person_page_button) {

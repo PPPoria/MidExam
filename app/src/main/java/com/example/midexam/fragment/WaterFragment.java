@@ -242,12 +242,14 @@ public class WaterFragment extends Fragment implements UserDataShowInterface {
 
     @Override
     public void receiveUpdate() {
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                initWaterData();
-            }
-        });
-
+        try {
+            requireActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    initWaterData();
+                }
+            });
+        } catch (Exception e) {
+        }
     }
 }

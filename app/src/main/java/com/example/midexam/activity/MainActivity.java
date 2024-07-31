@@ -69,16 +69,16 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
         if (STATUS == UserPresenter.STATUS_NO_INTERNET) {
             Toast.makeText(this, "网络异常，请稍后重试", Toast.LENGTH_SHORT).show();
             UserPresenter.getInstance(this).accordLoggedStatus(this, false);
-        } else if (STATUS == UserPresenter.STATUS_SUCCESS)
+            startActivity(new Intent(MainActivity.this, DesktopActivity.class));
+            finish();
+        } else if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-            if(UserPresenter.getInstance(this).isNextDay(this)) {
+            if (UserPresenter.getInstance(this).isNextDay(this)) {
                 UserPresenter.getInstance(this).getWaterToday().clear();
                 UserPresenter.getInstance(this).setWaterDrink(0);
             }
-
-        startActivity(new Intent(MainActivity.this, DesktopActivity.class));
-        finish();
-
+            UserPresenter.getInstance(this).updateUserData(this);
+        }
     }
 
     @Override
@@ -88,7 +88,11 @@ public class MainActivity extends AppCompatActivity implements UserDataShowInter
 
     @Override
     public void updateUserData(int STATUS) {
-
+        if(STATUS == UserPresenter.STATUS_SUCCESS)
+            Toast.makeText(this, "数据同步成功", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "数据同步失败", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(MainActivity.this, DesktopActivity.class));
+        finish();
     }
 
     @Override

@@ -49,6 +49,8 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
     private ImageView newBackground;
     private Button saveButton;
 
+    private boolean alreadyToBack = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +80,10 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
+                if (!alreadyToBack) {
+                    Toast.makeText(UserDataSettingActivity.this, "正在上传更新", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 DesktopActivity.personPage.initUserData();
                 DesktopActivity.personPage.clearImageMemoryAndDisk();
                 DesktopActivity.personPage.initUserImage();
@@ -106,6 +112,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
                 Toast.makeText(this, "提醒间隔最大5999", Toast.LENGTH_SHORT).show();
                 return;
             }
+            alreadyToBack = false;
             UserPresenter userPresenter = UserPresenter.getInstance(this);
             //更新userData中的name
             userPresenter.setUserName(newNameView.getText().toString());
@@ -149,7 +156,7 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
     }
 
     private void initImageData() {
-        UserPresenter userPresenter = UserPresenter.getInstance(this);
+        UserPresenter userPresenter = UserPresenter.presenter;
         String headImagePath = userPresenter.getHeadImagePath();
         Log.d(TAG, "headImagePath = " + headImagePath);
         Glide.with(this)
@@ -222,17 +229,21 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
 
     @Override
     public void updateUserData(int STATUS) {
-        if (STATUS == UserPresenter.STATUS_SUCCESS) {
-            Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
-            observer.updateObservedViews();
-        } else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
-            Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
-        else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
-            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void updateUserImage(int STATUS) {
+        if (STATUS == UserPresenter.STATUS_SUCCESS) {
+            Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+            clearImageMemoryAndDisk();
+            initImageData();
+        } else if (STATUS == UserPresenter.STATUS_NO_INTERNET)
+            Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
+        else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+
+        alreadyToBack = true;
     }
 
     @Override
