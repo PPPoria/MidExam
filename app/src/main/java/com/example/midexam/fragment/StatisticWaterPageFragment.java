@@ -92,7 +92,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
 
     public void initView() {
         waterChart = view.findViewById(R.id.bar_chart);
-        tipsNoData=view.findViewById(R.id.noDataTips_water);
+        tipsNoData = view.findViewById(R.id.noDataTips_water);
     }
 
     //有网络需求
@@ -106,7 +106,9 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
             day = userPresenter.getWaterToday();//格式为"1540180"，前两位表示在15小时40分钟，后面跟着就是饮水量。**后台应该在一天结束的时候，清空waterToday。
             month = userPresenter.getWaterPerDay();//格式为"07255999"，前四位表示07月25日，后面跟着的就是饮水量。
             year = userPresenter.getWaterPerMonth();//格式为"0751000"，前两位表示07月，后面跟着的就是饮水量。
-        }else{
+            Log.d(TAG, "waterPerDay = " + month);
+            Log.d(TAG, "waterPerMonth = " + year);
+        } else {
             day = new ArrayList<>();
             month = new ArrayList<>();
             year = new ArrayList<>();
@@ -118,30 +120,40 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         day.add("1540180");
         month.add("07255999");
         year.add("0751000");*/
-        if(!dayData.isEmpty()){dayData.clear();}
-        if(!dayDate.isEmpty()){dayDate.clear();}//清空旧数据，避免重复添加
-        for (int i = 0; i < day.size(); i++) {
-            String hour = day.get(i).substring(0, 2);
-            String min = day.get(i).substring(2, 4);
-            String water = day.get(i).substring(4);
-            int V = Integer.parseInt(water);
-
-            dayData.add(new BarEntry(i, V));
-            dayDate.add(hour + ":" + min);
+        if (!dayData.isEmpty()) {
+            dayData.clear();
         }
+        if (!dayDate.isEmpty()) {
+            dayDate.clear();
+        }//清空旧数据，避免重复添加
 
-        for (int i = 0; i < month.size(); i++) {
-            String Day = month.get(i).substring(2, 4);
-            String water = month.get(i).substring(4);
-            int V = Integer.parseInt(water);
-            monthData.get(Integer.parseInt(Day)).setY(V);
-        }
+        try {
+            for (int i = 0; i < day.size(); i++) {
+                String hour = day.get(i).substring(0, 2);
+                String min = day.get(i).substring(2, 4);
+                String water = day.get(i).substring(4);
+                int V = Integer.parseInt(water);
 
-        for (int i = 0; i < year.size(); i++) {
-            String Month = year.get(i).substring(0, 2);
-            String water = year.get(i).substring(2);
-            int V = Integer.parseInt(water);
-            yearData.get(Integer.parseInt(Month)).setY(V);
+                dayData.add(new BarEntry(i, V));
+                dayDate.add(hour + ":" + min);
+            }
+
+            for (int i = 0; i < month.size(); i++) {
+                String Day = month.get(i).substring(2, 4);
+                String water = month.get(i).substring(4);
+                int V = Integer.parseInt(water);
+                Log.d(TAG, "V = " + V);
+                monthData.get(Integer.parseInt(Day)).setY(V);
+            }
+
+            for (int i = 0; i < year.size(); i++) {
+                String Month = year.get(i).substring(0, 2);
+                String water = year.get(i).substring(2);
+                int V = Integer.parseInt(water);
+                yearData.get(Integer.parseInt(Month)).setY(V);
+            }
+        } catch (Exception e) {
+
         }
     }
 
@@ -150,20 +162,20 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         if (dataList == null || dataList.isEmpty()) {//判断是否数据源为空
             waterChart.setVisibility(View.INVISIBLE);
             tipsNoData.setVisibility(View.VISIBLE);
-        }else {//数据源不为空根据传入的数据源类型进行显示
-            if(dataList!=dayData){//如果是月和年
-                boolean noData=true;
+        } else {//数据源不为空根据传入的数据源类型进行显示
+            if (dataList != dayData) {//如果是月和年
+                boolean noData = true;
                 for (int i = 0; i < dataList.size(); i++) {
-                    if(dataList.get(i).getY()!=0){//如果喝水值为零
-                        noData=false;
+                    if (dataList.get(i).getY() != 0) {//如果喝水值为零
+                        noData = false;
                         break;
                     }
                 }//判断是不是都为零（因为前面为了初始化数据把它们都设成了零）
-                if(noData==false){
+                if (noData == false) {
                     waterChart.setVisibility(View.VISIBLE);
                     tipsNoData.setVisibility(View.INVISIBLE);
                 }//不是全为零，则显示
-                else{
+                else {
                     waterChart.setVisibility(View.INVISIBLE);
                     tipsNoData.setVisibility(View.VISIBLE);
                 }//全为零，显示无数据
@@ -296,9 +308,9 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         if (position == 0)
             setDataInBar(dayData, dayDate);
         else if (position == 1)
-            setDataInBar(monthData,monthDate);
+            setDataInBar(monthData, monthDate);
         else
-            setDataInBar(yearData,yearDate);
+            setDataInBar(yearData, yearDate);
     }
 
     static class dataManager {

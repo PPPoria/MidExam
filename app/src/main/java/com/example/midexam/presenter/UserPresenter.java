@@ -19,6 +19,7 @@ import com.example.midexam.model.WeatherData;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -90,7 +91,7 @@ public class UserPresenter {
     }
 
     public int getWaterTarget() {
-        if(userData == null) return 0;
+        if (userData == null) return 0;
         return userData.getWaterTarget();
     }
 
@@ -99,7 +100,7 @@ public class UserPresenter {
     }
 
     public int getWaterDrink() {
-        if(userData == null) return 0;
+        if (userData == null) return 0;
         return userData.getWaterDrink();
     }
 
@@ -116,19 +117,67 @@ public class UserPresenter {
     }
 
     public List<String> getWaterPerDay() {
-        if (userData == null) return new ArrayList<>();
+        if (userData == null) {
+            Log.d(TAG, "getWaterPerDay: userData is null");
+            return new ArrayList<>();
+        }
         if (userData.getWaterPerDay() == null) {
+            Log.d(TAG, "getWaterPerDay: waterPerDay is null");
             userData.setWaterPerDay(new ArrayList<>());
         }
         return userData.getWaterPerDay();
     }
 
+
+    public void accordWaterPerDay(int waterDrink) {
+        List<String> list = getWaterPerDay();
+        int num = list.size();
+
+        //今日日期字符串，例0729
+        int m = LocalDateTime.now().getMonthValue();
+        int d = LocalDateTime.now().getDayOfMonth();
+        @SuppressLint("DefaultLocale") String today = String.format("%02d%02d", m, d);
+
+        if (num != 0) {
+            //获取最新记录的字符串
+            String waterThatDay = list.get(num - 1);
+
+            //判断最新记录的时间是否为今天，以作不同处理
+            //是则更改喝水量，否则直接添加新纪录日期
+            if (today.equals(waterThatDay.substring(0, 4)))
+                list.set(num - 1, today + waterDrink);
+            else
+                list.add(today + waterDrink);
+        } else
+            list.add(today + waterDrink);
+
+        Log.d(TAG, "waterPerDay = " + list);
+    }
+
     public List<String> getWaterPerMonth() {
-        if (userData == null) return new ArrayList<>();
-        if (userData.getWaterPerMonth() == null) {
-            userData.setWaterPerMonth(new ArrayList<>());
+        List<String> dayList = getWaterPerDay();
+        List<String> monthList = new ArrayList<>();
+
+        if (dayList.isEmpty()) return monthList;
+        String m = dayList.get(0).substring(0, 2);
+
+        String thatM = null;
+        int thatMonthValue = 0;
+        for (String waterPerDay : dayList) {
+            thatM = waterPerDay.substring(0, 2);
+            if (m.equals(thatM)) {
+                thatMonthValue += Integer.parseInt(waterPerDay.substring(2));
+            } else {
+                monthList.add(m + thatMonthValue);
+                thatMonthValue = Integer.parseInt(waterPerDay.substring(2));
+                m = thatM;
+            }
         }
-        return userData.getWaterPerMonth();
+        if (thatMonthValue != Integer.parseInt(dayList.get(dayList.size() - 1).substring(2))) {
+            monthList.add(m + thatMonthValue);
+        }
+
+        return monthList;
     }
 
     public void drink(String date, int drinkValue) {
@@ -137,6 +186,7 @@ public class UserPresenter {
         setWaterDrink(waterDrink);
 
         getWaterToday().add(date + drinkValue);
+        accordWaterPerDay(waterDrink);
     }
 
     public List<String> getFinishJobs() {
