@@ -37,7 +37,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     StatisticTimePageFragment statisticTimePageFragment;
     StatisticWaterPageFragment statisticWaterPageFragment;
     List<Fragment> pages = new ArrayList<>();
-    int pagePosition = 0;
+    int chartPagePosition = 0;
+    int timePagePosition=0;
 
 
     @Override
@@ -97,8 +98,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         int id = v.getId();
 
         if (id == R.id.bt_pie_focus) {
-            pagePosition = 0;
+            chartPagePosition = 0;
             statisticsViewPager.setCurrentItem(0);
+            statisticTimePageFragment.setPosition(timePagePosition);
 
             btFocusChart.setTextColor(Color.WHITE);
             btFocusChart.setBackgroundColor(Color.parseColor("#6bbef2"));
@@ -107,8 +109,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             btWaterChart.setBackgroundColor(Color.WHITE);
             return;
         } else if (id == R.id.bt_bar_water) {
-            pagePosition = 1;
+            chartPagePosition = 1;
             statisticsViewPager.setCurrentItem(1);
+            statisticWaterPageFragment.setPosition(timePagePosition);
 
             btWaterChart.setTextColor(Color.WHITE);
             btWaterChart.setBackgroundColor(Color.parseColor("#6bbef2"));
@@ -121,7 +124,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
 
         if (id == R.id.bt_day) {
-            if (pagePosition == 0) {
+            if (chartPagePosition == 0) {
                 statisticTimePageFragment.setPosition(0);
                 statisticTimePageFragment.receiveUpdate();
             } else {
@@ -137,9 +140,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
             btYear.setTextColor(Color.parseColor("#969696"));
             btYear.setBackgroundColor(Color.WHITE);
+            timePagePosition=0;
 
         } else if (id == R.id.bt_month) {
-            if (pagePosition == 0) {
+            if (chartPagePosition == 0) {
                 statisticTimePageFragment.setPosition(1);
                 statisticTimePageFragment.receiveUpdate();
             } else {
@@ -155,9 +159,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
             btYear.setTextColor(Color.parseColor("#969696"));
             btYear.setBackgroundColor(Color.WHITE);
+            timePagePosition=1;
 
         } else if (id == R.id.bt_year) {
-            if (pagePosition == 0) {
+            if (chartPagePosition == 0) {
                 statisticTimePageFragment.setPosition(2);
                 statisticTimePageFragment.receiveUpdate();
             } else {
@@ -173,7 +178,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
             btMonth.setTextColor(Color.parseColor("#969696"));
             btMonth.setBackgroundColor(Color.WHITE);
-
+            timePagePosition=2;
         }
     }
 
@@ -204,9 +209,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void receiveUpdate() {
-        if (pagePosition == 0) {
+        if (chartPagePosition == 0) {
             statisticTimePageFragment.receiveUpdate();
-        } else if (pagePosition == 1) {
+        } else if (chartPagePosition == 1) {
             statisticWaterPageFragment.receiveUpdate();
         }
     }
