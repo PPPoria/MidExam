@@ -142,7 +142,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
                 String Day = month.get(i).substring(2, 4);
                 String water = month.get(i).substring(4);//格式为"0725  5999"
                 int V = Integer.parseInt(water);
-                Log.d(TAG, "V = " + V);
+                Log.d(TAG, "V = " + V);//
                 monthData.get(Integer.parseInt(Day)-1).setY(V);
             }
 
