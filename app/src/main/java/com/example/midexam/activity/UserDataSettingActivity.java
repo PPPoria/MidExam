@@ -229,11 +229,6 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
 
     @Override
     public void updateUserData(int STATUS) {
-
-    }
-
-    @Override
-    public void updateUserImage(int STATUS) {
         if (STATUS == UserPresenter.STATUS_SUCCESS) {
             Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
             clearImageMemoryAndDisk();
@@ -242,7 +237,10 @@ public class UserDataSettingActivity extends AppCompatActivity implements UserDa
             Toast.makeText(this, "无网络", Toast.LENGTH_SHORT).show();
         else if (STATUS == UserPresenter.STATUS_UPDATE_ERROR)
             Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void updateUserImage(int STATUS) {
         alreadyToBack = true;
     }
 

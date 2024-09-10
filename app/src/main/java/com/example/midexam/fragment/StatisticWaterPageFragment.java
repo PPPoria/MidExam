@@ -123,11 +123,7 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
         if (!dayData.isEmpty()) {
             dayData.clear();
         }
-        if (!dayDate.isEmpty()) {
-            dayDate.clear();
-        }//清空旧数据，避免重复添加
-
-
+        try {
             for (int i = 0; i < day.size(); i++) {
                 String hour = day.get(i).substring(0, 2);
                 String min = day.get(i).substring(2, 4);
@@ -143,16 +139,18 @@ public class StatisticWaterPageFragment extends Fragment implements UserDataShow
                 String water = month.get(i).substring(4);//格式为"0725  5999"
                 int V = Integer.parseInt(water);
                 Log.d(TAG, "V = " + V);//
-                monthData.get(Integer.parseInt(Day)-1).setY(V);
+                monthData.get(Integer.parseInt(Day) - 1).setY(V);
             }
 
             for (int i = 0; i < year.size(); i++) {
                 String Month = year.get(i).substring(0, 2);
                 String water = year.get(i).substring(2);
                 int V = Integer.parseInt(water);
-                yearData.get(Integer.parseInt(Month)-1).setY(V);
+                yearData.get(Integer.parseInt(Month) - 1).setY(V);
             }
-
+        } catch (Throwable e) {
+            Log.e(TAG, "initBarData", e);
+        }
     }
 
     public void setDataInBar(List<BarEntry> dataList, List<String> dateList) {
